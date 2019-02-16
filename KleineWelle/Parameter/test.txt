@@ -1,0 +1,7 @@
+stride 16
+basename K-KW_TRIGGERS
+transientDuration 4.0
+significance 2.0
+threshold 3.0
+decimateFactor -1
+channel K1:IMC-MCL_SERVO_OUT_DQ 16 1024 2

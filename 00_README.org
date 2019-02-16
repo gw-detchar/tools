@@ -1,0 +1,193 @@
+#+TITLE: KAGRA DetChar Tool Memo
+#+AUTHOR: Takahiro Yamamoto
+#+DATE: Jan. 20th, 2019
+#+TEXT: 
+#+TEXT: 
+#+TEXT: [TABLE-OF-CONTENTS]
+#+OPTIONS: ^:{}
+-----
+
+* /users/DET/tools
+** Bruco
+*** Script/gui4medm.sh
+    - GUI interface for Bruco launched from MEDM
+*** Script/create_exclude_list.sh
+    - GUI interface in order to create the include/exclude file for Bruco.
+    -----
+*** share/*
+    - These are the channel list files for --include/--exclude option
+** Cache
+*** Script/makeCache.sh
+    - This script is used for automatically making the cache files
+      formatted as the Virgo convention (.ffl) and as the LIGO convention (.cache)
+    - It is running as the cron-job on k1script. (Jan. 20th, 2019)
+    - The cache files are updated to the latest state every 3 minutes.
+      - New gwf files are added and old ones are removed.
+    -----
+** KleineWelle
+*** Script/automation.sh
+    - This script is used for automatically executing the KleineWelle
+      and for automatically.
+    - The output directory is fixed as /home/controls/triggers/K-KW-TRIGGERS for SummaryPage's convention.
+    - It is running every 15 minutes as the cron-job on k1sum1. (Jan. 23th, 2019)
+    #+BEGIN_SRC txt
+KleineWelle output and gwtrigfind input:
+   /home/controls/triggers/K-KW_TRIGGERS/K-KW_TRIGGERS-12345/K-KW_TRIGGERS-1234567890-16.xml
+   (KleineWelle puts all channels' results in one xml file.)
+    #+END_SRC
+*** Script/functions.sh
+    - This is the bash library which defines the useful functions.
+*** Script/gui4medm.sh
+    - GUI interface for KleineWelle launched from MEDM
+*** Parameter/*
+    - These are the parameter files for KleineWelle
+    #+BEGIN_SRC txt
+## Example
+stride 16
+basename K-KW_TRIGGERS
+transientDuration 4.0
+significance 2.0
+threshold 3.0
+decimateFactor -1
+channel K1:FOO-BAR_BAZ 16 1024 2
+channel K1:BAR-BAZ_FOO 16 2048 2
+    #+END_SRC
+*** Reference
+    - [[https://dcc.ligo.org/cgi-bin/private/DocDB/ShowDocument?.submit=Identifier&docid=T060221&version=][LIGO-T060221]] : Trigger File Naming Convention
+    -----
+** Omegascan
+*** Script/gui4medm.sh
+    - GUI interface for KleineWelle launched from MEDM
+-----
+** Omicron
+*** Script/automation.sh
+    - This script is used for automatically executing the Omicron
+      and for automatically changing the directory structure as the LIGO convention
+      in order to use the omicron triggers on DailySummaryPage.
+    - It is running every 15 minutes as the cron-job on k1sum0 and k1sum1. (Jan. 23th, 2019)
+    #+BEGIN_SRC txt
+Omicron output:
+   "OUTPUT DIRECTORY"/K1:FOO-BAR_BAZ/K1-FOO_BAR_BAZ_OMICRON-1234567890-60.xml
+
+gwtrigfind input:
+   /home/controls/triggers/K1/FOO_BAR_BAZ_OMICRON/12345/K1-FOO_BAR_BAZ_OMICRON-1234567890-60.xml.gz
+    #+END_SRC
+*** Script/functions.sh
+    - This is the bash library which defines the useful functions.
+*** Script/gui4medm.sh
+    - GUI interface for KleineWelle launched from MEDM
+*** Parameter/*
+    - These are the parameter files for Omicron.
+    #+BEGIN_SRC txt
+## Example
+DATA FFL /users/DET/Cache/latest.ffl
+DATA CHANNELS K1:FOO-BAR_BAZ
+DATA CHANNELS K1:BAR-BAZ_FOO
+DATA SAMPLEFREQUENCY 2048
+
+PARAMETER TIMING 64 4
+PARAMETER FREQUENCYRANGE 10 1024
+PARAMETER QRANGE 4 100
+PARAMETER MISMATCHMAX 0.2
+PARAMETER SNRTHRESHOLD 6
+PARAMETER PSDLENGTH 128
+
+OUTPUT DIRECTORY /somewhere
+OUTPUT PRODUCTS triggers
+OUTPUT FORMAT xml
+OUTPUT VERBOSITY 0
+    #+END_SRC
+
+*** etc/cron-omicron.env
+    - This is the definition of the environmental variables for executing Omicron as the cron-job.
+*** Reference
+    - [[https://tds.virgo-gw.eu/?content=3&r=14693][VIR-0545C-14]] : Omicron Algorithm
+    - [[https://tds.virgo-gw.eu/?content=3&r=11553][VIR-0135A-15]] : Omicron Example
+    - [[https://dcc.ligo.org/cgi-bin/private/DocDB/ShowDocument?.submit=Identifier&docid=T0500178&version=][LIGO-T050017]] : Trigger File Naming Convention
+    - [[https://dcc.ligo.org/cgi-bin/private/DocDB/ShowDocument?.submit=Identifier&docid=T1300468&version=][LIGO-T1300468]] : Trigger Handling Convention
+    -----
+* /users/DET/Cache
+** latest.{ffl,cache}
+   - These files contain all gwf files which exsist in Kamioka 20TB storage.
+** Cache_GPS/[1-9][0-9][0-9][0-9][0-9].{ffl,cache}
+   - These files contain all gwf files in each directory named as the first 5 digits of the GPS time.
+   -----
+* /users/DET/Result
+** {KleineWelle,Omegascan,Omicron}/medm/*
+   - All results by GUI interface launched from MEDM are sotored in these directories.
+* Note
+** How to add new channels to automated glitch pipelines
+   - You can add new channels in one of two ways. 
+     1. Use same parameter file (for KleineWelle and Omicron).
+        - Add new channels to =/users/DET/tools/{KleineWelle,Omicron}/Parameter/summary_test.txt=
+     2. Use another parameter file (for Omicron).
+        - Prepare a new parameter file.
+        - Register a new job in crontab.
+          #+BEGIN_SRC term
+sh> crontab -e
+5-59/15 * * * * env - `cat /users/DET/tools/Omicron/etc/sum0_cron-omicron.env` \
+/users/DET/tools/Omicron/Script/automation.sh /path/to/param.txt
+          #+END_SRC
+   - After adding channels, please modify the ini-file.
+     - cf. [[https://git.ligo.org/detchar/ligo-summary-pages/blob/master/configurations/common/hoft.ini#L154][LIGO's ini file]] (need LIGO DCC account)
+** LV tool modification for KAGRA
+*** bruco
+    - [[https://github.com/gw-detchar/bruco][KAGRA's bruco]] is forked from [[https://github.com/duncanmmacleod/bruco][the orignal one]].
+    - [[https://github.com/gw-detchar/bruco/compare/master...gw-detchar:kagra][Change Log]]
+      - added kagradata.py
+      - added K1 as the IFO parameter
+      - added the '--include' option for enabling the channel filter as the white-list.
+    -----
+*** gwtrigfind
+    - DailySummaryPage depends on gwtrigfind and gwtrigfind searches trigger files 
+      - in =/home/detchar/triggers/K1= for Omicron trigger files.
+      - in =/gds-K1/dmt/triggers/K-KW_TRIGGERS= for KleineWelle trigger files.
+    - I had to modify the gwtrigfind code because k1sum0 does not have such a user and directories.
+      - And the search path of trigger files are hard-coded.
+    #+BEGIN_SRC diff -up
+--- /home/controls/opt/summary-2.7/lib/python2.7/site-packages/gwtrigfind/core.py.bak   2018-10-19 09:12:45.375654000 +0900
++++ /home/controls/opt/summary-2.7/lib/python2.7/site-packages/gwtrigfind/core.py       2019-01-23 18:29:06.224172322 +0900
+@@ -161,12 +161,12 @@ def find_detchar_files(channel, start, e
+     ifo, name = _format_channel_name(channel).split('-', 1)
+     # find base path relative to O1 or O2 formatting
+     if start >= OMICRON_O2_EPOCH:
+-        base = os.path.join(os.path.sep, 'home', 'detchar', 'triggers')
++        base = os.path.join(os.path.sep, 'home', 'controls', 'triggers')
+         tag = etg.upper()
+         dirtag = '%s_%s' % (name, tag)
+     else:
+         epoch = '*'
+-        base = os.path.join(os.path.sep, 'home', 'detchar', 'triggers', '*')
++        base = os.path.join(os.path.sep, 'home', 'controls', 'triggers', '*')
+         tag = etg.title()
+         dirtag = '%s_%s' % (str(channel).split(':', 1)[1], tag)
+ 
+@@ -223,8 +223,8 @@ def find_kleinewelle_files(channel, star
+     else:
+         tag = '%s-KW_TRIGGERS' % site
+     if base is None:
+-        base = os.path.join(os.sep, 'gds-{}'.format(ifo.lower()),
+-                            'dmt', 'triggers', tag, '{}-{{0}}'.format(tag))
++        base = os.path.join(os.path.sep, 'home',
++                            'controls', 'triggers', tag, '{}-{{0}}'.format(tag))
+ 
+     # loop over GPS directories and find files
+     filename = '%s-*-*.%s' % (tag, ext)
+    #+END_SRC
+    -----
+*** gwpy
+    - OmegaScan depens on nds2.py in the gwpy packages.
+    - The hostname and the port of NDS server is listed in nds2.py.
+      - L1, H1, are already assinged.
+    - I added the k1nds0:8088 
+    #+BEGIN_SRC diff -up
+--- /home/controls/opt/summary-2.7/lib/python2.7/site-packages/gwpy/io/nds2.py.bak   2019-01-27 23:26:30.277612549 +0900
++++ /home/controls/opt/summary-2.7/lib/python2.7/site-packages/gwpy/io/nds2.py       2019-01-27 23:27:36.645281039 +0900
+@@ -59,6 +59,7 @@ DEFAULT_HOSTS = OrderedDict([
+     ('V1', ('nds.ligo.caltech.edu', 31200)),
+     ('C1', ('nds40.ligo.caltech.edu', 31200)),
+     ('C0', ('nds40.ligo.caltech.edu', 31200)),
++    ('K1', ('k1nds0.kagra.icrr.u-tokyo.ac.jp', 8088)),
+ ])
+    #+END_SRC
+    -----
