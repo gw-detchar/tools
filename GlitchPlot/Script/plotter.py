@@ -2,6 +2,9 @@
 This script will make basic plots from glitch information.
 '''
 
+import matplotlib
+matplotlib.use('Agg')  # this line is required for the batch job before importing other matplotlib modules.
+
 import math
 from gwpy.table import EventTable
 from gwpy.segments import DataQualityFlag
@@ -10,36 +13,44 @@ from gwpy.table.filters import in_segmentlist
 from ROOT import gROOT, gDirectory, gPad, gSystem, gStyle
 from ROOT import TH1D, TH2D, TH1I, TCanvas
 from mylib import mylib
-import matplotlib
-matplotlib.use('Agg')  # this line is required for the batch job before importing other matplotlib modules.
-
+from astropy.table import vstack
 # argument processing
 
 import argparse
 
 parser = argparse.ArgumentParser(description='Make basic plots.')
 parser.add_argument('-o','--output',help='output text filename.',default='result.txt')
-parser.add_argument('-i','--inputfile',help='input trigger filename.',default='/home/controls/triggers/K1/LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON/12440/K1-LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON-1244013258-60.xml.gz')
+#parser.add_argument('-i','--inputfile',help='input trigger filename.',default='/home/controls/triggers/K1/LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON/12440/K1-LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON-1244013258-60.xml.gz')
+parser.add_argument('-i','--inputfile',help='input trigger filename.',default='/home/controls/triggers/K1/LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON/12440/K1-LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON-1244004678-60.xml.gz')
 
 args = parser.parse_args()
 output = args.output
 inputfile = args.inputfile
 
+# Define parameters
+omicron_interval = 60.
+snrthreshold=1.
+
+# get the time of the input file.
+tmp=inputfile.rsplit("-",2)
+tfile=int(tmp[1])
+
 # Open omicron file
 
-#events = EventTable.read('K1-IMC_CAV_ERR_OUT_DQ_OMICRON-1241900058-60.xml.gz', tablename='sngl_burst', columns=['peak_time', 'peak_time_ns', 'start_time', 'start_time_ns', 'duration', 'peak_frequency', 'central_freq', 'bandwidth', 'channel', 'amplitude', 'snr', 'confidence', 'chisq', 'chisq_dof', 'param_one_name', 'param_one_value'])
 events = EventTable.read(inputfile, tablename='sngl_burst', columns=['peak_time', 'peak_time_ns', 'start_time', 'start_time_ns', 'duration', 'peak_frequency', 'central_freq', 'bandwidth', 'channel', 'amplitude', 'snr', 'confidence', 'chisq', 'chisq_dof', 'param_one_name', 'param_one_value'])
 # Tablename option
 #'process', 'process_params', 'sngl_burst', 'segment_definer', 'segment_summary', 'segment'
 # Column option
 #ifo peak_time peak_time_ns start_time start_time_ns duration search process_id event_id peak_frequency central_freq bandwidth channel amplitude snr confidence chisq chisq_dof param_one_name param_one_value
+#events = EventTable.read('K1-IMC_CAV_ERR_OUT_DQ_OMICRON-1241900058-60.xml.gz', tablename='sngl_burst', columns=['peak_time', 'peak_time_ns', 'start_time', 'start_time_ns', 'duration', 'peak_frequency', 'central_freq', 'bandwidth', 'channel', 'amplitude', 'snr', 'confidence', 'chisq', 'chisq_dof', 'param_one_name', 'param_one_value'])
+
+# Setup output txtfile.
+f = open(output, mode='w')
 
 # Apply filter. 
 
-snrthreshold=100.    
 fevents = events.filter(('snr', mylib.Islarger,  snrthreshold))
 fevents.write('test.txt',format='ascii',overwrite=True)
-
 
 # Makesegments of triggers. It will give information about interesting gps time. 
 
@@ -51,16 +62,9 @@ snrs = fevents.get_column('snr')
 durations = fevents.get_column('duration')
 starts = fevents.get_column('start_time')
 starts_ns = fevents.get_column('start_time_ns')
-# columns can be used like array. col[0] will give first value.
-
-# get the time of the input file.
-tmp=inputfile.rsplit("-",2)
-tfile=int(tmp[1])
-
-c = TCanvas()
+# columns can be used like array. columns[0] will give first value.
 
 # Initialize segments of trigger. t=0 is the start of the trigger file.
-omicron_interval = 60.
 Triggered = DataQualityFlag(known=[(0,omicron_interval)],active=[])
 
 # loop over triggers.
@@ -77,13 +81,27 @@ for peak_time,peak_time_ns,peak_frequency,snr,duration,start,startns in zip(peak
     # Added to the segments of this file.
     Triggered |= tmpTriggered
     
-# Find interesting bin from histogram.
-
 # Get active segments. 
 tmpactive=Triggered.active
 
-# Setup output txtfile.
-f = open(output, mode='w')
+# Get trigger channel. Assumed that 1 omicron file contains only 1 channel.
+channel = (fevents.get_column('channel'))[0]
+#print(channel)
+
+# Get DQflag.
+#safety is contracting time.
+safety=1
+
+locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="IMC",min_len=safety*3)
+locked_contract=locked.copy()
+locked=locked.active
+locked_contract=locked_contract.contract(1)
+unlocked_contract=~locked_contract
+
+print("locked")
+print(locked)
+print("unlocked_contract")
+print(unlocked_contract)
 
 # Loop over active segments.
 for segment in tmpactive:
@@ -92,10 +110,26 @@ for segment in tmpactive:
 
     # strtmp is parameter string to be passed to condor_jobfile_plotter.sh.
     # strtmp = [starttime in gps] [channel] [min_duration] [max_duration] [bandwidth] [maxSNR] [frequency_snr] [max_amp] [frequency_amp]
-    strtmp=""
-    time=tfile+tmpstart
-    strtmp+=str(time)
 
+    time=tfile+tmpstart
+
+    print(segment)
+    print(segment.shift(tfile))
+    segment_shift=segment.shift(tfile)
+    # Discriminate glitch and lock loss
+    Islocked=locked.intersects_segment(segment_shift)
+    if not Islocked:
+        continue
+    
+    Islockloss=unlocked_contract.intersects_segment(segment_shift)
+    if Islockloss:
+        eventtype="lockloss"
+    else:
+        eventtype="glitch"
+
+    print(segment)
+    print(eventtype)
+    
     #print("time="+str(time))
 
     # From all trigger, extract those in the segmants.
@@ -128,12 +162,7 @@ for segment in tmpactive:
         tmpevents=vstack([tmptmpevents,tmpevents2])
 
     print(tmpevents)
-    # Get trigger channel. Assumed that 1 omicron file contains only 1 channel.
-    channel = (tmpevents.get_column('channel'))[0]
-    #print(channel)
-    strtmp+=" K1:"
-    strtmp+=str(channel)
-    
+
     #duration
 
     #initialize
@@ -145,12 +174,7 @@ for segment in tmpactive:
     for duration in durations:
         if min_duration > duration:
             min_duration = duration
-            
-    strtmp+=(" ")
-    strtmp+=str(min_duration)
-    strtmp+=(" ")
-    strtmp+=str(max_duration)
-    
+                
     #bandwidth
     
     bandwidths = tmpevents.get_column('bandwidth')
@@ -168,8 +192,6 @@ for segment in tmpactive:
             max_bandwidth = bandwidth
 
     mean_bandwidth=mean_bandwidth/i
-    strtmp+=(" ")
-    strtmp+=str(min_bandwidth)
 
     #SNR, frequency
 
@@ -182,10 +204,6 @@ for segment in tmpactive:
         if max_snr < snr:
             max_snr = snr
             peakfrequency=frequency
-    strtmp+=(" ")
-    strtmp+=str(max_snr)
-    strtmp+=(" ")
-    strtmp+=str(peakfrequency)
 
     #Amplitude, frequency
 
@@ -197,6 +215,26 @@ for segment in tmpactive:
         if max_amp < amplitude:
             max_amp = amplitude
             peakfrequency=frequency
+    
+    strtmp=""
+    strtmp+=str(time)
+    
+    strtmp+=" K1:"
+    strtmp+=str(channel)
+
+    strtmp+=(" ")
+    strtmp+=str(min_duration)
+    strtmp+=(" ")
+    strtmp+=str(max_duration)
+
+    strtmp+=(" ")
+    strtmp+=str(min_bandwidth)
+
+    strtmp+=(" ")
+    strtmp+=str(max_snr)
+    strtmp+=(" ")
+    strtmp+=str(peakfrequency)
+    
     strtmp+=(" ")
     strtmp+=str(max_amp)
     strtmp+=(" ")
