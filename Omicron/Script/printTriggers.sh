@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: Omicron/printTriggers.sh
 #        Author: Takahiro Yamamoto
-# Last Modified: 2019/03/01 02:23:16
+# Last Modified: 2019/04/04 19:43:32
 #******************************************#
 
 ################################
@@ -19,10 +19,11 @@ FLAG_FULL=0
 ################################
 function __helpecho(){
 cat <<EOF
-Usage: $0 [-f] [-t threshold] [-h] startgps stopgps channel
+Usage: $0 [-fl] [-t threshold] [-h] startgps stopgps channel
    Options:
       -f     Display full parameters
       -t     Set threshold of SNR
+      -l     lower limit of frequency
       -h     Show this help
 EOF
 }
@@ -48,12 +49,14 @@ function __trigfind(){
 ###   Main
 ###################################################################################################
 ###################################################################################################
-while getopts ft:h opt
+while getopts fl:t:h opt
 do
     case $opt in
 	f) FLAG_FULL=1
 	   ;;
 	t) threshold=$OPTARG
+	   ;;
+	l) lower=${OPTARG}
 	   ;;
 	h) __helpecho && exit 0
 	   ;;
@@ -65,6 +68,7 @@ shift $((OPTIND - 1))
 
 [ "${3}" = "" ] && __helpecho && printf "\n [\033[31m ERROR \033[00m] too few argments\n" && exit 1
 [ "${threshold}" = "" ] && threshold=0
+[ "${lower}" = "" ] && lower=0
 startgps=${1}
 stopgps=${2}
 channel=${3}
@@ -85,13 +89,13 @@ then
     printf "%11s %13s %10s %10s %9s\n" "# peak_time" "peak_time_ns" "duration" "peak_freq" "snr"
     for trgfile in ${LIST}
     do
-	zcat ${trgfile} | grep sngl_burst | grep ${ETG^^} | sed -e 's/"//g' | awk -v x=${threshold} -F',' '$15>=x{printf("%11s %13s %10s %10s %9s\n", $2, $3, $6, $10, $15)}'
+	zcat ${trgfile} | grep sngl_burst | grep ${ETG^^} | sed -e 's/"//g' | awk -v x=${threshold} -v s=${startgps} -v e=${stopgps} -v l=${lower} -F',' '$15>=x && $2>=s && $2<=e && $10>=l{printf("%11s %13s %10s %10s %9s\n", $2, $3, $6, $10, $15)}'
     done
 else
     printf "%11s %13s %11s %14s %10s %10s %13s %10s %12s %9s\n" "# peak_time" "peak_time_ns" "start_time" "start_time_ns" "duration" "peak_freq" "central_freq" "bandwidth" "amplitude" "snr"
     for trgfile in ${LIST}
     do
-	zcat ${trgfile} | grep sngl_burst | grep ${ETG^^} | sed -e 's/"//g' | awk -v x=${threshold} -F',' '$15>=x{printf("%11s %13s %11s %14s %10s %10s %13s %10s %12s %9s\n",$2, $3, $4, $5, $6, $10, $11, $12, $14, $15)}'
+	zcat ${trgfile} | grep sngl_burst | grep ${ETG^^} | sed -e 's/"//g' | awk -v x=${threshold} -v s=${startgps} -v e=${stopgps} -v l=${lower} -F',' '$15>=x && $2>=s && $2<=e && $10>=l{printf("%11s %13s %11s %14s %10s %10s %13s %10s %12s %9s\n",$2, $3, $4, $5, $6, $10, $11, $12, $14, $15)}'
     done
 fi
 

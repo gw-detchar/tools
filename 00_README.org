@@ -24,6 +24,10 @@
     - The cache files are updated to the latest state every 3 minutes.
       - New gwf files are added and old ones are removed.
     -----
+** Segments
+*** Script/makeSegments.sh
+    - This script is used for automatically making the segments files
+    -----
 ** KleineWelle
 *** Script/automation.sh
     - This script is used for automatically executing the KleineWelle

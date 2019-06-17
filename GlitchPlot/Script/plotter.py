@@ -29,7 +29,7 @@ inputfile = args.inputfile
 
 # Define parameters
 omicron_interval = 60.
-snrthreshold=1.
+snrthreshold=100.
 
 # get the time of the input file.
 tmp=inputfile.rsplit("-",2)
@@ -119,13 +119,14 @@ for segment in tmpactive:
     # Discriminate glitch and lock loss
     Islocked=locked.intersects_segment(segment_shift)
     if not Islocked:
-        continue
-    
-    Islockloss=unlocked_contract.intersects_segment(segment_shift)
-    if Islockloss:
-        eventtype="lockloss"
+        eventtype="unlocked"
+
     else:
-        eventtype="glitch"
+        Islockloss=unlocked_contract.intersects_segment(segment_shift)
+        if Islockloss:
+            eventtype="lockloss"
+        else:
+            eventtype="glitch"
 
     print(segment)
     print(eventtype)
