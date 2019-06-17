@@ -29,7 +29,7 @@ inputfile = args.inputfile
 
 # Define parameters
 omicron_interval = 60.
-snrthreshold=1.
+snrthreshold=100.
 
 # get the time of the input file.
 tmp=inputfile.rsplit("-",2)
