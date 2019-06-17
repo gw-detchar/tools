@@ -116,10 +116,20 @@ for segment in tmpactive:
     print(segment)
     print(segment.shift(tfile))
     segment_shift=segment.shift(tfile)
-    # Discriminate glitch and lock loss
-    Islocked=locked.intersects_segment(segment_shift)
-    if not Islocked:
-        eventtype="unlocked"
+
+    # Discriminate glitch and lock loss if not PEM channel.
+
+    if "PEM" not in channel:
+
+        Islocked=locked.intersects_segment(segment_shift)
+        if not Islocked:
+            eventtype="plotter"
+        else:    
+            Islockloss=unlocked_contract.intersects_segment(segment_shift)
+            if Islockloss:
+                eventtype="lockloss"
+            else:
+                eventtype="glitch"
 
     else:
         Islockloss=unlocked_contract.intersects_segment(segment_shift)
@@ -127,11 +137,6 @@ for segment in tmpactive:
             eventtype="lockloss"
         else:
             eventtype="glitch"
-
-    print(segment)
-    print(eventtype)
-    
-    #print("time="+str(time))
 
     # From all trigger, extract those in the segmants.
     # sec. order
@@ -240,6 +245,9 @@ for segment in tmpactive:
     strtmp+=str(max_amp)
     strtmp+=(" ")
     strtmp+=str(peakfrequency)
+
+    strtmp+=(" ")
+    strtmp+=str(eventtype)
 
     f.write(strtmp)
     f.write('\n')
