@@ -1,10 +1,13 @@
 #!/usr/bin/env python2
 
-from os import listdir
+from os import listdir,path
 from numpy import arange
 from optparse import OptionParser
 
-basedir = "/frame0/"
+if path.exists("/frame0"):
+        basedir = "/frame0/"
+else:
+        basedir = "/data/"
 DT      = 100000
 dt      = 32
 
