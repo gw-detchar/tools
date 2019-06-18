@@ -6,4 +6,4 @@ else
 fi
 export MAKESFTS_PATH=/usr/bin
 export SPECAVG_PATH=/usr/bin
-export PLOTSPECAVGOUTPUT_PATH=/home/controls/opt/Fscan
+export PLOTSPECAVGOUTPUT_PATH=${HOME}/opt/Fscan
