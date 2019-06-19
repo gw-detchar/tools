@@ -9,13 +9,21 @@
 ################################
 ### Set enviroment
 ################################
-source  /kagra/apps/etc/client-user-env.sh
-DIR_FR0=/frame0/full
-DIR_FR1=/frame1/full
-DIR_CACHE=/users/DET/Cache
-FILE_CACHE=${DIR_CACHE}/latest
-[ -e /usr/bin/gpstime ] && CMD_GPS=/usr/bin/gpstime || CMD_GPS=/kagra/apps/cdsutils/bin/gpstime
-
+[ -e /kagra/apps/etc/client-user-env.sh ] && source  /kagra/apps/etc/client-user-env.sh
+if test `whoami` = "controls"
+then
+    DIR_FR0=/frame0/full
+    DIR_FR1=/frame1/full
+    DIR_CACHE=/users/DET/Cache
+    FILE_CACHE=${DIR_CACHE}/latest
+    [ -e /usr/bin/gpstime ] && CMD_GPS=/usr/bin/gpstime || CMD_GPS=/kagra/apps/cdsutils/bin/gpstime
+else
+    DIR_FR0=/data/full
+    DIR_FR1=/data/full
+    DIR_CACHE=${HOME}/cache
+    FILE_CACHE=${DIR_CACHE}/latest
+    CMD_GPS=${HOME}/bin/gpstime
+fi
 
 ################################
 ### Usage
@@ -50,7 +58,7 @@ then
     GWF_LATEST=`tail -1 ${FILE_LATEST}`
     GPS_LATEST=`printf "${GWF_LATEST}" | awk '{print $2}'`
     LEN_LATEST=`printf "${GWF_LATEST}" | awk '{print $3}'`
-    GPS_STOP=`${CMD_GPS} | head -3 | tail -1 | awk -F'[ .]' '{print $2}'`
+    GPS_STOP=`${CMD_GPS} | head -3 | tail -1 | sed -e 's/ GPS/GPS/g' | awk -F'[ .]' '{print $2}'`
     let GPS_LATEST=${GPS_LATEST}+${LEN_LATEST}
 else
     GPS_LATEST=${1}00000
@@ -108,5 +116,11 @@ done
 ################################
 ### merge caches
 ################################
-cat ${DIR_CACHE}/Cache_GPS/*.ffl > ${FILE_CACHE}.ffl
-cat ${DIR_CACHE}/Cache_GPS/*.cache > ${FILE_CACHE}.cache
+if test `whoami` = "controls"
+then
+    cat ${DIR_CACHE}/Cache_GPS/*.ffl > ${FILE_CACHE}.ffl
+    cat ${DIR_CACHE}/Cache_GPS/*.cache > ${FILE_CACHE}.cache
+else
+    cat `ls ${DIR_CACHE}/Cache_GPS/*.ffl | tail -7` > ${FILE_CACHE}.ffl
+    cat `ls ${DIR_CACHE}/Cache_GPS/*.cache | tail -7` > ${FILE_CACHE}.cache
+fi
