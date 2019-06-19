@@ -133,10 +133,10 @@ for segment in tmpactive:
                 eventtype="glitch"
 
     else:
-        Islockloss=unlocked_contract.intersects_segment(segment_shift)
-        if Islockloss:
-            eventtype="lockloss"
-        else:
+#        Islockloss=unlocked_contract.intersects_segment(segment_shift)
+#        if Islockloss:
+#            eventtype="lockloss"
+#        else:
             eventtype="glitch"
 
     # From all trigger, extract those in the segmants.
