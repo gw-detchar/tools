@@ -90,7 +90,7 @@ do
     fi
 
     divide=`echo "scale=5; $span / $stride" | bc | awk '{printf("%d\n",$1 + 1)}'`
-    span=`echo "scale=5; $stride * $stride" | bc | awk '{printf("%d\n",$1 + 1)}'`
+    span=`echo "scale=5; $stride * $divide" | bc | awk '{printf("%d\n",$1 + 1)}'`
 
     tmpend=`echo "scale=5; $span30 + 2. " | bc `
 
@@ -121,14 +121,14 @@ do
 
     # IMC lock
     #lchannel="K1:GRD-IO_STATE_N.mean"  #guardian channel
-    #lchannel="K1:GRD-IO_STATE_N"  #guardian channel
-    #lnumber=99  #number of the required state
-    #llabel='IMC_LSC'  #y-axis label for the bar plot.
+    lchannel="K1:GRD-IO_STATE_N"  #guardian channel
+    lnumber=99  #number of the required state
+    llabel='IMC_LSC'  #y-axis label for the bar plot.
 
     # X-arm lock
-    lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
-    lnumber=31415  #number of the required state
-    llabel='X-arm'  #y-axis label for the bar plot.
+    #lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
+    #lnumber=31415  #number of the required state
+    #llabel='X-arm'  #y-axis label for the bar plot.
 
     
     # Set the output directory.

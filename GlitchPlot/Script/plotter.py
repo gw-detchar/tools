@@ -20,12 +20,14 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Make basic plots.')
 parser.add_argument('-o','--output',help='output text filename.',default='result.txt')
+parser.add_argument('-c','--channel',help='channel name.',default='channel')
 #parser.add_argument('-i','--inputfile',help='input trigger filename.',default='/home/controls/triggers/K1/LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON/12440/K1-LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON-1244013258-60.xml.gz')
 parser.add_argument('-i','--inputfile',help='input trigger filename.',default='/home/controls/triggers/K1/LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON/12440/K1-LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON-1244004678-60.xml.gz')
 
 args = parser.parse_args()
 output = args.output
 inputfile = args.inputfile
+channel = args.channel
 
 # Define parameters
 omicron_interval = 60.
@@ -85,14 +87,13 @@ for peak_time,peak_time_ns,peak_frequency,snr,duration,start,startns in zip(peak
 tmpactive=Triggered.active
 
 # Get trigger channel. Assumed that 1 omicron file contains only 1 channel.
-channel = (fevents.get_column('channel'))[0]
 #print(channel)
 
 # Get DQflag.
 #safety is contracting time.
 safety=1
 
-locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="IMC",min_len=safety*3)
+locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="IMC",min_len=safety*3,kamioka=True)
 locked_contract=locked.copy()
 locked=locked.active
 locked_contract=locked_contract.contract(1)

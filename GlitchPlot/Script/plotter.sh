@@ -49,27 +49,28 @@ list=()
 for channel in ${channels[@]}; do
     list+=( `find /home/controls/triggers/K1/${channel}_OMICRON/${GPS_END:0:5}/ -newermt "$jst_start" -and ! -newermt "$jst_end"` `find /home/controls/triggers/K1/${channel}_OMICRON/${tmp}/ -newermt "$jst_start" -and ! -newermt "$jst_end"` )
 
+
+
+    for file in ${list[@]};do
+	
+	if [ -d $file ]; then
+	    continue
+	fi
+	
+	echo $file
+	
+	echo "---------trigger file reading---------"
+	# process the trigger data and determine plot parameter
+	parameterlist="/users/DET/Result/GlitchPlot/parameter/"`basename $file`".txt"
+	python plotter.py -i $file -o $parameterlist -c $channel
+	echo  $parameterlist
+	echo "----------plot job throwing----------"
+	# from the plot parameter, throw condor job to make basic plots.
+	./condor_jobfile_plotter.sh $parameterlist
+
+    done
+
 done
-
-for file in ${list[@]};do
-
-    if [ -d $file ]; then
-	continue
-    fi
-
-    echo $file
-    
-    echo "---------trigger file reading---------"
-    # process the trigger data and determine plot parameter
-    parameterlist="/users/DET/Result/GlitchPlot/parameter/"`basename $file`".txt"
-    python plotter.py -i $file -o $parameterlist
-    echo  $parameterlist
-    echo "----------plot job throwing----------"
-    # from the plot parameter, throw condor job to make basic plots.
-    ./condor_jobfile_plotter.sh $parameterlist
-
-done
-
 
 # scp produced files.
 
