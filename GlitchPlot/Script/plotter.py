@@ -72,15 +72,12 @@ if len(channels) == 0:
 else:
     channel = channels[0]
 
-print("test")
-print(len(snrs))
 # Initialize segments of trigger. t=0 is the start of the trigger file.
 Triggered = DataQualityFlag(known=[(0,omicron_interval)],active=[])
 
 # loop over triggers.
 for peak_time,peak_time_ns,peak_frequency,snr,duration,start,startns in zip(peak_times,peak_time_nss,peak_frequencys,snrs,durations,starts,starts_ns):
-    print("peak_time")
-    print(peak_time)
+
     # Time is converted to the time from the start time of the file.
     tmpstart=start-tfile
     tmpstart+=1e-9*startns
@@ -125,8 +122,6 @@ for segment in tmpactive:
 
     time=tfile+tmpstart
 
-    print(segment)
-    print(segment.shift(tfile))
     segment_shift=segment.shift(tfile)
 
     # Discriminate glitch and lock loss if not PEM channel.
@@ -179,7 +174,6 @@ for segment in tmpactive:
         # final result
         tmpevents=vstack([tmptmpevents,tmpevents2])
 
-    print(tmpevents)
 
     #duration
 
