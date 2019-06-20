@@ -69,7 +69,8 @@ if len(channels) == 0:
     print("No filtered event.")
     print("Successfully finished!")
     exit
-
+else:
+    channel = channels[0]
 
 print("test")
 print(len(snrs))
