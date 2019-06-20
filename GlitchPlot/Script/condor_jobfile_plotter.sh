@@ -86,8 +86,8 @@ do
     
     # make the time span to be multiple of stride.
     span=`echo "scale=5; $max_duration * 10 " | bc `
-    if [ "$(echo "$span < 8.0" | bc)" -eq 1 ]; then
-	span=8.
+    if [ "$(echo "$span < 4.0" | bc)" -eq 1 ]; then
+	span=4.
     fi
 
     divide=`echo "scale=5; $span / $stride" | bc | awk '{printf("%d\n",$1 + 1)}'`
