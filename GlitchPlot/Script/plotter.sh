@@ -62,7 +62,7 @@ for channel in ${channels[@]}; do
 	echo "---------trigger file reading---------"
 	# process the trigger data and determine plot parameter
 	parameterlist="/users/DET/Result/GlitchPlot/parameter/"`basename $file`".txt"
-	python plotter.py -i $file -o $parameterlist -c $channel
+	python plotter.py -i $file -o $parameterlist 
 	echo  $parameterlist
 	echo "----------plot job throwing----------"
 	# from the plot parameter, throw condor job to make basic plots.

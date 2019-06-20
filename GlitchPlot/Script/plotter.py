@@ -20,14 +20,12 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Make basic plots.')
 parser.add_argument('-o','--output',help='output text filename.',default='result.txt')
-parser.add_argument('-c','--channel',help='channel name.',default='channel')
 #parser.add_argument('-i','--inputfile',help='input trigger filename.',default='/home/controls/triggers/K1/LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON/12440/K1-LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON-1244013258-60.xml.gz')
 parser.add_argument('-i','--inputfile',help='input trigger filename.',default='/home/controls/triggers/K1/LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON/12440/K1-LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON-1244004678-60.xml.gz')
 
 args = parser.parse_args()
 output = args.output
 inputfile = args.inputfile
-channel = args.channel
 
 # Define parameters
 omicron_interval = 60.
@@ -57,6 +55,7 @@ fevents.write('test.txt',format='ascii',overwrite=True)
 # Makesegments of triggers. It will give information about interesting gps time. 
 
 # Get trigger parameters
+channels = fevents.get_column('channel')
 peak_times = fevents.get_column('peak_time')
 peak_time_nss = fevents.get_column('peak_time_ns')
 peak_frequencys = fevents.get_column('peak_frequency')
@@ -66,12 +65,21 @@ starts = fevents.get_column('start_time')
 starts_ns = fevents.get_column('start_time_ns')
 # columns can be used like array. columns[0] will give first value.
 
+if len(channels) == 0:
+    print("No filtered event.")
+    print("Successfully finished!")
+    exit
+
+
+print("test")
+print(len(snrs))
 # Initialize segments of trigger. t=0 is the start of the trigger file.
 Triggered = DataQualityFlag(known=[(0,omicron_interval)],active=[])
 
 # loop over triggers.
 for peak_time,peak_time_ns,peak_frequency,snr,duration,start,startns in zip(peak_times,peak_time_nss,peak_frequencys,snrs,durations,starts,starts_ns):
-
+    print("peak_time")
+    print(peak_time)
     # Time is converted to the time from the start time of the file.
     tmpstart=start-tfile
     tmpstart+=1e-9*startns
@@ -82,6 +90,8 @@ for peak_time,peak_time_ns,peak_frequency,snr,duration,start,startns in zip(peak
 
     # Added to the segments of this file.
     Triggered |= tmpTriggered
+    
+    
     
 # Get active segments. 
 tmpactive=Triggered.active
