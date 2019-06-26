@@ -157,7 +157,7 @@ do
 	echo $gpstime $channel $min_duration $max_duration $bandwidth $dump1 $dump2 $dump3 $dump4 $eventtype
     } > $outdir/parameter.txt
 
-    logdir="$PWD/log/"
+    logdir="$PWD/log/$date/"
     if [ ! -e $logdir ]; then
 	mkdir -p $logdir
     fi
@@ -340,10 +340,10 @@ do
 	    #  $ python batch_timeseries.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i ${index} ${optiontime}"
-	    echo "Output       = log/out_\$(Cluster).\$(Process).txt"
-	    echo "Error        = log/err_\$(Cluster).\$(Process).txt"
-	    echo "Log          = log/log_\$(Cluster).\$(Process).txt"
+	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i ${index} ${optiontime} -t ${chlist[0]} "
+	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
+	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
+	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 	} >> job_${nametime}.sdf
 	
@@ -354,9 +354,9 @@ do
 	    # for option detail.
 	    
 	    echo "Arguments = -c ${chlist[@]} -s ${gpsstarts30[@]} -e ${gpsends30[@]} -o ${outdir} -i ${index} -t time -f ${fft30} ${optionspectrum}"
-	    echo "Output       = log/out_\$(Cluster).\$(Process).txt"
-	    echo "Error        = log/err_\$(Cluster).\$(Process).txt"
-	    echo "Log          = log/log_\$(Cluster).\$(Process).txt"
+	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
+	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
+	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 	} >> job_${namespectrum}.sdf
 
@@ -367,15 +367,15 @@ do
 	    # for option detail.
 	    
 	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i ${index} -f ${fft} --stride ${stride} ${optionspectrogram}"
-	    echo "Output       = log/out_\$(Cluster).\$(Process).txt"
-	    echo "Error        = log/err_\$(Cluster).\$(Process).txt"
-	    echo "Log          = log/log_\$(Cluster).\$(Process).txt"
+	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
+	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
+	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 
 	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i ${index} -f ${fft} --stride ${stride} ${optionspectrogram} -w"
-	    echo "Output       = log/out_\$(Cluster).\$(Process).txt"
-	    echo "Error        = log/err_\$(Cluster).\$(Process).txt"
-	    echo "Log          = log/log_\$(Cluster).\$(Process).txt"
+	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
+	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
+	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 
 
@@ -388,15 +388,15 @@ do
 	    # for option detail.
 	    
 	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i ${index} -f ${fft} --stride ${stride} ${optioncoherencegram}"
-	    echo "Output       = log/out_\$(Cluster).\$(Process).txt"
-	    echo "Error        = log/err_\$(Cluster).\$(Process).txt"
-	    echo "Log          = log/log_\$(Cluster).\$(Process).txt"
+	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
+	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
+	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 
 #	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i ${index}dur -f ${duration} --stride ${durstride} ${optioncoherencegram}"
-#	    echo "Output       = log/out_\$(Cluster).\$(Process).txt"
-#	    echo "Error        = log/err_\$(Cluster).\$(Process).txt"
-#	    echo "Log          = log/log_\$(Cluster).\$(Process).txt"
+#	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
+#	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
+#	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 #	    echo "Queue"
 } >> job_${namecoherencegram}.sdf
 
