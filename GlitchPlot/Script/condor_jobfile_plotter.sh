@@ -143,6 +143,8 @@ do
 
     if "${kamioka}"; then
 	condir="/users/DET/Result/GlitchPlot"
+    else
+	condir="/home/chihiro.kozakai/public_html/KAGRA/GlitchPlot"
     fi
 
     if [ "$condir" = "" ]; then
@@ -461,9 +463,9 @@ do
 	    # for option detail.
 	    
 	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i ${index} ${optionqtransform}"
-	    echo "Output       = log/out_\$(Cluster).\$(Process).txt"
-	    echo "Error        = log/err_\$(Cluster).\$(Process).txt"
-	    echo "Log          = log/log_\$(Cluster).\$(Process).txt"
+	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
+	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
+	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 
 	} >> job_${nameqtransform}.sdf
