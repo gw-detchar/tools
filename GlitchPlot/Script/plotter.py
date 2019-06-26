@@ -126,24 +126,23 @@ for segment in tmpactive:
 
     # Discriminate glitch and lock loss if not PEM channel.
 
-    if "PEM" not in channel:
+    
+    Islocked=locked.intersects_segment(segment_shift)
+    if not Islocked:
+        eventtype="plotter"
+    else:    
+        Islockloss=unlocked_contract.intersects_segment(segment_shift)
+        if Islockloss:
+            eventtype="lockloss"
+        else:
+            eventtype="glitch"
 
-        Islocked=locked.intersects_segment(segment_shift)
-        if not Islocked:
-            eventtype="plotter"
-        else:    
-            Islockloss=unlocked_contract.intersects_segment(segment_shift)
-            if Islockloss:
-                eventtype="lockloss"
-            else:
-                eventtype="glitch"
 
-    else:
 #        Islockloss=unlocked_contract.intersects_segment(segment_shift)
 #        if Islockloss:
 #            eventtype="lockloss"
 #        else:
-            eventtype="glitch"
+
 
     # From all trigger, extract those in the segmants.
     # sec. order
@@ -226,7 +225,7 @@ for segment in tmpactive:
     for amplitude,frequency in zip(amplitudes,frequencys):
         if max_amp < amplitude:
             max_amp = amplitude
-            peakfrequency=frequency
+            peakfrequency_amp=frequency
     
     strtmp=""
     strtmp+=str(time)
@@ -250,7 +249,7 @@ for segment in tmpactive:
     strtmp+=(" ")
     strtmp+=str(max_amp)
     strtmp+=(" ")
-    strtmp+=str(peakfrequency)
+    strtmp+=str(peakfrequency_amp)
 
     strtmp+=(" ")
     strtmp+=str(eventtype)
