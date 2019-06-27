@@ -1,9 +1,7 @@
 #!/bin/bash
 
 ################################################################
-# This file is for submitting time series plot job into condor.
-#
-# $condir will be used as output directory.
+# This file is for submitting trigger related plot job into condor.
 #
 # Recommendation: 
 # 
@@ -11,9 +9,6 @@
 # Please make symbolic link in your working directory like this. 
 # $ ln -s /path/to/Kozapy/samples/mylib/ mylib
 #
-# Edit your ~/.bashrc file and insert the output directory.
-#  export condir=~/path/to/output/directory/
-# If $condir is empty, current directory will be used.
 ################################################################
 
 # Define variables.
@@ -23,6 +18,7 @@ namespectrum="spectrum"
 namespectrogram="whitening_spectrogram"
 namecoherencegram="coherencegram"
 nameqtransform="qtransform"
+namelock="locksegments"
 
 cat $1 | while read gpstime channel min_duration max_duration bandwidth dump1 dump2 dump3 dump4 eventtype
 do
@@ -359,6 +355,56 @@ do
 	echo "when_to_transfer_output = ON_EXIT"
 	echo ""
     } > job_${nameqtransform}.sdf
+
+    # for lock segmnet.
+    
+    runlock="$PWD/run_${namelock}.sh"
+    pylock="$Kozapy/batch_${namelock}.py"
+    #py="~/batch_qtransformsries.py"  # For the case you use non-conventional python script name.
+
+    {
+	echo "#!/bin/bash"
+	echo ""
+	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
+	echo "# This file is generated from `basename $0`."
+	echo "# If you need to change, please edit `basename $0`."
+	echo ""
+	echo "echo \$@"
+	echo "python $pylock \$@"
+	
+    } > $runlock
+
+    chmod u+x $runlock
+
+    # Write a file for condor submission.
+    
+    {
+	echo "Executable = ${runlock}"
+	echo "Universe   = vanilla"
+	echo "Notification = never"
+	# if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.
+	echo "request_memory = 1 GB"
+	echo "Getenv  = True            # the environment variables will be copied."
+	echo ""
+	echo "should_transfer_files = YES"
+	echo "when_to_transfer_output = ON_EXIT"
+	echo ""
+    } > job_${namelock}.sdf
+
+    {
+	# Please try
+	#  $ python batch_locksegments.py -h
+	# for option detail.
+	
+	echo "Arguments = -s $gpsstart -e $gpsend -o ${outdir} -i ${index} -t $gpstime -d $max_duration "
+	echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
+	echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
+	echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
+	echo "Queue"
+    } >> job_${namelock}.sdf
+	
+    echo job_${namelock}.sdf
+    condor_submit job_${namelock}.sdf
 
     # Loop over each plot. 
     option=""
