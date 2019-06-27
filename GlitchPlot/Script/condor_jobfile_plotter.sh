@@ -22,6 +22,7 @@ nametime="timeseries"
 namespectrum="spectrum"
 namespectrogram="whitening_spectrogram"
 namecoherencegram="coherencegram"
+nameqtransform="qtransform"
 
 cat $1 | while read gpstime channel min_duration max_duration bandwidth dump1 dump2 dump3 dump4 eventtype
 do
@@ -113,7 +114,12 @@ do
     #data="second"
     data="full"
 
-    kamioka=true
+    if [ `hostname` == "k1sum1" ]; then
+	kamioka=true
+    else
+	kamioka=false
+    fi
+    #kamioka=true
     #kamioka=false
 
     # For locked segments bar plot.
@@ -135,15 +141,22 @@ do
     # Set the output directory.
 #    condir="/users/.ckozakai/KashiwaAnalysis/analysis/code/gwpy/trigger/plotter"
 
-    condir="/users/DET/Result/GlitchPlot"
+    if "${kamioka}"; then
+	condir="/users/DET/Result/GlitchPlot"
+    fi
+
     if [ "$condir" = "" ]; then
 	condir=$PWD
     fi
 
-    [ -e /usr/bin/gpstime ] && cmd_gps=/usr/bin/gpstime || cmd_gps=/home/controls/bin/gpstime
-    date=`${cmd_gps} ${gpstime}| head -1`
-    set ${date}
-    date=`echo ${2}| sed -e 's/-//g'`
+    if "${kamioka}"; then
+	[ -e /usr/bin/gpstime ] && cmd_gps=/usr/bin/gpstime || cmd_gps=/home/controls/bin/gpstime
+	date=`${cmd_gps} ${gpstime}| head -1`
+	set ${date}
+	date=`echo ${2}| sed -e 's/-//g'`
+    else
+	date=`tconvert -f %Y%m%d ${gpstime}`
+    fi
 
     outdir="$condir/$date/${index}/"
 
@@ -166,7 +179,12 @@ do
 
     # for time series.
 
-    Kozapy="/users/DET/tools/GlitchPlot/Script/Kozapy/samples"
+    if "${kamioka}"; then
+	Kozapy="/users/DET/tools/GlitchPlot/Script/Kozapy/samples"
+    else
+	Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
+    fi
+
     runtime="$PWD/run_${nametime}.sh"
     pytime="$Kozapy/batch_${nametime}.py"
     #py="~/batch_timesries.py"  # For the case you use non-conventional python script name.
@@ -270,7 +288,7 @@ do
 	echo ""
     } > job_${namespectrogram}.sdf
 
-        # for coherencegram series.
+    # for coherencegram series.
     
     runcoherencegram="$PWD/run_${namecoherencegram}.sh"
     pycoherencegram="$Kozapy/batch_${namecoherencegram}.py"
@@ -305,6 +323,41 @@ do
 	echo ""
     } > job_${namecoherencegram}.sdf
 
+    # for qtransform.
+    
+    runqtransform="$PWD/run_${nameqtransform}.sh"
+    pyqtransform="$Kozapy/batch_${nameqtransform}.py"
+    #py="~/batch_qtransformsries.py"  # For the case you use non-conventional python script name.
+
+    {
+	echo "#!/bin/bash"
+	echo ""
+	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
+	echo "# This file is generated from `basename $0`."
+	echo "# If you need to change, please edit `basename $0`."
+	echo ""
+	echo "echo \$@"
+	echo "python $pyqtransform \$@"
+	
+    } > $runqtransform
+
+    chmod u+x $runqtransform
+
+    # Write a file for condor submission.
+    
+    {
+	echo "Executable = ${runqtransform}"
+	echo "Universe   = vanilla"
+	echo "Notification = never"
+	# if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.
+	echo "request_memory = 1 GB"
+	echo "Getenv  = True            # the environment variables will be copied."
+	echo ""
+	echo "should_transfer_files = YES"
+	echo "when_to_transfer_output = ON_EXIT"
+	echo ""
+    } > job_${nameqtransform}.sdf
+
     # Loop over each plot. 
     option=""
     if "${kamioka}" ; then
@@ -321,6 +374,7 @@ do
 
     optionspectrogram=$option
     optioncoherencegram=$option
+    optionqtransform=$option
     
     if [ $data = "minute" ] ; then
 	option+=" -d minute"
@@ -398,7 +452,21 @@ do
 #	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
 #	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 #	    echo "Queue"
-} >> job_${namecoherencegram}.sdf
+	} >> job_${namecoherencegram}.sdf
+
+	# qtransform job
+	{
+	    # Please try
+	    #  $ python batch_coherencegram.py -h
+	    # for option detail.
+	    
+	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i ${index} ${optionqtransform}"
+	    echo "Output       = log/out_\$(Cluster).\$(Process).txt"
+	    echo "Error        = log/err_\$(Cluster).\$(Process).txt"
+	    echo "Log          = log/log_\$(Cluster).\$(Process).txt"
+	    echo "Queue"
+
+	} >> job_${nameqtransform}.sdf
 
 #	done
 	# end of gps time list
@@ -414,6 +482,8 @@ do
     condor_submit job_${namespectrogram}.sdf
     echo job_${namecoherencegram}.sdf
     condor_submit job_${namecoherencegram}.sdf
+    echo job_${nameqtransform}.sdf
+    condor_submit job_${nameqtransform}.sdf
 
 done
 # end of parameter.txt
