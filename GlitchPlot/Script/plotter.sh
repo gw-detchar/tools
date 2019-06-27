@@ -61,12 +61,17 @@ for channel in ${channels[@]}; do
 	
 	echo "---------trigger file reading---------"
 	# process the trigger data and determine plot parameter
-	parameterlist="/users/DET/Result/GlitchPlot/parameter/"`basename $file`".txt"
+	today="`date +%Y%m%d`"
+	if [ ! -e /users/DET/Result/GlitchPlot/parameter/$today/ ]; then
+	    mkdir -p /users/DET/Result/GlitchPlot/parameter/$today/
+	fi
+	
+	parameterlist="/users/DET/Result/GlitchPlot/parameter/$today/"`basename $file`".txt"
 	python plotter.py -i $file -o $parameterlist 
 	echo  $parameterlist
-	echo "----------plot job throwing----------"
+#	echo "----------plot job throwing----------"
 	# from the plot parameter, throw condor job to make basic plots.
-	./condor_jobfile_plotter.sh $parameterlist
+	#./condor_jobfile_plotter.sh $parameterlist
 
     done
 
@@ -96,5 +101,5 @@ jst_start=${jst_start#*:}
 #rsync /users/DET/Result/GlitchPlot/ ckozakai@icrhome05.icrr.u-tokyo.ac.jp:
 #rsync -avz -e "ssh -v -i ~/.ssh/id_rsa_icrhome_ckozakai" --exclude="parameter/*.txt" /users/DET/Result/GlitchPlot/ ckozakai@icrhome05.icrr.u-tokyo.ac.jp:public_html/KAGRA/GlitchPlot/
 
-rsync -avz -e "ssh -v -i ~/.ssh/id_rsa_icrhome_ckozakai" --exclude="p*er/*" /users/DET/Result/GlitchPlot/ chihiro.kozakai@m31-01_ckozakai:public_html/KAGRA/GlitchPlot/
+rsync -avz -e "ssh -v -i ~/.ssh/id_rsa_icrhome_ckozakai"  /users/DET/Result/GlitchPlot/parameter chihiro.kozakai@m31-01_ckozakai:public_html/KAGRA/GlitchPlot/parameter/
 

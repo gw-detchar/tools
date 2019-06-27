@@ -130,6 +130,7 @@ for segment in tmpactive:
     Islocked=locked.intersects_segment(segment_shift)
     if not Islocked:
         eventtype="plotter"
+        continue
     else:    
         Islockloss=unlocked_contract.intersects_segment(segment_shift)
         if Islockloss:
