@@ -98,12 +98,18 @@ do
     gpsstart=`echo "scale=5; $gpstime - $span " | bc `
     gpsend=`echo "scale=5; $gpstime + $span " | bc `
 
-    gpsstart1=`echo "scale=5; $gpstime + 2. " | bc `
-    gpsend1=`echo "scale=5; $gpstime + $span30 + 2. " | bc `
+    # after trigger
+    gpsstart1=`echo "scale=5; $gpstime + 2. + $max_duration " | bc `
+    gpsend1=`echo "scale=5; $gpstime + $span30 + 2. +$max_duration " | bc `
+    #before trigger
     gpsstart2=`echo "scale=5; $gpstime - $span30 - 2. " | bc `
     gpsend2=`echo "scale=5; $gpstime - 2. " | bc `
-    gpsstarts30=($gpsstart1 $gpsstart2)
-    gpsends30=($gpsend1 $gpsend2)
+    # during trigger
+    gpsstart3=$gpstime
+    gpsend3=`echo "scale=5; $gpstime + $max_duration " | bc `
+
+    gpsstarts30=($gpsstart3 $gpsstart1 $gpsstart2)
+    gpsends30=($gpsend3 $gpsend1 $gpsend2)
 
     # Data type for time series. Default is to use minutes trend. second trend or full data can be used with following flags. Please set one of them true and set the others false. Or it will give warning message and exit. 
     #data="minute"
