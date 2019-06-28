@@ -18,6 +18,7 @@ from gwpy.segments import DataQualityFlag
 from glue.lal import Cache
 
 import getpass
+import glob
 #------------------------------------------------------------
 
 start_time = time.time()
