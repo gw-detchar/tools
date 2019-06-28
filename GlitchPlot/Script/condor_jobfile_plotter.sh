@@ -83,8 +83,8 @@ do
     
     # make the time span to be multiple of stride.
     span=`echo "scale=5; $max_duration * 10 " | bc `
-    if [ "$(echo "$span < 4.0" | bc)" -eq 1 ]; then
-	span=4.
+    if [ "$(echo "$span < 2.0" | bc)" -eq 1 ]; then
+	span=2.
     fi
 
     divide=`echo "scale=5; $span / $stride" | bc | awk '{printf("%d\n",$1 + 1)}'`
@@ -105,11 +105,11 @@ do
     gpsstart2=`echo "scale=5; $gpstime - $span30 - 2. " | bc `
     gpsend2=`echo "scale=5; $gpstime - 2. " | bc `
     # during trigger
-    gpsstart3=$gpstime
-    gpsend3=`echo "scale=5; $gpstime + $max_duration " | bc `
+    #gpsstart3=$gpstime
+    #gpsend3=`echo "scale=5; $gpstime + $max_duration " | bc `
 
-    gpsstarts30=($gpsstart3 $gpsstart1 $gpsstart2)
-    gpsends30=($gpsend3 $gpsend1 $gpsend2)
+    gpsstarts30=($gpsstart1 $gpsstart2)
+    gpsends30=($gpsend1 $gpsend2)
 
     # Data type for time series. Default is to use minutes trend. second trend or full data can be used with following flags. Please set one of them true and set the others false. Or it will give warning message and exit. 
     #data="minute"
