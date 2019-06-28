@@ -419,6 +419,7 @@ do
     fi
 
     optionspectrum=$option
+    optioncoherencegram=$option
     
     if "${lock}" ; then
 	option+=" -l ${lchannel} -n ${lnumber} --llabel ${llabel}"
@@ -427,7 +428,6 @@ do
     fi
 
     optionspectrogram=$option
-    optioncoherencegram=$option
     optionqtransform=$option
     
     if [ $data = "minute" ] ; then
@@ -448,7 +448,7 @@ do
 	    #  $ python batch_timeseries.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i ${index} ${optiontime} -t ${chlist[0]} "
+	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i ${index} ${optiontime} -t '${chlist[0]} Time series' --nolegend"
 	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
 	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
 	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
