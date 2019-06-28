@@ -43,6 +43,15 @@ do
     # fftlength is defined based on bandwidth of the trigger event.
     # For spectrum, fft length = 1/bandwidth, rounded to integer.
     fft30=`echo "scale=5; 1. / $bandwidth" | bc | awk '{printf("%d\n",$1 + 1)}'`
+    # select fft to take 2^n data points.
+    tmp=`awk "BEGIN {print log($fft30) / log(2)}"`
+    dif=0
+    if [ "$(echo "$tmp < 0" | bc)" -eq 1 ]; then
+	dif=-0.999
+    fi 
+    tmp2=`echo $tmp | awk '{printf("%i\n", $tmp + $dif)}'`
+    fft30=`awk "BEGIN {print 2**$tmp2}"`
+
     # determine time scale to use. around 30s, use a nice round number.
     # divide is number of bins. 
     ndivide30=`echo "scale=5; 30. / $fft30" | bc | awk '{printf("%d\n",$1 + 1)}'`
@@ -61,6 +70,14 @@ do
     fi
     echo fft $fft
 
+    # select fft to take 2^n data points.
+    tmp=`awk "BEGIN {print log($fft) / log(2)}"`
+    dif=0
+    if [ "$(echo "$tmp < 0" | bc)" -eq 1 ]; then
+	dif=-0.999
+    fi 
+    tmp2=`echo $tmp | awk '{printf("%i\n", $tmp + $dif)}'`
+    fft=`awk "BEGIN {print 2**$tmp2}"`
 
     # stride is minimum of a and b.
 
@@ -402,7 +419,7 @@ do
 	#  $ python batch_locksegments.py -h
 	# for option detail.
 	
-	echo "Arguments = -s $gpsstart -e $gpsend -o ${outdir} -i ${index} -t $gpstime -d $max_duration "
+	echo "Arguments = -s $gpsstart -e $gpsend -o ${outdir} -i "" -t $gpstime -d $max_duration "
 	echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
 	echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
 	echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
@@ -448,7 +465,7 @@ do
 	    #  $ python batch_timeseries.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i ${index} ${optiontime} -t '${chlist[0]} Time series' --nolegend"
+	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t '${chlist[0]} Time series' --nolegend"
 	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
 	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
 	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
@@ -461,7 +478,7 @@ do
 	    #  $ python batch_spectrum.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s ${gpsstarts30[@]} -e ${gpsends30[@]} -o ${outdir} -i ${index} -t time -f ${fft30} ${optionspectrum}"
+	    echo "Arguments = -c ${chlist[@]} -s ${gpsstarts30[@]} -e ${gpsends30[@]} -o ${outdir} -i $channel -t time -f ${fft30} ${optionspectrum}"
 	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
 	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
 	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
@@ -474,13 +491,13 @@ do
 	    #  $ python batch_ehitening_spectrogram.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i ${index} -f ${fft} --stride ${stride} ${optionspectrogram}"
+	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optionspectrogram}"
 	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
 	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
 	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 
-	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i ${index} -f ${fft} --stride ${stride} ${optionspectrogram} -w"
+	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optionspectrogram} -w"
 	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
 	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
 	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
@@ -495,13 +512,13 @@ do
 	    #  $ python batch_coherencegram.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i ${index} -f ${fft} --stride ${stride} ${optioncoherencegram}"
+	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optioncoherencegram}"
 	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
 	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
 	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 
-#	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i ${index}dur -f ${duration} --stride ${durstride} ${optioncoherencegram}"
+#	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channeldur -f ${duration} --stride ${durstride} ${optioncoherencegram}"
 #	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
 #	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
 #	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
@@ -514,7 +531,7 @@ do
 	    #  $ python batch_coherencegram.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i ${index} ${optionqtransform}"
+	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel ${optionqtransform}"
 	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
 	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
 	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
