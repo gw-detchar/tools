@@ -8,6 +8,12 @@
 orig_root=/mnt/fscan/daily
 dest_root=/mnt/fscan/summ
 
+if test `whoami` != "controls"
+then
+    echo "Nothing to be done for `whoami` user"
+    exit 0
+fi
+
 target=`date +"fscans_%Y_%m_%d_09_00_00_JST_%a"`
 link=`date --date='1 day ago' +"fscans_%Y_%m_%d_09_00_00_JST"`
 
