@@ -230,6 +230,7 @@ do
 	echo "# This file is generated from `basename $0`."
 	echo "# If you need to change, please edit `basename $0`."
 	echo ""
+	echo "echo timeseries"
 	echo "echo \$@"
 	echo "python $pytime \$@"
 	
@@ -265,6 +266,7 @@ do
 	echo "# This file is generated from `basename $0`."
 	echo "# If you need to change, please edit `basename $0`."
 	echo ""
+	echo "echo spectrum"
 	echo "echo \$@"
 	echo "python $pyspectrum \$@"
 	
@@ -300,6 +302,7 @@ do
 	echo "# This file is generated from `basename $0`."
 	echo "# If you need to change, please edit `basename $0`."
 	echo ""
+	echo "echo whitening_spectrogram"
 	echo "echo \$@"
 	echo "python $pyspectrogram \$@"
 	
@@ -335,6 +338,7 @@ do
 	echo "# This file is generated from `basename $0`."
 	echo "# If you need to change, please edit `basename $0`."
 	echo ""
+	echo "echo coherencegram"
 	echo "echo \$@"
 	echo "python $pycoherencegram \$@"
 	
@@ -370,6 +374,7 @@ do
 	echo "# This file is generated from `basename $0`."
 	echo "# If you need to change, please edit `basename $0`."
 	echo ""
+	echo "echo qtransform"
 	echo "echo \$@"
 	echo "python $pyqtransform \$@"
 	
@@ -405,6 +410,7 @@ do
 	echo "# This file is generated from `basename $0`."
 	echo "# If you need to change, please edit `basename $0`."
 	echo ""
+	echo "echo locksegments"
 	echo "echo \$@"
 	echo "python $pylock \$@"
 	
