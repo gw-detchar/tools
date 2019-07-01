@@ -10,8 +10,8 @@ from gwpy.table import EventTable
 from gwpy.segments import DataQualityFlag
 from gwpy.table.filters import in_segmentlist
 #import ROOT
-from ROOT import gROOT, gDirectory, gPad, gSystem, gStyle
-from ROOT import TH1D, TH2D, TH1I, TCanvas
+#from ROOT import gROOT, gDirectory, gPad, gSystem, gStyle
+#from ROOT import TH1D, TH2D, TH1I, TCanvas
 from mylib import mylib
 from astropy.table import vstack
 # argument processing
@@ -29,8 +29,9 @@ inputfile = args.inputfile
 
 # Define parameters
 omicron_interval = 60.
-snrthreshold=100.
+snrthreshold=10.
 
+kamioka=False
 # get the time of the input file.
 tmp=inputfile.rsplit("-",2)
 tfile=int(tmp[1])
@@ -101,7 +102,7 @@ tmpactive=Triggered.active
 #safety is contracting time.
 safety=1
 
-locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="IMC",min_len=safety*3,kamioka=True)
+locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="IMC",min_len=safety*3,kamioka=kamioka)
 locked_contract=locked.copy()
 locked=locked.active
 locked_contract=locked_contract.contract(1)
@@ -130,6 +131,7 @@ for segment in tmpactive:
     Islocked=locked.intersects_segment(segment_shift)
     if not Islocked:
         eventtype="plotter"
+        continue
     else:    
         Islockloss=unlocked_contract.intersects_segment(segment_shift)
         if Islockloss:

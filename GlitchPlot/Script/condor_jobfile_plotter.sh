@@ -51,6 +51,9 @@ do
     fi 
     tmp2=`echo $tmp | awk '{printf("%i\n", $tmp + $dif)}'`
     fft30=`awk "BEGIN {print 2**$tmp2}"`
+    if [ "$(echo "$fft30 > 30" | bc)" -eq 1 ]; then
+	fft30=16
+    fi 
 
     # determine time scale to use. around 30s, use a nice round number.
     # divide is number of bins. 
@@ -58,13 +61,17 @@ do
     # span is total data length.
     span30=`echo "scale=5; $fft30 * $ndivide30" | bc `
 
+    echo fft30 $fft30
+    echo ndivide30 $ndivide30
+    echo span30 $span30
+
     # for spectrogram etc.
     # fft length = larger one of [min_duration] or [max_duration/10]
     # stride = multiple of fft length, 
 
     # 
     fft=`echo "scale=5; $max_duration / 10. " | bc `
-    echo fft $fft
+
     if [ "$(echo "$fft < $min_duration" | bc)" -eq 1 ]; then
 	fft=$min_duration
     fi
@@ -73,19 +80,20 @@ do
     # select fft to take 2^n data points.
     tmp=`awk "BEGIN {print log($fft) / log(2)}"`
     dif=0
+
+
     if [ "$(echo "$tmp < 0" | bc)" -eq 1 ]; then
 	dif=-0.999
     fi 
-    tmp2=`echo $tmp | awk '{printf("%i\n", $tmp + $dif)}'`
-    fft=`awk "BEGIN {print 2**$tmp2}"`
 
+    tmp2=`echo "scale=0; $tmp + $dif"| bc | awk '{printf("%d\n",$1 )}'`
+    fft=`awk "BEGIN {print 2**$tmp2}"`
     # stride is minimum of a and b.
 
     a=`echo "scale=5; $min_duration * 10. " | bc `
     b=`echo "scale=5; $max_duration / 2. " | bc `
     stride=0
     span=0
-
 
     if [ "$(echo "$b < $a" | bc)" -eq 1 ]; then
 	stride=$b
@@ -97,7 +105,7 @@ do
 
     # make the stride to be multiple of fft length.
     stride=`echo "scale=5; $fft * $divide" | bc `
-    
+
     # make the time span to be multiple of stride.
     span=`echo "scale=5; $max_duration * 10 " | bc `
     if [ "$(echo "$span < 2.0" | bc)" -eq 1 ]; then
@@ -105,7 +113,12 @@ do
     fi
 
     divide=`echo "scale=5; $span / $stride" | bc | awk '{printf("%d\n",$1 + 1)}'`
+
     span=`echo "scale=5; $stride * $divide" | bc | awk '{printf("%d\n",$1 + 1)}'`
+
+    echo fft $fft
+    echo ndivide $ndivide
+    echo span $span
 
     tmpend=`echo "scale=5; $span30 + 2. " | bc `
 
@@ -147,14 +160,14 @@ do
 
     # IMC lock
     #lchannel="K1:GRD-IO_STATE_N.mean"  #guardian channel
-    lchannel="K1:GRD-IO_STATE_N"  #guardian channel
-    lnumber=99  #number of the required state
-    llabel='IMC_LSC'  #y-axis label for the bar plot.
+    #lchannel="K1:GRD-IO_STATE_N"  #guardian channel
+    #lnumber=99  #number of the required state
+    #llabel='IMC_LSC'  #y-axis label for the bar plot.
 
     # X-arm lock
-    #lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
-    #lnumber=31415  #number of the required state
-    #llabel='X-arm'  #y-axis label for the bar plot.
+    lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
+    lnumber=31415  #number of the required state
+    llabel='X-arm'  #y-axis label for the bar plot.
 
     
     # Set the output directory.
@@ -419,7 +432,7 @@ do
 	#  $ python batch_locksegments.py -h
 	# for option detail.
 	
-	echo "Arguments = -s $gpsstart -e $gpsend -o ${outdir} -i "" -t $gpstime -d $max_duration "
+	echo "Arguments = -s $gpsstart -e $gpsend -o ${outdir} -i $channel -t $gpstime -d $max_duration "
 	echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
 	echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
 	echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
@@ -465,7 +478,7 @@ do
 	    #  $ python batch_timeseries.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t '${chlist[0]} Time series' --nolegend"
+	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t '${chlist[0]}_Timeseries' --nolegend"
 	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
 	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
 	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
