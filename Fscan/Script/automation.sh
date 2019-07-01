@@ -11,12 +11,13 @@
 if test `whoami` = "controls"
 then
     DET_ROOT=/users/DET
+    DIR_SEG=${DET_ROOT}/Segments
 else
     DET_ROOT=${HOME}/git/kagra-detchar
+    DIR_SEG=${HOME}/segment/UTC
 fi
 DET_FSCAN=${DET_ROOT}/tools/Fscan
 DIR_FSCAN=${HOME}/opt/Fscan
-DIR_SEG=${DET_ROOT}/Segments
 FILE_RSC=${DIR_FSCAN}/KagraDailyFscanGenerator.rsc
 CMD_GPSTIME=${HOME}/bin/gpstime
 CMD_SEGGEN=${DET_ROOT}/tools/Segments/Script/makeDailySegment.py
@@ -40,7 +41,7 @@ let GPS_END=${GPS_START}+86400
 echo "==> LOCAL: ${JST_DATE}"
 echo "==> START: ${GPS_START}"
 echo "==>   END: ${GPS_END}"
-FILE_SEG=${DIR_SEG}/SegmentList_IMC_UTC_${JST_DATE}.txt
+FILE_SEG=${DIR_SEG}/SegmentList_UTC_${JST_DATE}.txt
 
 ################################
 ### Generate Resource File
