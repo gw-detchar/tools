@@ -124,7 +124,7 @@ do
     span=`echo "scale=5; $stride * $divide" | bc | awk '{printf("%d\n",$1 + 1)}'`
 
     echo fft $fft
-    echo ndivide $ndivide
+    echo divide $divide
     echo span $span
 
     tmpend=`echo "scale=5; $span30 + 2. " | bc `
@@ -137,17 +137,18 @@ do
 
     if [ "$(echo "$span > 30.0" | bc)" -eq 1 ]; then
 	span=30.
+    fi
 
     qgpsstart=`echo "scale=5; $gpstime - $span " | bc `
     qgpsend=`echo "scale=5; $gpstime + $span " | bc `
 
 
     # after trigger
-    gpsstart1=`echo "scale=5; $gpstime + 2. + $max_duration " | bc | awk '{printf("%d\n",$1 + 1)}`
-    gpsend1=`echo "scale=5; $gpstime + $span30 + 2. +$max_duration " | bc | awk '{printf("%d\n",$1 + 1)}`
+    gpsstart1=`echo "scale=5; $gpstime + 2. + $max_duration " | bc | awk '{printf("%d\n",$1 + 1)}'`
+    gpsend1=`echo "scale=5; $gpstime + $span30 + 2. +$max_duration " | bc | awk '{printf("%d\n",$1 + 1)}'`
     #before trigger
-    gpsstart2=`echo "scale=5; $gpstime - $span30 - 2. " | bc | awk '{printf("%d\n",$1 - 1)}`
-    gpsend2=`echo "scale=5; $gpstime - 2. " | bc | awk '{printf("%d\n",$1 - 1)}`
+    gpsstart2=`echo "scale=5; $gpstime - $span30 - 2. " | bc | awk '{printf("%d\n",$1 - 1)}'`
+    gpsend2=`echo "scale=5; $gpstime - 2. " | bc | awk '{printf("%d\n",$1 - 1)}'`
     # during trigger
     #gpsstart3=$gpstime
     #gpsend3=`echo "scale=5; $gpstime + $max_duration " | bc `
