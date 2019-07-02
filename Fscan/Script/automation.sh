@@ -41,7 +41,7 @@ let GPS_END=${GPS_START}+86400
 echo "==> LOCAL: ${JST_DATE}"
 echo "==> START: ${GPS_START}"
 echo "==>   END: ${GPS_END}"
-FILE_SEG=${DIR_SEG}/SegmentList_UTC_${JST_DATE}.txt
+FILE_SEG=${DIR_SEG}/SegmentList_IMC_UTC_${JST_DATE}.txt
 
 ################################
 ### Generate Resource File
