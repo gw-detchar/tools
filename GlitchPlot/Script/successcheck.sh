@@ -1,5 +1,7 @@
 #!/bin/bash
 
+date=20190608
+
 #if "${kamioka}"; then
 #    Kozapy="/users/DET/tools/GlitchPlot/Script/Kozapy/samples"
 #else
@@ -219,23 +221,22 @@ for log in ${list[@]}; do
     output=$(tail -n 2 $log | head -n 1)
 
     # set output sdf file.
-    if [ "`echo $output | grep timeseries `" ]; then
+    if [ "`echo $argument | grep series `" ]; then
 	tmpsdf=$outsdftime
-    elif [ "`echo $output | grep spectrum `" ]; then
-	tmpsdf=$outsdfspectrum
-    elif [ "`echo $output | grep spectrogram `" ]; then
-	tmpsdf=$outsdfspectrogram
-    elif [ "`echo $output | grep qtrans `" ]; then
-	tmpsdf=$outsdfqtrans
-    elif [ "`echo $output | grep coherence `" ]; then
+    elif [ "`echo $argument | grep '\-r' `" ]; then
 	tmpsdf=$outsdfcoherence
-    elif [ "`echo $output | grep locksegment `" ]; then
+    elif [ "`echo $argument | grep stride `" ]; then
+	tmpsdf=$outsdfspectrogram
+    elif [ "`echo $argument | grep time `" ]; then
+	tmpsdf=$outsdfspectrum
+    elif [ "`echo $argument | grep '\-d' `" ]; then
 	tmpsdf=$outsdflock
-
+#    elif [ "`echo $argument | grep qtrans `" ]; then
     else
-	echo "Unknown job !"
-	echo $log
+	tmpsdf=$outsdfqtrans
     fi
+
+    echo $tmpsdf
 
     outls=`ls -s ${output}`
     badls="0 ${output}"
@@ -246,31 +247,34 @@ for log in ${list[@]}; do
 	echo $log
 
 	{
+	    echo "# $log"
 	    echo "Arguments = $argument "
 	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
             echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
             echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
             echo "Queue"
+	    
 	} >> $tmpsdf
 
     elif test "$ok" = "$checkword" ;then
 	if [ -e ${output} ];then
 	    echo $log " successfully finished."
 	else
-	    echo $output " is not found !"
-	{
-	    echo "Arguments = $argument "
-	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
-            echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
-            echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
-            echo "Queue"
-	} >> $tmpsdf
+	    echo $log " is not found !"
+#	{
+#	    echo "Arguments = $argument "
+#	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
+#           echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
+#            echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
+#            echo "Queue"
+#	} >> $tmpsdf
 
 	fi
     else	
 	echo $log " is not processed !"
 
 	{
+	    echo "# $log"
 	    echo "Arguments = $argument "
 	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
             echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"

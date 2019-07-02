@@ -38,7 +38,7 @@ do
     ./chlist_plotter.sh $channels $channel
 
     # For timeseries, gps time start from 2s before glitch and end at 2s after glitch.
-    
+
     # For spectrum, spectogram, and coherencegram,
     # fftlength is defined based on bandwidth of the trigger event.
     # For spectrum, fft length = 1/bandwidth, rounded to integer.
@@ -47,10 +47,15 @@ do
     tmp=`awk "BEGIN {print log($fft30) / log(2)}"`
     dif=0
     if [ "$(echo "$tmp < 0" | bc)" -eq 1 ]; then
-	dif=-0.999
-    fi 
-    tmp2=`echo $tmp | awk '{printf("%i\n", $tmp + $dif)}'`
+#	tmp2=`echo $tmp | awk '{printf("%i\n", $tmp + 16)}'`
+	tmp2=0
+#	fft30=${sampling[tmp2]}
+    else
+	tmp2=`echo $tmp | awk '{printf("%i\n", $tmp )}'`
+    fi
+
     fft30=`awk "BEGIN {print 2**$tmp2}"`
+
     if [ "$(echo "$fft30 > 30" | bc)" -eq 1 ]; then
 	fft30=16
     fi 
@@ -78,16 +83,18 @@ do
     echo fft $fft
 
     # select fft to take 2^n data points.
+    sampling=( 1 0.5 0.25 0.125 0.0625 0.03125 0.015625 0.0078125 0.0390625 0.001953125 0.00097656250 0.00048828125 0.000244140625 0.000122703125 0.00006103515625 )
     tmp=`awk "BEGIN {print log($fft) / log(2)}"`
     dif=0
 
-
     if [ "$(echo "$tmp < 0" | bc)" -eq 1 ]; then
-	dif=-0.999
-    fi 
+	tmp2=`echo "scale=0; 0 - ${tmp} "| bc | awk '{printf("%d\n",$1 + 0.5)}'`
+	fft=${sampling[$tmp2]}
+    else
+	tmp2=`echo "scale=0; $tmp "| bc | awk '{printf("%d\n",$1 )}'`
+	fft=`awk "BEGIN {print 2**$tmp2}"`
+    fi
 
-    tmp2=`echo "scale=0; $tmp + $dif"| bc | awk '{printf("%d\n",$1 )}'`
-    fft=`awk "BEGIN {print 2**$tmp2}"`
     # stride is minimum of a and b.
 
     a=`echo "scale=5; $min_duration * 10. " | bc `
@@ -136,11 +143,11 @@ do
 
 
     # after trigger
-    gpsstart1=`echo "scale=5; $gpstime + 2. + $max_duration " | bc `
-    gpsend1=`echo "scale=5; $gpstime + $span30 + 2. +$max_duration " | bc `
+    gpsstart1=`echo "scale=5; $gpstime + 2. + $max_duration " | bc | awk '{printf("%d\n",$1 + 1)}`
+    gpsend1=`echo "scale=5; $gpstime + $span30 + 2. +$max_duration " | bc | awk '{printf("%d\n",$1 + 1)}`
     #before trigger
-    gpsstart2=`echo "scale=5; $gpstime - $span30 - 2. " | bc `
-    gpsend2=`echo "scale=5; $gpstime - 2. " | bc `
+    gpsstart2=`echo "scale=5; $gpstime - $span30 - 2. " | bc | awk '{printf("%d\n",$1 - 1)}`
+    gpsend2=`echo "scale=5; $gpstime - 2. " | bc | awk '{printf("%d\n",$1 - 1)}`
     # during trigger
     #gpsstart3=$gpstime
     #gpsend3=`echo "scale=5; $gpstime + $max_duration " | bc `
