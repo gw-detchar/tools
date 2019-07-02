@@ -8,7 +8,7 @@ date=20190608
     Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
 #fi
 
-list=( `find log/20190608/out_259* -newermt "2019-06-29 08:45:00"` )
+list=( `find log/20190608/out_260* -newermt "2019-06-29 08:45:00"` )
 
 #outsdf=retry_$(basename $insdf)
 outsdftime=retry_timeseries.sdf
