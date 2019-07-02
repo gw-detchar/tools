@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#if "${kamioka}"; then
+#    Kozapy="/users/DET/tools/GlitchPlot/Script/Kozapy/samples"
+#else
+    Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
+#fi
+
 list=( `find log/20190608/out_259* -newermt "2019-06-29 08:45:00"` )
 
 #outsdf=retry_$(basename $insdf)
@@ -186,17 +192,14 @@ for log in ${list[@]}; do
     argument=$(head -n 1 $log)
     # empty channel
     if [ "`echo $argument | grep TM_LOCK_ `" ]; then
-
 	continue
     elif [ "`echo $argument | grep IM_LOCK_ `" ]; then
-
 	continue
     elif [ "`echo $argument | grep MN_LOCK_ `" ]; then
-
 	continue
     elif [ "`echo $argument | grep PEM-SEIS_MCE `" ]; then
 	continue
-    elif [ "`echo $argument | grep K1:IMC-SERVO_SLOW_MON_OUT_DQ `" ]; then
+    elif [ "`echo $argument | grep K1:IMC-SERVO_ | grep _MON_OUT_DQ `" ]; then
 	continue
     elif [ "`echo $argument | grep PEM-MAG_BS_BOOTH_BS_X `" ]; then
 	echo "wrong channel."
@@ -207,6 +210,9 @@ for log in ${list[@]}; do
     elif [ "`echo $argument | grep PEM-MAG_BS_BOOTH_BS_Z `" ]; then
 	echo "wrong channel."
 	argument=`echo $argument | sed -e 's/PEM-MAG_BS_BOOTH_BS_Z/PEM-MAG_BS_BOOTH_BS_Z_OUT_DQ/g'`
+    elif [ "`echo $argument | grep NORM_OUTPUT `" ]; then
+	# qtransform may fail.
+	continue
     fi
 
     checkword=$(tail -n 1 $log)
@@ -225,6 +231,10 @@ for log in ${list[@]}; do
 	tmpsdf=$outsdfcoherence
     elif [ "`echo $output | grep locksegment `" ]; then
 	tmpsdf=$outsdflock
+
+    else
+	echo "Unknown job !"
+	echo $log
     fi
 
     outls=`ls -s ${output}`

@@ -128,6 +128,13 @@ do
     gpsstart=`echo "scale=5; $gpstime - $span " | bc `
     gpsend=`echo "scale=5; $gpstime + $span " | bc `
 
+    if [ "$(echo "$span > 30.0" | bc)" -eq 1 ]; then
+	span=30.
+
+    qgpsstart=`echo "scale=5; $gpstime - $span " | bc `
+    qgpsend=`echo "scale=5; $gpstime + $span " | bc `
+
+
     # after trigger
     gpsstart1=`echo "scale=5; $gpstime + 2. + $max_duration " | bc `
     gpsend1=`echo "scale=5; $gpstime + $span30 + 2. +$max_duration " | bc `
@@ -550,7 +557,7 @@ do
 	    #  $ python batch_coherencegram.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel ${optionqtransform}"
+	    echo "Arguments = -c ${chlist[@]} -s ${qgpsstart} -e ${qgpsend} -o ${outdir} -i $channel ${optionqtransform}"
 	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
 	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
 	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
