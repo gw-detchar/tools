@@ -186,13 +186,27 @@ for log in ${list[@]}; do
     argument=$(head -n 1 $log)
     # empty channel
     if [ "`echo $argument | grep TM_LOCK_ `" ]; then
+
 	continue
     elif [ "`echo $argument | grep IM_LOCK_ `" ]; then
+
 	continue
     elif [ "`echo $argument | grep MN_LOCK_ `" ]; then
+
 	continue
     elif [ "`echo $argument | grep PEM-SEIS_MCE `" ]; then
 	continue
+    elif [ "`echo $argument | grep K1:IMC-SERVO_SLOW_MON_OUT_DQ `" ]; then
+	continue
+    elif [ "`echo $argument | grep PEM-MAG_BS_BOOTH_BS_X `" ]; then
+	echo "wrong channel."
+	argument=`echo $argument | sed -e 's/PEM-MAG_BS_BOOTH_BS_X/PEM-MAG_BS_BOOTH_BS_X_OUT_DQ/g'`
+    elif [ "`echo $argument | grep PEM-MAG_BS_BOOTH_BS_Y `" ]; then
+	echo "wrong channel."
+	argument=`echo $argument | sed -e 's/PEM-MAG_BS_BOOTH_BS_Y/PEM-MAG_BS_BOOTH_BS_Y_OUT_DQ/g'`
+    elif [ "`echo $argument | grep PEM-MAG_BS_BOOTH_BS_Z `" ]; then
+	echo "wrong channel."
+	argument=`echo $argument | sed -e 's/PEM-MAG_BS_BOOTH_BS_Z/PEM-MAG_BS_BOOTH_BS_Z_OUT_DQ/g'`
     fi
 
     checkword=$(tail -n 1 $log)
