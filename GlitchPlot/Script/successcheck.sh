@@ -5,10 +5,12 @@ date=20190608
 #if "${kamioka}"; then
 #    Kozapy="/users/DET/tools/GlitchPlot/Script/Kozapy/samples"
 #else
-    Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
+Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
 #fi
 
-list=( `find log/20190608/out_260* -newermt "2019-06-29 08:45:00"` )
+list=( `find log/20190608/out_383* -newermt "2019-06-29 08:45:00"` )
+#list=( `find log/20190608/out_45621* -newermt "2019-06-29 08:45:00"` )
+
 
 #outsdf=retry_$(basename $insdf)
 outsdftime=retry_timeseries.sdf
@@ -191,7 +193,8 @@ ok="Successfully finished !"
 
 for log in ${list[@]}; do
 
-    argument=$(head -n 1 $log)
+    plottype=$(head -n 1 $log )
+    argument=$(head -n 2 $log | tail -n 1)
     # empty channel
     if [ "`echo $argument | grep TM_LOCK_ `" ]; then
 	continue
@@ -203,37 +206,32 @@ for log in ${list[@]}; do
 	continue
     elif [ "`echo $argument | grep K1:IMC-SERVO_ | grep _MON_OUT_DQ `" ]; then
 	continue
-    elif [ "`echo $argument | grep PEM-MAG_BS_BOOTH_BS_X `" ]; then
-	echo "wrong channel."
-	argument=`echo $argument | sed -e 's/PEM-MAG_BS_BOOTH_BS_X/PEM-MAG_BS_BOOTH_BS_X_OUT_DQ/g'`
-    elif [ "`echo $argument | grep PEM-MAG_BS_BOOTH_BS_Y `" ]; then
-	echo "wrong channel."
-	argument=`echo $argument | sed -e 's/PEM-MAG_BS_BOOTH_BS_Y/PEM-MAG_BS_BOOTH_BS_Y_OUT_DQ/g'`
-    elif [ "`echo $argument | grep PEM-MAG_BS_BOOTH_BS_Z `" ]; then
-	echo "wrong channel."
-	argument=`echo $argument | sed -e 's/PEM-MAG_BS_BOOTH_BS_Z/PEM-MAG_BS_BOOTH_BS_Z_OUT_DQ/g'`
-    elif [ "`echo $argument | grep NORM_OUTPUT `" ]; then
-	# qtransform may fail.
-	continue
     fi
 
     checkword=$(tail -n 1 $log)
     output=$(tail -n 2 $log | head -n 1)
 
     # set output sdf file.
-    if [ "`echo $argument | grep series `" ]; then
+#    if [ "`echo $argument | grep series `" ]; then
+    if [ "$plottype" = "timeseries" ]; then
 	tmpsdf=$outsdftime
-    elif [ "`echo $argument | grep '\-r' `" ]; then
+#    elif [ "`echo $argument | grep '\-r' `" ]; then
+    elif [ "$plottype" = "coherencegram" ]; then
 	tmpsdf=$outsdfcoherence
-    elif [ "`echo $argument | grep stride `" ]; then
+#    elif [ "`echo $argument | grep stride `" ]; then
+    elif [ "$plottype" = "whitening_spectrogram" ]; then
 	tmpsdf=$outsdfspectrogram
-    elif [ "`echo $argument | grep time `" ]; then
+#    elif [ "`echo $argument | grep time `" ]; then
+    elif [ "$plottype" = "spectrum" ]; then
 	tmpsdf=$outsdfspectrum
-    elif [ "`echo $argument | grep '\-d' `" ]; then
+#    elif [ "`echo $argument | grep '\-d' `" ]; then
+    elif [ "$plottype" = "locksegments" ]; then
 	tmpsdf=$outsdflock
 #    elif [ "`echo $argument | grep qtrans `" ]; then
-    else
+    elif [ "$plottype" = "qtransform" ]; then
 	tmpsdf=$outsdfqtrans
+    else
+	echo "Warning !!! plot type is unknown." $plottype
     fi
 
     echo $tmpsdf

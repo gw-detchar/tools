@@ -88,7 +88,7 @@ do
     dif=0
 
     if [ "$(echo "$tmp < 0" | bc)" -eq 1 ]; then
-	tmp2=`echo "scale=0; 0 - ${tmp} "| bc | awk '{printf("%d\n",$1 + 0.5)}'`
+	tmp2=`echo "scale=0; 0 - ${tmp} "| bc | awk '{printf("%d\n",$1 + 1)}'`
 	fft=${sampling[$tmp2]}
     else
 	tmp2=`echo "scale=0; $tmp "| bc | awk '{printf("%d\n",$1 )}'`
