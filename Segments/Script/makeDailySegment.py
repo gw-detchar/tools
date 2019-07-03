@@ -68,7 +68,7 @@ def GetFilelist(gpsstart,gpsend):
 def mkSegment(gst, get, utc_date) :
 
     ch1 = 'K1:GRD-PMC_OK'
-    ch2 = 'K1:GRD-IMC_OK'
+    ch2 = 'K1:GRD-IO_OK'
     ch3 = 'K1:GRD-LSC_LOCK_STATE_N'
 
     file_path1 = SEGMENT_DIR + 'SegmentList_PMC_UTC_' + utc_date + '.txt'
