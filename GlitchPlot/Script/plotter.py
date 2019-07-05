@@ -29,7 +29,11 @@ inputfile = args.inputfile
 
 # Define parameters
 omicron_interval = 60.
+
+#Default
 snrthreshold=100.
+#If night, use lower threshold.
+snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":15, "AOS-TMSX_IR_PD_OUT_DQ":15, "IMC-CAV_TRANS_OUT_DQ":15, "IMC-CAV_REFL_OUT_DQ":15, "PSL-PMC_MIXER_MON_OUT_DQ":15, "IMC-MCL_SERVO_OUT_DQ":35, "PSL-PMC_TRANS_DC_OUT_DQ":35, "IMC-SERVO_SLOW_DAQ_OUT_DQ":10, "PEM_ACC_MCF_TABLE_REFL_Z_OUT_DQ":40, "PEM_ACC_PSL_PERI_PSL1_Y_OUT_DQ":10, "PEM_MIC_PSL_TABLE_PSL4_Z_OUT_DQ":10}
 
 # get the time of the input file.
 tmp=inputfile.rsplit("-",2)
@@ -72,6 +76,10 @@ if len(channels) == 0:
 else:
     channel = channels[0]
 
+# If 0am-6am, threshold is lowered.
+if 61218 < tfile%86400 and tfile%86400 < 82818:
+    snrthreshold=snrdict[channel]
+    
 # Initialize segments of trigger. t=0 is the start of the trigger file.
 Triggered = DataQualityFlag(known=[(0,omicron_interval)],active=[])
 
