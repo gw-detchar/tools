@@ -63,5 +63,6 @@ for file in ${list[@]};do
     
 done
 
+condor_release chihiro.kozakai
 
 
