@@ -76,8 +76,8 @@ if len(channels) == 0:
 else:
     channel = channels[0]
 
-# If 0am-6am, threshold is lowered.
-if 61218 < tfile%86400 and tfile%86400 < 82818:
+# If 0am-8am, threshold is lowered.
+if 54018 < tfile%86400 and tfile%86400 < 82818:
     snrthreshold=snrdict[channel]
     
 # Initialize segments of trigger. t=0 is the start of the trigger file.
