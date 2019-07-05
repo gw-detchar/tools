@@ -79,6 +79,8 @@ else:
 # If 0am-8am, threshold is lowered.
 if 54018 < tfile%86400 and tfile%86400 < 82818:
     snrthreshold=snrdict[channel]
+else:
+    exit
     
 # Initialize segments of trigger. t=0 is the start of the trigger file.
 Triggered = DataQualityFlag(known=[(0,omicron_interval)],active=[])
