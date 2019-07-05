@@ -8,8 +8,8 @@ date=20190608
 Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
 #fi
 
-list=( `find log/20190608/out_383* -newermt "2019-06-29 08:45:00"` )
-#list=( `find log/20190608/out_45621* -newermt "2019-06-29 08:45:00"` )
+list=( `find log/20190608/out_47266* -newermt "2019-07-04 19:07:00"` )
+#list=( `find log/20190608/out_45660* -newermt "2019-06-29 08:45:00"` )
 
 
 #outsdf=retry_$(basename $insdf)
@@ -114,7 +114,7 @@ pyspectrogram="$Kozapy/batch_whitening_spectrogram.py"
         echo "# This file is generated from `basename $0`."
         echo "# If you need to change, please edit `basename $0`."
         echo ""
-        echo "echo spectrogram"
+        echo "echo whitening_spectrogram"
         echo "echo \$@"
         echo "python $pyspectrogram \$@"
 
@@ -219,6 +219,8 @@ for log in ${list[@]}; do
     elif [ "$plottype" = "coherencegram" ]; then
 	tmpsdf=$outsdfcoherence
 #    elif [ "`echo $argument | grep stride `" ]; then
+    elif [ "$plottype" = "spectrogram" ]; then
+	tmpsdf=$outsdfspectrogram
     elif [ "$plottype" = "whitening_spectrogram" ]; then
 	tmpsdf=$outsdfspectrogram
 #    elif [ "`echo $argument | grep time `" ]; then
@@ -282,3 +284,11 @@ for log in ${list[@]}; do
 
     fi
 done 
+
+exit
+condor_submit $outsdftime
+condor_submit $outsdfspectrum
+condor_submit $outsdfspectrogram
+condor_submit $outsdfcoherence
+condor_submit $outsdfqtrans
+condor_submit $outsdflock
