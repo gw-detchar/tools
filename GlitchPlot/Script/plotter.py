@@ -33,7 +33,7 @@ omicron_interval = 60.
 #Default
 snrthreshold=100.
 #If night, use lower threshold.
-snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":15, "AOS-TMSX_IR_PD_OUT_DQ":15, "IMC-CAV_TRANS_OUT_DQ":15, "IMC-CAV_REFL_OUT_DQ":15, "PSL-PMC_MIXER_MON_OUT_DQ":15, "IMC-MCL_SERVO_OUT_DQ":35, "PSL-PMC_TRANS_DC_OUT_DQ":35, "IMC-SERVO_SLOW_DAQ_OUT_DQ":10, "PEM-ACC_MCF_TABLE_REFL_Z_OUT_DQ":40, "PEM-ACC_PSL_PERI_PSL1_Y_OUT_DQ":10, "PEM-MIC_PSL_TABLE_PSL4_Z_OUT_DQ":10}
+snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":10, "AOS-TMSX_IR_PD_OUT_DQ":10, "IMC-CAV_TRANS_OUT_DQ":10, "IMC-CAV_REFL_OUT_DQ":10, "PSL-PMC_MIXER_MON_OUT_DQ":10, "IMC-MCL_SERVO_OUT_DQ":30, "PSL-PMC_TRANS_DC_OUT_DQ":30, "IMC-SERVO_SLOW_DAQ_OUT_DQ":7, "PEM-ACC_MCF_TABLE_REFL_Z_OUT_DQ":30, "PEM-ACC_PSL_PERI_PSL1_Y_OUT_DQ":7, "PEM-MIC_PSL_TABLE_PSL4_Z_OUT_DQ":7}
 
 # get the time of the input file.
 tmp=inputfile.rsplit("-",2)
@@ -47,6 +47,23 @@ events = EventTable.read(inputfile, tablename='sngl_burst', columns=['peak_time'
 # Column option
 #ifo peak_time peak_time_ns start_time start_time_ns duration search process_id event_id peak_frequency central_freq bandwidth channel amplitude snr confidence chisq chisq_dof param_one_name param_one_value
 #events = EventTable.read('K1-IMC_CAV_ERR_OUT_DQ_OMICRON-1241900058-60.xml.gz', tablename='sngl_burst', columns=['peak_time', 'peak_time_ns', 'start_time', 'start_time_ns', 'duration', 'peak_frequency', 'central_freq', 'bandwidth', 'channel', 'amplitude', 'snr', 'confidence', 'chisq', 'chisq_dof', 'param_one_name', 'param_one_value'])
+
+channels = events.get_column('channel')
+
+if len(channels) == 0:
+    print("No event.")
+    print("Successfully finished!")
+    exit()
+else:
+    channel = channels[0]
+
+
+# If 0am-8am, threshold is lowered.
+if 54018 < tfile%86400 and tfile%86400 < 82818:
+    snrthreshold=snrdict[channel]
+else:
+    print("Day time file. skip. ")
+    exit()
 
 # Setup output txtfile.
 f = open(output, mode='w')
@@ -72,15 +89,7 @@ starts_ns = fevents.get_column('start_time_ns')
 if len(channels) == 0:
     print("No filtered event.")
     print("Successfully finished!")
-    exit
-else:
-    channel = channels[0]
-
-# If 0am-8am, threshold is lowered.
-if 54018 < tfile%86400 and tfile%86400 < 82818:
-    snrthreshold=snrdict[channel]
-else:
-    exit
+    exit()
     
 # Initialize segments of trigger. t=0 is the start of the trigger file.
 Triggered = DataQualityFlag(known=[(0,omicron_interval)],active=[])
