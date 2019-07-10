@@ -51,7 +51,6 @@ f = open(output, mode='w')
 # Apply filter. 
 
 fevents = events.filter(('snr', mylib.Islarger,  snrthreshold))
-fevents.write('test.txt',format='ascii',overwrite=True)
 
 # Makesegments of triggers. It will give information about interesting gps time. 
 
