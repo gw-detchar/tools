@@ -20,7 +20,7 @@ namecoherencegram="coherencegram"
 nameqtransform="qtransform"
 namelock="locksegments"
 
-cat $1 | while read gpstime channel min_duration max_duration bandwidth dump1 dump2 dump3 dump4 eventtype
+cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype
 do
     echo "gps time = $gpstime "
     echo "channel = $channel "
@@ -216,7 +216,7 @@ do
     fi
 
     {
-	echo $gpstime $channel $min_duration $max_duration $bandwidth $dump1 $dump2 $dump3 $dump4 $eventtype
+	echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_snr $max_amp $frequency_amp  $eventtype $triggertype
     } > $outdir/parameter.txt
 
     logdir="$PWD/log/$date/"
