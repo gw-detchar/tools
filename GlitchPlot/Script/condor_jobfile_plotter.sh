@@ -238,20 +238,20 @@ do
     pytime="$Kozapy/batch_${nametime}.py"
     #py="~/batch_timesries.py"  # For the case you use non-conventional python script name.
 
-    {
-	echo "#!/bin/bash"
-	echo ""
-	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
-	echo "# This file is generated from `basename $0`."
-	echo "# If you need to change, please edit `basename $0`."
-	echo ""
-	echo "echo timeseries"
-	echo "echo \$@"
-	echo "python $pytime \$@"
-	
-    } > $runtime
+#    {
+#	echo "#!/bin/bash"
+#	echo ""
+#	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
+#	echo "# This file is generated from `basename $0`."
+#	echo "# If you need to change, please edit `basename $0`."
+#	echo ""
+#	echo "echo timeseries"
+#	echo "echo \$@"
+#	echo "python $pytime \$@"
+#	
+#   } > $runtime
 
-    chmod u+x $runtime
+#    chmod u+x $runtime
 
     # Write a file for condor submission.
     
@@ -274,20 +274,20 @@ do
     pyspectrum="$Kozapy/batch_${namespectrum}.py"
     #py="~/batch_spectrumsries.py"  # For the case you use non-conventional python script name.
 
-    {
-	echo "#!/bin/bash"
-	echo ""
-	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
-	echo "# This file is generated from `basename $0`."
-	echo "# If you need to change, please edit `basename $0`."
-	echo ""
-	echo "echo spectrum"
-	echo "echo \$@"
-	echo "python $pyspectrum \$@"
-	
-    } > $runspectrum
+#    {
+#	echo "#!/bin/bash"
+#	echo ""
+#	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
+#	echo "# This file is generated from `basename $0`."
+#	echo "# If you need to change, please edit `basename $0`."
+#	echo ""
+#	echo "echo spectrum"
+#	echo "echo \$@"
+#	echo "python $pyspectrum \$@"
+#	
+#    } > $runspectrum
 
-    chmod u+x $runspectrum
+#    chmod u+x $runspectrum
 
     # Write a file for condor submission.
     
@@ -310,20 +310,20 @@ do
     pyspectrogram="$Kozapy/batch_${namespectrogram}.py"
     #py="~/batch_spectrogramsries.py"  # For the case you use non-conventional python script name.
 
-    {
-	echo "#!/bin/bash"
-	echo ""
-	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
-	echo "# This file is generated from `basename $0`."
-	echo "# If you need to change, please edit `basename $0`."
-	echo ""
-	echo "echo whitening_spectrogram"
-	echo "echo \$@"
-	echo "python $pyspectrogram \$@"
-	
-    } > $runspectrogram
+#    {
+#	echo "#!/bin/bash"
+#	echo ""
+#	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
+#	echo "# This file is generated from `basename $0`."
+#	echo "# If you need to change, please edit `basename $0`."
+#	echo ""
+#	echo "echo whitening_spectrogram"
+#	echo "echo \$@"
+#	echo "python $pyspectrogram \$@"
+#	
+#    } > $runspectrogram
 
-    chmod u+x $runspectrogram
+#    chmod u+x $runspectrogram
 
     # Write a file for condor submission.
     
@@ -346,20 +346,20 @@ do
     pycoherencegram="$Kozapy/batch_${namecoherencegram}.py"
     #py="~/batch_coherencegramsries.py"  # For the case you use non-conventional python script name.
 
-    {
-	echo "#!/bin/bash"
-	echo ""
-	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
-	echo "# This file is generated from `basename $0`."
-	echo "# If you need to change, please edit `basename $0`."
-	echo ""
-	echo "echo coherencegram"
-	echo "echo \$@"
-	echo "python $pycoherencegram \$@"
-	
-    } > $runcoherencegram
+#    {
+#	echo "#!/bin/bash"
+#	echo ""
+#	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
+#	echo "# This file is generated from `basename $0`."
+#	echo "# If you need to change, please edit `basename $0`."
+#	echo ""
+#	echo "echo coherencegram"
+#	echo "echo \$@"
+#	echo "python $pycoherencegram \$@"
+#	
+#    } > $runcoherencegram
 
-    chmod u+x $runcoherencegram
+#    chmod u+x $runcoherencegram
 
     # Write a file for condor submission.
     
@@ -382,20 +382,20 @@ do
     pyqtransform="$Kozapy/batch_${nameqtransform}.py"
     #py="~/batch_qtransformsries.py"  # For the case you use non-conventional python script name.
 
-    {
-	echo "#!/bin/bash"
-	echo ""
-	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
-	echo "# This file is generated from `basename $0`."
-	echo "# If you need to change, please edit `basename $0`."
-	echo ""
-	echo "echo qtransform"
-	echo "echo \$@"
-	echo "python $pyqtransform \$@"
+#    {
+#	echo "#!/bin/bash"
+#	echo ""
+#	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
+#	echo "# This file is generated from `basename $0`."
+#	echo "# If you need to change, please edit `basename $0`."
+#	echo ""
+#	echo "echo qtransform"
+#	echo "echo \$@"
+#	echo "python $pyqtransform \$@"
 	
-    } > $runqtransform
+#    } > $runqtransform
 
-    chmod u+x $runqtransform
+#    chmod u+x $runqtransform
 
     # Write a file for condor submission.
     
@@ -418,20 +418,20 @@ do
     pylock="$Kozapy/batch_${namelock}.py"
     #py="~/batch_qtransformsries.py"  # For the case you use non-conventional python script name.
 
-    {
-	echo "#!/bin/bash"
-	echo ""
-	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
-	echo "# This file is generated from `basename $0`."
-	echo "# If you need to change, please edit `basename $0`."
-	echo ""
-	echo "echo locksegments"
-	echo "echo \$@"
-	echo "python $pylock \$@"
-	
-    } > $runlock
+#    {
+#	echo "#!/bin/bash"
+#	echo ""
+#	echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
+#	echo "# This file is generated from `basename $0`."
+#	echo "# If you need to change, please edit `basename $0`."
+#	echo ""
+#	echo "echo locksegments"
+#	echo "echo \$@"
+#	echo "python $pylock \$@"
+#	
+#    } > $runlock
 
-    chmod u+x $runlock
+#    chmod u+x $runlock
 
     # Write a file for condor submission.
     
