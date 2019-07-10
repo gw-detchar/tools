@@ -30,6 +30,9 @@ inputfile = args.inputfile
 # Define parameters
 omicron_interval = 60.
 
+#triggertype
+triggertype="Omicron"
+
 #Default
 snrthreshold=100.
 #If night, use lower threshold.
@@ -275,6 +278,9 @@ for segment in tmpactive:
 
     strtmp+=(" ")
     strtmp+=str(eventtype)
+
+    strtmp+=(" ")
+    strtmp+=str(triggertype)
 
     f.write(strtmp)
     f.write('\n')
