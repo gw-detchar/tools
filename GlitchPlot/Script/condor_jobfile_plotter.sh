@@ -184,6 +184,11 @@ do
     lnumber=31415  #number of the required state
     llabel='X-arm'  #y-axis label for the bar plot.
 
+    #  lock
+#    lchannel="K1:GRD-LSC_MICH_OK"  #guardian channel
+#    lnumber=1  #number of the required state
+#    llabel='MICH'  #y-axis label for the bar plot.
+
     
     # Set the output directory.
 #    condir="/users/.ckozakai/KashiwaAnalysis/analysis/code/gwpy/trigger/plotter"
