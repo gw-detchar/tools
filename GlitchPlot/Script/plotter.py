@@ -76,7 +76,7 @@ f = open(output, mode='w')
 # Apply filter. 
 
 fevents = events.filter(('snr', mylib.Islarger,  snrthreshold))
-fevents.write('test.txt',format='ascii',overwrite=True)
+#fevents.write('test.txt',format='ascii',overwrite=True)
 
 # Makesegments of triggers. It will give information about interesting gps time. 
 
@@ -126,6 +126,7 @@ tmpactive=Triggered.active
 safety=1
 
 locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="IMC",min_len=safety*3,kamioka=True)
+#locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="MICH",min_len=safety*3,kamioka=True)
 locked_contract=locked.copy()
 locked=locked.active
 locked_contract=locked_contract.contract(1)
