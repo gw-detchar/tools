@@ -125,8 +125,8 @@ tmpactive=Triggered.active
 #safety is contracting time.
 safety=1
 
-locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="IMC",min_len=safety*3,kamioka=True)
-#locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="MICH",min_len=safety*3,kamioka=True)
+#locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="IMC",min_len=safety*3,kamioka=True)
+locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="MICH",min_len=safety*3,kamioka=True)
 locked_contract=locked.copy()
 locked=locked.active
 locked_contract=locked_contract.contract(1)
