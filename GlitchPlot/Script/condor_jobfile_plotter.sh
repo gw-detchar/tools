@@ -209,7 +209,7 @@ do
 	set ${date}
 	date=`echo ${2}| sed -e 's/-//g'`
     else
-	date=`tconvert -f %Y%m%d ${gpstime}`
+	date=`tconvert -l -f %Y%m%d ${gpstime}`
     fi
 
     outdir="$condir/$date/${index}/"
