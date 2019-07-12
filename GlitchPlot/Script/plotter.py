@@ -22,10 +22,12 @@ parser = argparse.ArgumentParser(description='Make basic plots.')
 parser.add_argument('-o','--output',help='output text filename.',default='result.txt')
 #parser.add_argument('-i','--inputfile',help='input trigger filename.',default='/home/controls/triggers/K1/LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON/12440/K1-LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON-1244013258-60.xml.gz')
 parser.add_argument('-i','--inputfile',help='input trigger filename.',default='/home/controls/triggers/K1/LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON/12440/K1-LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON-1244004678-60.xml.gz')
+parser.add_argument('-f','--force',help='Flag to run without daytime skip.',action='store_true')
 
 args = parser.parse_args()
 output = args.output
 inputfile = args.inputfile
+force = args.force
 
 # Define parameters
 omicron_interval = 60.
@@ -36,7 +38,7 @@ triggertype="Omicron"
 #Default
 snrthreshold=100.
 #If night, use lower threshold.
-snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":10, "AOS-TMSX_IR_PD_OUT_DQ":10, "IMC-CAV_TRANS_OUT_DQ":20, "IMC-CAV_REFL_OUT_DQ":10, "PSL-PMC_MIXER_MON_OUT_DQ":10, "IMC-MCL_SERVO_OUT_DQ":30, "PSL-PMC_TRANS_DC_OUT_DQ":40, "IMC-SERVO_SLOW_DAQ_OUT_DQ":7, "PEM-ACC_MCF_TABLE_REFL_Z_OUT_DQ":40, "PEM-ACC_PSL_PERI_PSL1_Y_OUT_DQ":20, "PEM-MIC_PSL_TABLE_PSL4_Z_OUT_DQ":20, "LSC-REFL_PDA1_RF17_Q_ERR_DQ":30, "LSC-REFL_PDA1_RF45_I_ERR_DQ":30, "LSC-AS_PDA1_RF17_Q_ERR_DQ":30}
+snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":10, "AOS-TMSX_IR_PD_OUT_DQ":10, "IMC-CAV_TRANS_OUT_DQ":20, "IMC-CAV_REFL_OUT_DQ":10, "PSL-PMC_MIXER_MON_OUT_DQ":10, "IMC-MCL_SERVO_OUT_DQ":30, "PSL-PMC_TRANS_DC_OUT_DQ":40, "IMC-SERVO_SLOW_DAQ_OUT_DQ":7, "PEM-ACC_MCF_TABLE_REFL_Z_OUT_DQ":40, "PEM-ACC_PSL_PERI_PSL1_Y_OUT_DQ":20, "PEM-MIC_PSL_TABLE_PSL4_Z_OUT_DQ":20, "LSC-REFL_PDA1_RF17_Q_ERR_DQ":30, "LSC-REFL_PDA1_RF45_I_ERR_DQ":30, "LSC-AS_PDA1_RF17_Q_ERR_DQ":30, "CAL-CS_PROC_IMC_FREQUENCY_DQ":6}
 
 # get the time of the input file.
 tmp=inputfile.rsplit("-",2)
@@ -62,7 +64,9 @@ else:
 
 
 # If 0am-8am, threshold is lowered.
-if 54018 < tfile%86400 and tfile%86400 < 82818:
+if force:
+    snrthreshold=snrdict[channel]
+elif 54018 < tfile%86400 and tfile%86400 < 82818:
     snrthreshold=snrdict[channel]
 elif 1247020218 < tfile and tfile < 1247065218:
     snrthreshold=snrdict[channel]
