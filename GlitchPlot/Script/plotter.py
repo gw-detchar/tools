@@ -64,7 +64,7 @@ else:
 # If 0am-8am, threshold is lowered.
 if 54018 < tfile%86400 and tfile%86400 < 82818:
     snrthreshold=snrdict[channel]
-elif 1247022018 < tfile and tfile < 1247043618:
+elif 1247020218 < tfile and tfile < 1247065218:
     snrthreshold=snrdict[channel]
 else:
     print("Day time file. skip. ")
