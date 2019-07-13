@@ -23,13 +23,13 @@ jst_end="`date +"%Y-%m-%d %H:${mm}:00"`"
 [ -e /usr/bin/gpstime ] && cmd_gps=/usr/bin/gpstime || cmd_gps=/home/controls/bin/gpstime
 
 #GPS_END=`${cmd_gps} ${jst_end}| head -3 | tail -1 | awk '{printf("%d\n", $2)}'`
-GPS_END=`tconvert $jst_end`
+GPS_END=`tconvert -l $jst_end`
 
 let GPS_START=${GPS_END}-${INTERVAL}*60
 
 #jst_start=`${cmd_gps} ${GPS_START}| head -1`
 #jst_start=${jst_start#*:}
-jst_start=`tconvert -f "%Y-%m-%d %H:%M:%S" $GPS_START`
+jst_start=`tconvert -l -f "%Y-%m-%d %H:%M:%S" $GPS_START`
 
 echo $jst_start
 echo $jst_end

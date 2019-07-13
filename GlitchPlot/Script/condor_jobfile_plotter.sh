@@ -185,9 +185,9 @@ do
 #    llabel='X-arm'  #y-axis label for the bar plot.
 
     #  lock
-    lchannel="K1:GRD-LSC_MICH_OK"  #guardian channel
+    lchannel="K1:GRD-LSC_LOCK_OK"  #guardian channel
     lnumber=1  #number of the required state
-    llabel='MICH'  #y-axis label for the bar plot.
+    llabel='LSC'  #y-axis label for the bar plot.
 
     
     # Set the output directory.
