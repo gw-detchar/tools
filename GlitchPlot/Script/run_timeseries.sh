@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # PLEASE NEVER CHANGE THIS FILE BY HAND.
-# This file is generated from condor_jobfile_plotter.sh.
-# If you need to change, please edit condor_jobfile_plotter.sh.
+# This file is generated from successcheck_1722.sh.
+# If you need to change, please edit successcheck_1722.sh.
 
 echo timeseries
 echo $@

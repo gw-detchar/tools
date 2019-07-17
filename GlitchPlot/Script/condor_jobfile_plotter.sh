@@ -185,8 +185,8 @@ do
 #    llabel='X-arm'  #y-axis label for the bar plot.
 
     #  lock
-    lchannel="K1:GRD-LSC_LOCK_OK"  #guardian channel
-    lnumber=1  #number of the required state
+    lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
+    lnumber=157  #number of the required state
     llabel='LSC'  #y-axis label for the bar plot.
 
     
@@ -409,7 +409,7 @@ do
 	echo "Universe   = vanilla"
 	echo "Notification = never"
 	# if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.
-	echo "request_memory = 1 GB"
+	echo "request_memory = 8 GB"
 	echo "Getenv  = True            # the environment variables will be copied."
 	echo ""
 	echo "should_transfer_files = YES"
