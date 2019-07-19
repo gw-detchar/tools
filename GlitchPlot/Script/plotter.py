@@ -149,7 +149,8 @@ safety=1
 locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="LSC",min_len=safety*3,kamioka=True)
 locked_contract=locked.copy()
 locked=locked.active
-locked_contract=locked_contract.contract(1)
+locked_contract.active=locked_contract.active.shift(-0.5)
+locked_contract=locked_contract.contract(0.5)
 unlocked_contract=~locked_contract
 
 print("locked")
