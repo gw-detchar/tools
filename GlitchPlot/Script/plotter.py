@@ -80,12 +80,16 @@ else:
 
 
 # If 0am-8am, threshold is lowered.
+
+LocklossOnly = True
 if force:
     snrthreshold=snrdict[channel]
+    LocklossOnly = False
 elif 54018 < tfile%86400 and tfile%86400 < 82818:
     snrthreshold=snrdict[channel]
 elif 1247020218 < tfile and tfile < 1247065218:
     snrthreshold=snrdict[channel]
+    LocklossOnly = False
 else:
     print("Day time file. skip. ")
     exit()
@@ -183,7 +187,8 @@ for segment in tmpactive:
             eventtype="lockloss"
         else:
             eventtype="glitch"
-
+            if LocklossOnly:
+                continue
 
 #        Islockloss=unlocked_contract.intersects_segment(segment_shift)
 #        if Islockloss:
