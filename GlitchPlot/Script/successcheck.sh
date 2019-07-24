@@ -8,7 +8,7 @@ date=20190713
 Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
 #fi
 
-list=( `find log/20190713/out_173227* -newermt "2019-07-17 16:49:00"` )
+list=( `find log/20190713/out_1732462.*  -newermt "2019-07-18 11:00:00"` )
 #list=( `find log/20190608/out_45660* -newermt "2019-06-29 08:45:00"` )
 
 
@@ -23,19 +23,6 @@ outsdflock=retry_lock.sdf
 # Write a file for condor submission.                                                                            
 runlock="$PWD/run_lock.sh"
 pylock="$Kozapy/batch_locksegment.py"
-{
-        echo "#!/bin/bash"
-        echo ""
-        echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
-        echo "# This file is generated from `basename $0`."
-        echo "# If you need to change, please edit `basename $0`."
-        echo ""
-        echo "echo lock"
-        echo "echo \$@"
-        echo "python $pylock \$@"
-
-} > $runlock
-chmod u+x $runlock
 {
     echo "Executable = ${runlock}"
     echo "Universe   = vanilla"
@@ -52,19 +39,6 @@ chmod u+x $runlock
 runtime="$PWD/run_timeseries.sh"
 pytime="$Kozapy/batch_timeseries.py"
 {
-        echo "#!/bin/bash"
-        echo ""
-        echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
-        echo "# This file is generated from `basename $0`."
-        echo "# If you need to change, please edit `basename $0`."
-        echo ""
-        echo "echo timeseries"
-        echo "echo \$@"
-        echo "python $pytime \$@"
-
-} > $runtime
-chmod u+x $runtime
-{
     echo "Executable = ${runtime}"
     echo "Universe   = vanilla"
     echo "Notification = never"
@@ -79,19 +53,6 @@ chmod u+x $runtime
 
 runspectrum="$PWD/run_spectrum.sh"
 pyspectrum="$Kozapy/batch_spectrum.py"
-{
-        echo "#!/bin/bash"
-        echo ""
-        echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
-        echo "# This file is generated from `basename $0`."
-        echo "# If you need to change, please edit `basename $0`."
-        echo ""
-        echo "echo spectrum"
-        echo "echo \$@"
-        echo "python $pyspectrum \$@"
-
-} > $runspectrum
-chmod u+x $runspectrum
 {
     echo "Executable = ${runspectrum}"
     echo "Universe   = vanilla"
@@ -108,19 +69,6 @@ chmod u+x $runspectrum
 runspectrogram="$PWD/run_whitening_spectrogram.sh"
 pyspectrogram="$Kozapy/batch_whitening_spectrogram.py"
 {
-        echo "#!/bin/bash"
-        echo ""
-        echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
-        echo "# This file is generated from `basename $0`."
-        echo "# If you need to change, please edit `basename $0`."
-        echo ""
-        echo "echo whitening_spectrogram"
-        echo "echo \$@"
-        echo "python $pyspectrogram \$@"
-
-} > $runspectrogram
-chmod u+x $runspectrogram
-{
     echo "Executable = ${runspectrogram}"
     echo "Universe   = vanilla"
     echo "Notification = never"
@@ -135,19 +83,6 @@ chmod u+x $runspectrogram
 
 runcoherence="$PWD/run_coherencegram.sh"
 pycoherence="$Kozapy/batch_coherencegram.py"
-{
-        echo "#!/bin/bash"
-        echo ""
-        echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
-        echo "# This file is generated from `basename $0`."
-        echo "# If you need to change, please edit `basename $0`."
-        echo ""
-        echo "echo coherencegram"
-        echo "echo \$@"
-        echo "python $pycoherence \$@"
-
-} > $runcoherence
-chmod u+x $runcoherence
 {
     echo "Executable = ${runcoherence}"
     echo "Universe   = vanilla"
@@ -164,24 +99,11 @@ chmod u+x $runcoherence
 runqtrans="$PWD/run_qtransform.sh"
 pyqtrans="$Kozapy/batch_qtransform.py"
 {
-        echo "#!/bin/bash"
-        echo ""
-        echo "# PLEASE NEVER CHANGE THIS FILE BY HAND."
-        echo "# This file is generated from `basename $0`."
-        echo "# If you need to change, please edit `basename $0`."
-        echo ""
-        echo "echo qtransform"
-        echo "echo \$@"
-        echo "python $pyqtrans \$@"
-
-} > $runqtrans
-chmod u+x $runqtrans
-{
     echo "Executable = ${runqtrans}"
     echo "Universe   = vanilla"
     echo "Notification = never"
     # if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.                                                                             
-    echo "request_memory = 8 GB"
+    echo "request_memory = 16 GB"
     echo "Getenv  = True            # the environment variables will be copied."
     echo ""
     echo "should_transfer_files = YES"
@@ -209,78 +131,313 @@ for log in ${list[@]}; do
 #    fi
     if [ "`echo $argument | grep 124706 `" ]; then
 	continue
+    elif [ "$argument" = "" ]; then
+	continue
+    elif [ "`echo $argument | grep REFL_PDA1_DC_OUT_DQ `" ]; then
+	argument=`echo $argument | sed s/REFL_PDA1_DC_OUT_DQ/REFL_PDA1_DC_IN1_DQ/g`
     elif [ "`echo $argument | grep SUM_OUT_DQ `" ]; then
-	echo $argument | sed s/SUM_OUT_DQ/SUM_OUTPUT/g
+	argument=`echo $argument | sed s/SUM_OUT_DQ/SUM_OUTPUT/g`
+    elif [ "`echo $argument | grep _OUTPUT `" ]; then
+	if [ "`echo $plottype | grep qtransform `" ]; then
+	    continue
+	elif [ "`echo $plottype | grep coherence `" ]; then
+	    continue
+	fi
+    elif [ "`echo $argument | grep DC_OUT_DQ `" ]; then
+	if [ "`echo $plottype | grep qtransform `" ]; then
+	    continue
+	elif [ "`echo $plottype | grep coherence `" ]; then
+	    continue
+	fi
     elif [ "`echo $argument | grep LEN_PIT_OUT_DQ `" ]; then
-	echo $argument | sed s/LEN_PIT_OUT_DQ/LEN_PIT_OUTPUT/g
+	argument=`echo $argument | sed s/LEN_PIT_OUT_DQ/LEN_PIT_OUTPUT/g`
     elif [ "`echo $argument | grep 1247040413.81  `" ]; then
-	echo $argument | sed s/1247040413.81/1247040414/g
-	echo $argument | sed s/1247040419.81/1247040420/g
+	argument=`echo $argument | sed s/1247040413.81/1247040414/g`
+	argument=`echo $argument | sed s/1247040419.81/1247040420/g`
     elif [ "`echo $argument | grep 1247043589.12  `" ]; then
-	echo $argument | sed s/1247043589.12/1247043589.1/g
-	echo $argument | sed s/1247043648.12/1247043648.1/g
+	argument=`echo $argument | sed s/1247043589.12/1247043589.1/g`
+	argument=`echo $argument | sed s/1247043648.12/1247043648.1/g`
     elif [ "`echo $argument | grep 1247029018.81  `" ]; then
-	echo $argument | sed s/1247029018.81/1247029018.8/g
-	echo $argument | sed s/1247029024.81/1247029024.8/g
+	argument=`echo $argument | sed s/1247029018.81/1247029018.8/g`
+	argument=`echo $argument | sed s/1247029024.81/1247029024.8/g`
     elif [ "`echo $argument | grep 1247039003.94  `" ]; then
-	echo $argument | sed s/1247039003.94/1247039004/g
-	echo $argument | sed s/1247039009.94/1247039010/g
+	argument=`echo $argument | sed s/1247039003.94/1247039004/g`
+	argument=`echo $argument | sed s/1247039009.94/1247039010/g`
     elif [ "`echo $argument | grep 1247037370.88  `" ]; then
-	echo $argument | sed s/1247037370.88/1247037370.9/g
-	echo $argument | sed s/1247037376.88/1247037376.9/g
+	argument=`echo $argument | sed s/1247037370.88/1247037371/g`
+	argument=`echo $argument | sed s/1247037376.88/1247037377/g`
+    elif [ "`echo $argument | grep 1247037370.9  `" ]; then
+	argument=`echo $argument | sed s/1247037370.9/1247037371/g`
+	argument=`echo $argument | sed s/1247037376.9/1247037371/g`
     elif [ "`echo $argument | grep 1247035837.53  `" ]; then
-	echo $argument | sed s/837.53/837.5/g
-	echo $argument | sed s/843.53/843.5/g
+	argument=`echo $argument | sed s/837.53/837.5/g`
+	argument=`echo $argument | sed s/843.53/843.5/g`
 
     elif [ "`echo $argument | grep 1247035707.19  `" ]; then
-	echo $argument | sed s/707.19/707.2/g
-	echo $argument | sed s/713.19/713.2/g
+	argument=`echo $argument | sed s/707.19/707/g`
+	argument=`echo $argument | sed s/713.19/713/g`
+    elif [ "`echo $argument | grep 1247035707.2  `" ]; then
+	argument=`echo $argument | sed s/707.2/707/g`
+	argument=`echo $argument | sed s/713.2/713/g`
 
     elif [ "`echo $argument | grep 1247043645.34  `" ]; then
-	echo $argument | sed s/645.34/645.3/g
-	echo $argument | sed s/651.34/651.3/g
+	argument=`echo $argument | sed s/645.34/645/g`
+	argument=`echo $argument | sed s/651.34/651/g`
+    elif [ "`echo $argument | grep 1247043645.3  `" ]; then
+	argument=`echo $argument | sed s/645.3/645/g`
+	argument=`echo $argument | sed s/651.3/651/g`
 
     elif [ "`echo $argument | grep 1247041989.81  `" ]; then
-	echo $argument | sed s/989.81/989.8/g
-	echo $argument | sed s/995.81/995.8/g
+	argument=`echo $argument | sed s/989.81/989.8/g`
+	argument=`echo $argument | sed s/995.81/995.8/g`
 
     elif [ "`echo $argument | grep 1247028657.91  `" ]; then
-	echo $argument | sed s/657.91/657.9/g
-	echo $argument | sed s/663.91/663.9/g
+	argument=`echo $argument | sed s/657.91/657.9/g`
+	argument=`echo $argument | sed s/663.91/663.9/g`
 
     elif [ "`echo $argument | grep 1247039480.38  `" ]; then
-	echo $argument | sed s/480.38/480.4/g
-	echo $argument | sed s/486.38/486.4/g
+	argument=`echo $argument | sed s/480.38/480.4/g`
+	argument=`echo $argument | sed s/486.38/486.4/g`
 
     elif [ "`echo $argument | grep 1247037728.81  `" ]; then
-	echo $argument | sed s/728.81/728.8/g
-	echo $argument | sed s/734.81/734.8/g
+	argument=`echo $argument | sed s/728.81/728.8/g`
+	argument=`echo $argument | sed s/734.81/734.8/g`
 
     elif [ "`echo $argument | grep 1247024289.25  `" ]; then
-	echo $argument | sed s/289.25/289.3/g
-	echo $argument | sed s/295.25/295.3/g
+	argument=`echo $argument | sed s/289.25/289.3/g`
+	argument=`echo $argument | sed s/295.25/295.3/g`
 
     elif [ "`echo $argument | grep 1247038793.69  `" ]; then
-	echo $argument | sed s/793.69/793.7/g
-	echo $argument | sed s/799.69/799.7/g
+	argument=`echo $argument | sed s/793.69/793.7/g`
+	argument=`echo $argument | sed s/799.69/799.7/g`
 
     elif [ "`echo $argument | grep 1247033220.44  `" ]; then
-	echo $argument | sed s/220.44/220.4/g
-	echo $argument | sed s/226.44/226.4/g
+	argument=`echo $argument | sed s/220.44/220.4/g`
+	argument=`echo $argument | sed s/226.44/226.4/g`
     elif [ "`echo $argument | grep 1247037644.99  `" ]; then
-	echo $argument | sed s/644.99/645/g
-	echo $argument | sed s/650.99/651/g
+	argument=`echo $argument | sed s/644.99/645/g`
+	argument=`echo $argument | sed s/650.99/651/g`
     elif [ "`echo $argument | grep 1247029587.13  `" ]; then
-	echo $argument | sed s/587.13/587.1/g
-	echo $argument | sed s/593.13/593.1/g
+	argument=`echo $argument | sed s/587.13/587.1/g`
+	argument=`echo $argument | sed s/593.13/593.1/g`
     elif [ "`echo $argument | grep 1247031212.56  `" ]; then
-	echo $argument | sed s/212.56/212.6/g
-	echo $argument | sed s/218.56/218.6/g
+	argument=`echo $argument | sed s/212.56/212.6/g`
+	argument=`echo $argument | sed s/218.56/218.6/g`
     elif [ "`echo $argument | grep 1247037741.78  `" ]; then
-	echo $argument | sed s/741.78/741.8/g
-	echo $argument | sed s/747.78/747.8/g
-    elif [ "`echo $argument | grep 1247035707.19  `" ]; then
-	echo $argument | sed s/707.19/707.2/g
+	argument=`echo $argument | sed s/741.78/741.8/g`
+	argument=`echo $argument | sed s/747.78/747.8/g`
+    elif [ "`echo $argument | grep 1247043486.12  `" ]; then
+	argument=`echo $argument | sed s/43486.12/43486.1/g`
+	argument=`echo $argument | sed s/43520.12/43520.1/g`
+    elif [ "`echo $argument | grep 1247043486.1  `" ]; then
+	argument=`echo $argument | sed s/43486.1/43486.1/g`
+	argument=`echo $argument | sed s/43520.12/43520.1/g`
+    elif [ "`echo $argument | grep 1247039038.12  `" ]; then
+	argument=`echo $argument | sed s/038.12/038/g`
+	argument=`echo $argument | sed s/044.12/044/g`
+    elif [ "`echo $argument | grep 1247039038.1  `" ]; then
+	argument=`echo $argument | sed s/038.1/038/g`
+	argument=`echo $argument | sed s/044.1/044/g`
+    elif [ "`echo $argument | grep 1247043493.12  `" ]; then
+	argument=`echo $argument | sed s/493.12/493/g`
+	argument=`echo $argument | sed s/552.12/552/g`
+    elif [ "`echo $argument | grep 1247043493.1  `" ]; then
+	argument=`echo $argument | sed s/493.1/493/g`
+	argument=`echo $argument | sed s/552.12/552/g`
+    elif [ "`echo $argument | grep 1247043479.94  `" ]; then
+	argument=`echo $argument | sed s/479.94/480/g`
+	argument=`echo $argument | sed s/547.94/548/g`
+    elif [ "`echo $argument | grep 1247043479.9  `" ]; then
+	argument=`echo $argument | sed s/479.9/480/g`
+	argument=`echo $argument | sed s/547.9/548/g`
+    elif [ "`echo $argument | grep 1247043500.88  `" ]; then
+	argument=`echo $argument | sed s/500.88/501/g`
+	argument=`echo $argument | sed s/534.88/535/g`
+    elif [ "`echo $argument | grep 1247043500.9  `" ]; then
+	argument=`echo $argument | sed s/500.9/501/g`
+	argument=`echo $argument | sed s/534.9/535/g`
+    elif [ "`echo $argument | grep 1247043486.31  `" ]; then
+	argument=`echo $argument | sed s/486.31/486.3/g`
+	argument=`echo $argument | sed s/494.31/494.3/g`
+    elif [ "`echo $argument | grep 1247035514.62  `" ]; then
+	argument=`echo $argument | sed s/514.62/514.6/g`
+	argument=`echo $argument | sed s/520.62/520.6/g`
+    elif [ "`echo $argument | grep 1247041531.81  `" ]; then
+	argument=`echo $argument | sed s/531.81/531.8/g`
+	argument=`echo $argument | sed s/537.81/537.8/g`
+    elif [ "`echo $argument | grep 1247035516.62  `" ]; then
+	argument=`echo $argument | sed s/516.62/516.6/g`
+	argument=`echo $argument | sed s/526.62/526.6/g`
+    elif [ "`echo $argument | grep 1247042451.12  `" ]; then
+	argument=`echo $argument | sed s/451.12/451.1/g`
+	argument=`echo $argument | sed s/465.12/465.1/g`
+    elif [ "`echo $argument | grep 1247029849.56  `" ]; then
+	argument=`echo $argument | sed s/849.56/849.6/g`
+	argument=`echo $argument | sed s/855.56/855.6/g`
+    elif [ "`echo $argument | grep 1247043456.31  `" ]; then
+	argument=`echo $argument | sed s/456.31/456.3/g`
+	argument=`echo $argument | sed s/462.31/462.3/g`
+    elif [ "`echo $argument | grep 1247043648.12  `" ]; then
+	argument=`echo $argument | sed s/648.12/648.1/g`
+	argument=`echo $argument | sed s/654.12/654.1/g`
+    elif [ "`echo $argument | grep 1247043491.62  `" ]; then
+	argument=`echo $argument | sed s/491.62/491.6/g`
+	argument=`echo $argument | sed s/507.62/507.6/g`
+    elif [ "`echo $argument | grep 1247029571.12  `" ]; then
+	argument=`echo $argument | sed s/571.12/571.1/g`
+	argument=`echo $argument | sed s/577.12/577.1/g`
+    elif [ "`echo $argument | grep 1247030870.62  `" ]; then
+	argument=`echo $argument | sed s/870.62/870.6/g`
+	argument=`echo $argument | sed s/876.62/876.6/g`
+    elif [ "`echo $argument | grep 1247043630.12  `" ]; then
+	argument=`echo $argument | sed s/630.12/630.1/g`
+	argument=`echo $argument | sed s/636.12/636.1/g`
+    elif [ "`echo $argument | grep 1247043597.62  `" ]; then
+	argument=`echo $argument | sed s/597.62/597.6/g`
+	argument=`echo $argument | sed s/603.62/603.6/g`
+    elif [ "`echo $argument | grep 1247043599.12  `" ]; then
+	argument=`echo $argument | sed s/599.12/599.1/g`
+	argument=`echo $argument | sed s/659.12/659.1/g`
+    elif [ "`echo $argument | grep 1247043648.12  `" ]; then
+	argument=`echo $argument | sed s/648.12/648.1/g`
+	argument=`echo $argument | sed s/654.12/654.1/g`
+    elif [ "`echo $argument | grep 1247043469.56  `" ]; then
+	argument=`echo $argument | sed s/469.56/469.6/g`
+	argument=`echo $argument | sed s/475.56/475.6/g`
+    elif [ "`echo $argument | grep 1247031783.06  `" ]; then
+	argument=`echo $argument | sed s/783.06/783.1/g`
+	argument=`echo $argument | sed s/789.06/789.1/g`
+    elif [ "`echo $argument | grep 1247035516.62  `" ]; then
+	argument=`echo $argument | sed s/516.62/516.6/g`
+	argument=`echo $argument | sed s/526.62/526.6/g`
+    elif [ "`echo $argument | grep 1247035475.06  `" ]; then
+	argument=`echo $argument | sed s/475.06/475.1/g`
+	argument=`echo $argument | sed s/481.06/481.1/g`
+    elif [ "`echo $argument | grep 1247034176.12  `" ]; then
+	argument=`echo $argument | sed s/176.12/176.1/g`
+	argument=`echo $argument | sed s/190.12/190.1/g`
+    elif [ "`echo $argument | grep 1247030855.06  `" ]; then
+	argument=`echo $argument | sed s/855.06/855.1/g`
+	argument=`echo $argument | sed s/861.06/861.1/g`
+    elif [ "`echo $argument | grep 1247035514.62  `" ]; then
+	argument=`echo $argument | sed s/514.62/514.6/g`
+	argument=`echo $argument | sed s/528.62/528.6/g`
+    elif [ "`echo $argument | grep 1247042777.62  `" ]; then
+	argument=`echo $argument | sed s/777.62/777.6/g`
+	argument=`echo $argument | sed s/783.62/783.6/g`
+    elif [ "`echo $argument | grep 1247042398.12  `" ]; then
+	argument=`echo $argument | sed s/398.12/398.1/g`
+	argument=`echo $argument | sed s/404.12/404.1/g`
+    elif [ "`echo $argument | grep 1247035516.62  `" ]; then
+	argument=`echo $argument | sed s/516.62/516.6/g`
+	argument=`echo $argument | sed s/526.62/526.6/g`
+    elif [ "`echo $argument | grep 1247043626.19  `" ]; then
+	argument=`echo $argument | sed s/616.19/616.2/g`
+	argument=`echo $argument | sed s/648.19/648.2/g`
+    elif [ "`echo $argument | grep 1247043518.38  `" ]; then
+	argument=`echo $argument | sed s/518.38/518.4/g`
+	argument=`echo $argument | sed s/532.38/532.4/g`
+    elif [ "`echo $argument | grep 1247042266.27  `" ]; then
+	argument=`echo $argument | sed s/266.27/266.3/g`
+	argument=`echo $argument | sed s/272.27/272.3/g`
+    elif [ "`echo $argument | grep 1247040841.38  `" ]; then
+	argument=`echo $argument | sed s/841.38/841.4/g`
+	argument=`echo $argument | sed s/847.38/847.4/g`
+    elif [ "`echo $argument | grep 1247043503.12  `" ]; then
+	argument=`echo $argument | sed s/503.12/503.1/g`
+	argument=`echo $argument | sed s/563.12/563.1/g`
+    elif [ "`echo $argument | grep 1247043515.25  `" ]; then
+	argument=`echo $argument | sed s/515.25/525.3/g`
+	argument=`echo $argument | sed s/575.25/575.3/g`
+    elif [ "`echo $argument | grep 1247043454.88  `" ]; then
+	argument=`echo $argument | sed s/454.88/455/g`
+	argument=`echo $argument | sed s/460.88/461/g`
+    elif [ "`echo $argument | grep 1247043454.9  `" ]; then
+	argument=`echo $argument | sed s/454.9/455/g`
+	argument=`echo $argument | sed s/460.9/461/g`
+    elif [ "`echo $argument | grep 1247043493.1  `" ]; then
+	argument=`echo $argument | sed s/493.1/493/g`
+	argument=`echo $argument | sed s/573.12/573/g`
+
+    elif [ "`echo $argument | grep 1247042266.3  `" ]; then
+	argument=`echo $argument | sed s/266.3/266/g`
+	argument=`echo $argument | sed s/272.3/272/g`
+
+    elif [ "`echo $argument | grep 1247043479.9  `" ]; then
+	argument=`echo $argument | sed s/479.9/480/g`
+	argument=`echo $argument | sed s/547.9/548/g`
+
+    elif [ "`echo $argument | grep 1247029018.8  `" ]; then
+	argument=`echo $argument | sed s/018.8/019/g`
+	argument=`echo $argument | sed s/024.8/025/g`
+
+    elif [ "`echo $argument | grep 1247043518.4  `" ]; then
+	argument=`echo $argument | sed s/518.4/518/g`
+	argument=`echo $argument | sed s/532.4/532/g`
+
+    elif [ "`echo $argument | grep 1247035516.6  `" ]; then
+	argument=`echo $argument | sed s/516.6/517/g`
+	argument=`echo $argument | sed s/526.6/527/g`
+    elif [ "`echo $argument | grep 1247024656.56  `" ]; then
+	argument=`echo $argument | sed s/656.56/656.6/g`
+	argument=`echo $argument | sed s/662.56/662.6/g`
+    elif [ "`echo $argument | grep 1247025920.06  `" ]; then
+	argument=`echo $argument | sed s/920.06/920.1/g`
+	argument=`echo $argument | sed s/926.06/926.1/g`
+
+    elif [ "`echo $argument | grep 1247029421.12  `" ]; then
+	argument=`echo $argument | sed s/421.12/421.1/g`
+	argument=`echo $argument | sed s/427.12/427.1/g`
+
+    elif [ "`echo $argument | grep 1247039097.87  `" ]; then
+	argument=`echo $argument | sed s/097.87/097.9/g`
+	argument=`echo $argument | sed s/103.87/103.9/g`
+
+    elif [ "`echo $argument | grep 1247038199.81  `" ]; then
+	argument=`echo $argument | sed s/199.81/199.8/g`
+	argument=`echo $argument | sed s/205.81/205.8/g`
+
+    elif [ "`echo $argument | grep 1247043569.56  `" ]; then
+	argument=`echo $argument | sed s/569.56/569.6/g`
+	argument=`echo $argument | sed s/575.56/575.6/g`
+    elif [ "`echo $argument | grep 1247043514.34  `" ]; then
+	argument=`echo $argument | sed s/514.34/514/g`
+	argument=`echo $argument | sed s/520.34/520/g`
+    elif [ "`echo $argument | grep 1247043514.3  `" ]; then
+	argument=`echo $argument | sed s/514.3/514/g`
+	argument=`echo $argument | sed s/520.3/520/g`
+    elif [ "`echo $argument | grep 1247043454.19  `" ]; then
+	argument=`echo $argument | sed s/454.19/454/g`
+	argument=`echo $argument | sed s/460.19/460/g`
+    elif [ "`echo $argument | grep 1247043454.2  `" ]; then
+	argument=`echo $argument | sed s/454.2/454/g`
+	argument=`echo $argument | sed s/460.2/460/g`
+    elif [ "`echo $argument | grep 1247024683.56  `" ]; then
+	argument=`echo $argument | sed s/683.56/683.6/g`
+	argument=`echo $argument | sed s/689.56/689.6/g`
+
+    elif [ "`echo $argument | grep 1247043497.12  `" ]; then
+	argument=`echo $argument | sed s/497.12/497.1/g`
+	argument=`echo $argument | sed s/557.12/557.1/g`
+
+    elif [ "`echo $argument | grep 1247043558.12  `" ]; then
+	argument=`echo $argument | sed s/558.12/558.1/g`
+	argument=`echo $argument | sed s/564.12/564.1/g`
+
+    elif [ "`echo $argument | grep 1247033349.81  `" ]; then
+	argument=`echo $argument | sed s/349.81/349.8/g`
+	argument=`echo $argument | sed s/355.81/355.8/g`
+
+    elif [ "`echo $argument | grep 1247043347.62  `" ]; then
+	argument=`echo $argument | sed s/347.62/347.6/g`
+	argument=`echo $argument | sed s/359.62/359.6/g`
+    elif [ "`echo $argument | grep 1247033294.122  `" ]; then
+	argument=`echo $argument | sed s/294.12/294.1/g`
+	argument=`echo $argument | sed s/300.12/300.1/g`
+    elif [ "`echo $argument | grep 1247035473.62  `" ]; then
+	argument=`echo $argument | sed s/473.62/473.6/g`
+	argument=`echo $argument | sed s/479.62/479.6/g`
+
     fi
 
 
@@ -316,7 +473,7 @@ for log in ${list[@]}; do
 	echo "Warning !!! plot type is unknown." $plottype
     fi
 
-    echo $tmpsdf
+    #echo $tmpsdf
 
     outls=`ls -s ${output}`
     badls="0 ${output}"
@@ -324,7 +481,7 @@ for log in ${list[@]}; do
 
     if test "$outls" = "$badls" ;then
 	echo $output " is broken !"
-	echo $log
+	#echo $log
 
 	{
 	    echo "# $log"
@@ -338,8 +495,10 @@ for log in ${list[@]}; do
 
     elif test "$ok" = "$checkword" ;then
 	if [ -e ${output} ];then
+	    :
 	    echo $log " successfully finished."
 	else
+	    :
 	    echo $log " is not found !"
 #	{
 #	    echo "Arguments = $argument "
@@ -364,6 +523,7 @@ for log in ${list[@]}; do
 
     fi
 done 
+
 
 condor_submit $outsdftime
 condor_submit $outsdfspectrum

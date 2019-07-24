@@ -261,6 +261,10 @@ do
     # Write a file for condor submission.
     
     {
+	echo "PWD = $Fp(SUBMIT_FILE)"
+	echo "transfer_input_files = rm_if_empty.sh"
+	echo '+PostCmd = "rm_if_empty.sh"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
 	echo "Executable = ${runtime}"
 	echo "Universe   = vanilla"
 	echo "Notification = never"
@@ -271,6 +275,10 @@ do
 	echo "should_transfer_files = YES"
 	echo "when_to_transfer_output = ON_EXIT"
 	echo ""
+	echo "Log          = log/$date/log_${nametime}.txt"
+	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+
     } > job_${nametime}.sdf
 
     # for spectrum series.
@@ -297,6 +305,10 @@ do
     # Write a file for condor submission.
     
     {
+	echo "PWD = $Fp(SUBMIT_FILE)"
+	echo "transfer_input_files = rm_if_empty.sh"
+	echo '+PostCmd = "rm_if_empty.sh"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
 	echo "Executable = ${runspectrum}"
 	echo "Universe   = vanilla"
 	echo "Notification = never"
@@ -307,6 +319,10 @@ do
 	echo "should_transfer_files = YES"
 	echo "when_to_transfer_output = ON_EXIT"
 	echo ""
+	echo "Log          = log/$date/log_${namespectrum}.txt"
+	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+
     } > job_${namespectrum}.sdf
 
     # for spectrogram series.
@@ -333,6 +349,10 @@ do
     # Write a file for condor submission.
     
     {
+	echo "PWD = $Fp(SUBMIT_FILE)"
+	echo "transfer_input_files = rm_if_empty.sh"
+	echo '+PostCmd = "rm_if_empty.sh"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
 	echo "Executable = ${runspectrogram}"
 	echo "Universe   = vanilla"
 	echo "Notification = never"
@@ -343,6 +363,9 @@ do
 	echo "should_transfer_files = YES"
 	echo "when_to_transfer_output = ON_EXIT"
 	echo ""
+	echo "Log          = log/$date/log_${namespectrogram}.txt"
+	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
     } > job_${namespectrogram}.sdf
 
     # for coherencegram series.
@@ -369,6 +392,10 @@ do
     # Write a file for condor submission.
     
     {
+	echo "PWD = $Fp(SUBMIT_FILE)"
+	echo "transfer_input_files = rm_if_empty.sh"
+	echo '+PostCmd = "rm_if_empty.sh"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
 	echo "Executable = ${runcoherencegram}"
 	echo "Universe   = vanilla"
 	echo "Notification = never"
@@ -379,6 +406,9 @@ do
 	echo "should_transfer_files = YES"
 	echo "when_to_transfer_output = ON_EXIT"
 	echo ""
+	echo "Log          = log/$date/log_${namecoherencegram}.txt"
+	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
     } > job_${namecoherencegram}.sdf
 
     # for qtransform.
@@ -405,6 +435,10 @@ do
     # Write a file for condor submission.
     
     {
+	echo "PWD = $Fp(SUBMIT_FILE)"
+	echo "transfer_input_files = rm_if_empty.sh"
+	echo '+PostCmd = "rm_if_empty.sh"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
 	echo "Executable = ${runqtransform}"
 	echo "Universe   = vanilla"
 	echo "Notification = never"
@@ -415,6 +449,10 @@ do
 	echo "should_transfer_files = YES"
 	echo "when_to_transfer_output = ON_EXIT"
 	echo ""
+	echo "Log          = log/$date/log_${nameqtransform}.txt"
+	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+
     } > job_${nameqtransform}.sdf
 
     # for lock segmnet.
@@ -441,6 +479,10 @@ do
     # Write a file for condor submission.
     
     {
+	echo "PWD = $Fp(SUBMIT_FILE)"
+	echo "transfer_input_files = rm_if_empty.sh"
+	echo '+PostCmd = "rm_if_empty.sh"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
 	echo "Executable = ${runlock}"
 	echo "Universe   = vanilla"
 	echo "Notification = never"
@@ -451,6 +493,9 @@ do
 	echo "should_transfer_files = YES"
 	echo "when_to_transfer_output = ON_EXIT"
 	echo ""
+	echo "Log          = log/$date/log_${namelock}.txt"
+	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
     } > job_${namelock}.sdf
 
     {
@@ -459,9 +504,6 @@ do
 	# for option detail.
 	
 	echo "Arguments = -s $gpsstart -e $gpsend -o ${outdir} -i $channel -t $gpstime -d $max_duration "
-	echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
-	echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
-	echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	echo "Queue"
     } >> job_${namelock}.sdf
 	
@@ -505,9 +547,6 @@ do
 	    # for option detail.
 	    
 	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t '${chlist[0]}_Timeseries' --nolegend"
-	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
-	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
-	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 	} >> job_${nametime}.sdf
 	
@@ -518,9 +557,6 @@ do
 	    # for option detail.
 	    
 	    echo "Arguments = -c ${chlist[@]} -s ${gpsstarts30[@]} -e ${gpsends30[@]} -o ${outdir} -i $channel -t time -f ${fft30} ${optionspectrum}"
-	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
-	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
-	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 	} >> job_${namespectrum}.sdf
 
@@ -531,15 +567,9 @@ do
 	    # for option detail.
 	    
 	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optionspectrogram}"
-	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
-	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
-	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 
 	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optionspectrogram} -w"
-	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
-	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
-	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 
 
@@ -552,9 +582,6 @@ do
 	    # for option detail.
 	    
 	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optioncoherencegram}"
-	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
-	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
-	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 
 #	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channeldur -f ${duration} --stride ${durstride} ${optioncoherencegram}"
@@ -571,9 +598,6 @@ do
 	    # for option detail.
 	    
 	    echo "Arguments = -c ${chlist[@]} -s ${qgpsstart} -e ${qgpsend} -o ${outdir} -i $channel ${optionqtransform}"
-	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
-	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
-	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 	    echo "Queue"
 
 	} >> job_${nameqtransform}.sdf
