@@ -278,7 +278,7 @@ do
 	echo "Log          = log/$date/log_${nametime}.txt"
 	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
 	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
-
+	echo ""
     } > job_${nametime}.sdf
 
     # for spectrum series.
@@ -322,7 +322,7 @@ do
 	echo "Log          = log/$date/log_${namespectrum}.txt"
 	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
 	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
-
+	echo ""
     } > job_${namespectrum}.sdf
 
     # for spectrogram series.
@@ -366,6 +366,7 @@ do
 	echo "Log          = log/$date/log_${namespectrogram}.txt"
 	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
 	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+	echo ""
     } > job_${namespectrogram}.sdf
 
     # for coherencegram series.
@@ -409,6 +410,7 @@ do
 	echo "Log          = log/$date/log_${namecoherencegram}.txt"
 	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
 	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+	echo ""
     } > job_${namecoherencegram}.sdf
 
     # for qtransform.
@@ -452,7 +454,7 @@ do
 	echo "Log          = log/$date/log_${nameqtransform}.txt"
 	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
 	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
-
+	echo ""
     } > job_${nameqtransform}.sdf
 
     # for lock segmnet.
@@ -496,6 +498,7 @@ do
 	echo "Log          = log/$date/log_${namelock}.txt"
 	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
 	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+	echo ""
     } > job_${namelock}.sdf
 
     {
@@ -546,7 +549,7 @@ do
 	    #  $ python batch_timeseries.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t '${chlist[0]}_Timeseries' --nolegend"
+	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t '${chlist[0]}_Timeseries' --nolegend --dpi 50"
 	    echo "Queue"
 	} >> job_${nametime}.sdf
 	
@@ -556,7 +559,7 @@ do
 	    #  $ python batch_spectrum.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s ${gpsstarts30[@]} -e ${gpsends30[@]} -o ${outdir} -i $channel -t time -f ${fft30} ${optionspectrum}"
+	    echo "Arguments = -c ${chlist[@]} -s ${gpsstarts30[@]} -e ${gpsends30[@]} -o ${outdir} -i $channel -t time -f ${fft30} ${optionspectrum} --dpi 50"
 	    echo "Queue"
 	} >> job_${namespectrum}.sdf
 
@@ -566,7 +569,7 @@ do
 	    #  $ python batch_ehitening_spectrogram.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optionspectrogram}"
+	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optionspectrogram} --dpi 50"
 	    echo "Queue"
 
 	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optionspectrogram} -w"
@@ -581,7 +584,7 @@ do
 	    #  $ python batch_coherencegram.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optioncoherencegram}"
+	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optioncoherencegram} --dpi 50"
 	    echo "Queue"
 
 #	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channeldur -f ${duration} --stride ${durstride} ${optioncoherencegram}"
@@ -597,7 +600,7 @@ do
 	    #  $ python batch_coherencegram.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s ${qgpsstart} -e ${qgpsend} -o ${outdir} -i $channel ${optionqtransform}"
+	    echo "Arguments = -c ${chlist[@]} -s ${qgpsstart} -e ${qgpsend} -o ${outdir} -i $channel ${optionqtransform} --dpi 50"
 	    echo "Queue"
 
 	} >> job_${nameqtransform}.sdf
