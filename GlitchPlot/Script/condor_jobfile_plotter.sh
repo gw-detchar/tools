@@ -90,13 +90,19 @@ do
     if [ "$(echo "$tmp < 0" | bc)" -eq 1 ]; then
 	tmp2=`echo "scale=0; 0 - ${tmp} "| bc | awk '{printf("%d\n",$1 + 1)}'`
 	fft=${sampling[$tmp2]}
-	while [ "$(echo "$fft < " | bc)" -eq 1 ]
+	while [ "$(echo "scale=5; $fft < 1. / ${frequency_snr}" | bc)" -eq 1 ]
 	do
-
+	    tmp2=$(($tmp2 - 1))
+	    fft=${sampling[$tmp2]}
 	done
     else
 	tmp2=`echo "scale=0; $tmp "| bc | awk '{printf("%d\n",$1 )}'`
 	fft=`awk "BEGIN {print 2**$tmp2}"`
+	while [ "$(echo "scale=5; $fft < 1. / ${frequency_snr}" | bc)" -eq 1 ]
+	do
+	    tmp2=$(($tmp2 + 1))
+	    fft=`awk "BEGIN {print 2**$tmp2}"`
+	done
     fi
 
     # stride is minimum of a and b.
@@ -621,7 +627,7 @@ do
     done
     # end of channel list
     # Submit job into condor.
-
+    exit
     echo job_${nametime}.sdf
     condor_submit job_${nametime}.sdf
     echo job_${namespectrum}.sdf
