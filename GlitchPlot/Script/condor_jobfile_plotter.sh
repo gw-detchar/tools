@@ -604,7 +604,7 @@ do
 	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optionspectrogram} --dpi 50"
 	    echo "Queue"
 
-	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optionspectrogram} -w"
+	    echo "Arguments = -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optionspectrogram} -w --dpi 50"
 	    echo "Queue"
 
 

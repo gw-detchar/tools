@@ -8,7 +8,7 @@ date=20190713
 Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
 #fi
 
-list=( `find log/20190713/*.out  -newermt "2019-07-31 15:00:00"` )
+list=( `find log/20190713/out_87810.*  -newermt "2019-07-31 15:00:00"` )
 #list=( `find log/20190608/out_45660* -newermt "2019-06-29 08:45:00"` )
 
 
@@ -24,6 +24,10 @@ outsdflock=retry_lock.sdf
 runlock="$PWD/run_lock.sh"
 pylock="$Kozapy/batch_locksegment.py"
 {
+    echo "PWD = $Fp(SUBMIT_FILE)"
+    echo "transfer_input_files = rm_if_empty.sh"
+    echo '+PostCmd = "rm_if_empty.sh"'
+    echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
     echo "Executable = ${runlock}"
     echo "Universe   = vanilla"
     echo "Notification = never"
@@ -34,11 +38,20 @@ pylock="$Kozapy/batch_locksegment.py"
     echo "should_transfer_files = YES"
     echo "when_to_transfer_output = ON_EXIT"
     echo ""
+    echo "Log          = log/$date/log_lock.txt"
+    echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+    echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+    echo ""
+
 } > $outsdflock
 
 runtime="$PWD/run_timeseries.sh"
 pytime="$Kozapy/batch_timeseries.py"
 {
+    echo "PWD = $Fp(SUBMIT_FILE)"
+    echo "transfer_input_files = rm_if_empty.sh"
+    echo '+PostCmd = "rm_if_empty.sh"'
+    echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
     echo "Executable = ${runtime}"
     echo "Universe   = vanilla"
     echo "Notification = never"
@@ -49,11 +62,19 @@ pytime="$Kozapy/batch_timeseries.py"
     echo "should_transfer_files = YES"
     echo "when_to_transfer_output = ON_EXIT"
     echo ""
+    echo "Log          = log/$date/log_timeseries.txt"
+    echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+    echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+    echo ""
 } > $outsdftime
 
 runspectrum="$PWD/run_spectrum.sh"
 pyspectrum="$Kozapy/batch_spectrum.py"
 {
+    echo "PWD = $Fp(SUBMIT_FILE)"
+    echo "transfer_input_files = rm_if_empty.sh"
+    echo '+PostCmd = "rm_if_empty.sh"'
+    echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
     echo "Executable = ${runspectrum}"
     echo "Universe   = vanilla"
     echo "Notification = never"
@@ -64,11 +85,19 @@ pyspectrum="$Kozapy/batch_spectrum.py"
     echo "should_transfer_files = YES"
     echo "when_to_transfer_output = ON_EXIT"
     echo ""
+    echo "Log          = log/$date/log_spectrum.txt"
+    echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+    echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+    echo ""
 } > $outsdfspectrum
 
 runspectrogram="$PWD/run_whitening_spectrogram.sh"
 pyspectrogram="$Kozapy/batch_whitening_spectrogram.py"
 {
+    echo "PWD = $Fp(SUBMIT_FILE)"
+    echo "transfer_input_files = rm_if_empty.sh"
+    echo '+PostCmd = "rm_if_empty.sh"'
+    echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
     echo "Executable = ${runspectrogram}"
     echo "Universe   = vanilla"
     echo "Notification = never"
@@ -79,11 +108,19 @@ pyspectrogram="$Kozapy/batch_whitening_spectrogram.py"
     echo "should_transfer_files = YES"
     echo "when_to_transfer_output = ON_EXIT"
     echo ""
+    echo "Log          = log/$date/log_spectrogram.txt"
+    echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+    echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+    echo ""
 } > $outsdfspectrogram
 
 runcoherence="$PWD/run_coherencegram.sh"
 pycoherence="$Kozapy/batch_coherencegram.py"
 {
+    echo "PWD = $Fp(SUBMIT_FILE)"
+    echo "transfer_input_files = rm_if_empty.sh"
+    echo '+PostCmd = "rm_if_empty.sh"'
+    echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
     echo "Executable = ${runcoherence}"
     echo "Universe   = vanilla"
     echo "Notification = never"
@@ -94,11 +131,19 @@ pycoherence="$Kozapy/batch_coherencegram.py"
     echo "should_transfer_files = YES"
     echo "when_to_transfer_output = ON_EXIT"
     echo ""
+    echo "Log          = log/$date/log_coherencegram.txt"
+    echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+    echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+    echo ""
 } > $outsdfcoherence
 
 runqtrans="$PWD/run_qtransform.sh"
 pyqtrans="$Kozapy/batch_qtransform.py"
 {
+    echo "PWD = $Fp(SUBMIT_FILE)"
+    echo "transfer_input_files = rm_if_empty.sh"
+    echo '+PostCmd = "rm_if_empty.sh"'
+    echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
     echo "Executable = ${runqtrans}"
     echo "Universe   = vanilla"
     echo "Notification = never"
@@ -108,6 +153,10 @@ pyqtrans="$Kozapy/batch_qtransform.py"
     echo ""
     echo "should_transfer_files = YES"
     echo "when_to_transfer_output = ON_EXIT"
+    echo ""
+    echo "Log          = log/$date/log_qtransform.txt"
+    echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+    echo "Error       = log/$date/\$(Cluster).\$(Process).err"
     echo ""
 } > $outsdfqtrans
 
@@ -489,9 +538,6 @@ for log in ${list[@]}; do
 	{
 	    echo "# $log"
 	    echo "Arguments = $argument "
-	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
-            echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
-            echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
             echo "Queue"
 	    
 	} >> $tmpsdf
@@ -518,9 +564,6 @@ for log in ${list[@]}; do
 	{
 	    echo "# $log"
 	    echo "Arguments = $argument "
-	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
-            echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
-            echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
             echo "Queue"
 	} >> $tmpsdf
 
