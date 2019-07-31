@@ -624,10 +624,10 @@ do
 
 #	done
 	# end of gps time list
+
     done
     # end of channel list
     # Submit job into condor.
-    exit
     echo job_${nametime}.sdf
     condor_submit job_${nametime}.sdf
     echo job_${namespectrum}.sdf

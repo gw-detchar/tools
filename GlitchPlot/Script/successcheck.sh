@@ -8,7 +8,7 @@ date=20190713
 Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
 #fi
 
-list=( `find log/20190713/out_1732462.*  -newermt "2019-07-18 11:00:00"` )
+list=( `find log/20190713/*.out  -newermt "2019-07-31 15:00:00"` )
 #list=( `find log/20190608/out_45660* -newermt "2019-06-29 08:45:00"` )
 
 
@@ -129,6 +129,9 @@ for log in ${list[@]}; do
 #    elif [ "`echo $argument | grep K1:IMC-SERVO_ | grep _MON_OUT_DQ `" ]; then
 #	continue
 #    fi
+
+#    if "true"; then
+#	:
     if [ "`echo $argument | grep 124706 `" ]; then
 	continue
     elif [ "$argument" = "" ]; then
@@ -523,7 +526,6 @@ for log in ${list[@]}; do
 
     fi
 done 
-
 
 condor_submit $outsdftime
 condor_submit $outsdfspectrum
