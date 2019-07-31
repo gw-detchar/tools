@@ -274,7 +274,7 @@ do
 	echo "PWD = $Fp(SUBMIT_FILE)"
 	echo "transfer_input_files = rm_if_empty.sh"
 	echo '+PostCmd = "rm_if_empty.sh"'
-	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)/$(Output) $(PWD)/$(Error) $(PWD)/$(Log)"'
 	echo "Executable = ${runtime}"
 	echo "Universe   = vanilla"
 	echo "Notification = never"
@@ -318,7 +318,7 @@ do
 	echo "PWD = $Fp(SUBMIT_FILE)"
 	echo "transfer_input_files = rm_if_empty.sh"
 	echo '+PostCmd = "rm_if_empty.sh"'
-	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)/$(Output) $(PWD)/$(Error) $(PWD)/$(Log)"'
 	echo "Executable = ${runspectrum}"
 	echo "Universe   = vanilla"
 	echo "Notification = never"
@@ -362,7 +362,7 @@ do
 	echo "PWD = $Fp(SUBMIT_FILE)"
 	echo "transfer_input_files = rm_if_empty.sh"
 	echo '+PostCmd = "rm_if_empty.sh"'
-	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)/$(Output) $(PWD)/$(Error) $(PWD)/$(Log)"'
 	echo "Executable = ${runspectrogram}"
 	echo "Universe   = vanilla"
 	echo "Notification = never"
@@ -406,7 +406,7 @@ do
 	echo "PWD = $Fp(SUBMIT_FILE)"
 	echo "transfer_input_files = rm_if_empty.sh"
 	echo '+PostCmd = "rm_if_empty.sh"'
-	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)/$(Output) $(PWD)/$(Error) $(PWD)/$(Log)"'
 	echo "Executable = ${runcoherencegram}"
 	echo "Universe   = vanilla"
 	echo "Notification = never"
@@ -450,7 +450,7 @@ do
 	echo "PWD = $Fp(SUBMIT_FILE)"
 	echo "transfer_input_files = rm_if_empty.sh"
 	echo '+PostCmd = "rm_if_empty.sh"'
-	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)/$(Output) $(PWD)/$(Error) $(PWD)/$(Log)"'
 	echo "Executable = ${runqtransform}"
 	echo "Universe   = vanilla"
 	echo "Notification = never"
@@ -494,7 +494,7 @@ do
 	echo "PWD = $Fp(SUBMIT_FILE)"
 	echo "transfer_input_files = rm_if_empty.sh"
 	echo '+PostCmd = "rm_if_empty.sh"'
-	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)$(Output) $(PWD)$(Error) $(PWD)/$(Log)"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)/$(Output) $(PWD)/$(Error) $(PWD)/$(Log)"'
 	echo "Executable = ${runlock}"
 	echo "Universe   = vanilla"
 	echo "Notification = never"
