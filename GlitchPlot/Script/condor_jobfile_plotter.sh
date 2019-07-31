@@ -90,6 +90,10 @@ do
     if [ "$(echo "$tmp < 0" | bc)" -eq 1 ]; then
 	tmp2=`echo "scale=0; 0 - ${tmp} "| bc | awk '{printf("%d\n",$1 + 1)}'`
 	fft=${sampling[$tmp2]}
+	while [ "$(echo "$fft < " | bc)" -eq 1 ]
+	do
+
+	done
     else
 	tmp2=`echo "scale=0; $tmp "| bc | awk '{printf("%d\n",$1 )}'`
 	fft=`awk "BEGIN {print 2**$tmp2}"`
@@ -552,7 +556,29 @@ do
 	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t '${chlist[0]}_Timeseries' --nolegend --dpi 50"
 	    echo "Queue"
 	} >> job_${nametime}.sdf
-	
+
+	# If low sampling channel, only time series plot will be made. 
+	if [ "`echo ${chlist[@]} | grep _OUTPUT `" ]; then
+	    continue
+	fi
+
+	# coherencegram job
+	{
+	    # Please try
+	    #  $ python batch_coherencegram.py -h
+	    # for option detail.
+	    
+	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optioncoherencegram} --dpi 50"
+	    echo "Queue"
+
+#	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channeldur -f ${duration} --stride ${durstride} ${optioncoherencegram}"
+#	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
+#	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
+#	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
+#	    echo "Queue"
+	} >> job_${namecoherencegram}.sdf
+
+
 	# spectrum job
 	{
 	    # Please try
@@ -578,21 +604,6 @@ do
 
 	} >> job_${namespectrogram}.sdf
 
-	# coherencegram job
-	{
-	    # Please try
-	    #  $ python batch_coherencegram.py -h
-	    # for option detail.
-	    
-	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channel -f ${fft} --stride ${stride} ${optioncoherencegram} --dpi 50"
-	    echo "Queue"
-
-#	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channeldur -f ${duration} --stride ${durstride} ${optioncoherencegram}"
-#	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
-#	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
-#	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
-#	    echo "Queue"
-	} >> job_${namecoherencegram}.sdf
 
 	# qtransform job
 	{
