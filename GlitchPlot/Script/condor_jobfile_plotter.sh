@@ -20,7 +20,7 @@ namecoherencegram="coherencegram"
 nameqtransform="qtransform"
 namelock="locksegments"
 
-cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype
+cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype index
 do
     echo "gps time = $gpstime "
     echo "channel = $channel "
@@ -152,6 +152,11 @@ do
     qgpsstart=`echo "scale=5; $gpstime - $span " | bc `
     qgpsend=`echo "scale=5; $gpstime + $span " | bc `
 
+    if [ "$(echo "$frequency_snr < 20.0" | bc)" -eq 1 ]; then
+	fmin=`echo "scale=5; $frequency_snr / 2. " | bc `
+    else
+	fmin=10
+    fi
 
     # after trigger
     gpsstart1=`echo "scale=5; $gpstime + 2. + $max_duration " | bc | awk '{printf("%d\n",$1 + 1)}'`
@@ -165,6 +170,7 @@ do
 
     gpsstarts30=($gpsstart1 $gpsstart2)
     gpsends30=($gpsend1 $gpsend2)
+    titles=("After" "Before")
 
     # Data type for time series. Default is to use minutes trend. second trend or full data can be used with following flags. Please set one of them true and set the others false. Or it will give warning message and exit. 
     #data="minute"
@@ -190,14 +196,14 @@ do
     #llabel='IMC_LSC'  #y-axis label for the bar plot.
 
     # X-arm lock
-#    lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
-#    lnumber=31415  #number of the required state
-#    llabel='X-arm'  #y-axis label for the bar plot.
+    lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
+    lnumber=31415  #number of the required state
+    llabel='X-arm'  #y-axis label for the bar plot.
 
     #  lock
-    lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
-    lnumber=157  #number of the required state
-    llabel='LSC'  #y-axis label for the bar plot.
+#    lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
+#    lnumber=157  #number of the required state
+#    llabel='LSC'  #y-axis label for the bar plot.
 
     
     # Set the output directory.
@@ -231,7 +237,7 @@ do
     fi
 
     {
-	echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_snr $max_amp $frequency_amp  $eventtype $triggertype
+	echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_snr $max_amp $frequency_amp  $eventtype $triggertype $index
     } > $outdir/parameter.txt
 
     logdir="$PWD/log/$date/"
@@ -591,7 +597,7 @@ do
 	    #  $ python batch_spectrum.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s ${gpsstarts30[@]} -e ${gpsends30[@]} -o ${outdir} -i $channel -t time -f ${fft30} ${optionspectrum} --dpi 50"
+	    echo "Arguments = -c ${chlist[@]} -s ${gpsstarts30[@]} -e ${gpsends30[@]} -o ${outdir} -i $channel -t time -f ${fft30} --title ${titles[@]} ${optionspectrum} --dpi 50"
 	    echo "Queue"
 	} >> job_${namespectrum}.sdf
 
@@ -617,7 +623,7 @@ do
 	    #  $ python batch_coherencegram.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s ${qgpsstart} -e ${qgpsend} -o ${outdir} -i $channel ${optionqtransform} --dpi 50"
+	    echo "Arguments = -c ${chlist[@]} -s ${qgpsstart} -e ${qgpsend} -o ${outdir} -i $channel ${optionqtransform} -f ${fmin} --dpi 50"
 	    echo "Queue"
 
 	} >> job_${nameqtransform}.sdf

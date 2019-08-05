@@ -8,7 +8,7 @@ date=20190713
 Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
 #fi
 
-list=( `find log/20190713/out_87810.*  -newermt "2019-07-31 15:00:00"` )
+list=( `find log/20190608/892*.out  ` )
 #list=( `find log/20190608/out_45660* -newermt "2019-06-29 08:45:00"` )
 
 
@@ -546,6 +546,7 @@ for log in ${list[@]}; do
 	if [ -e ${output} ];then
 	    :
 	    echo $log " successfully finished."
+	    rm -rf $log
 	else
 	    :
 	    echo $log " is not found !"
@@ -570,6 +571,7 @@ for log in ${list[@]}; do
     fi
 done 
 
+exit
 condor_submit $outsdftime
 condor_submit $outsdfspectrum
 condor_submit $outsdfspectrogram
