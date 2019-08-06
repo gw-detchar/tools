@@ -65,4 +65,6 @@ done
 
 condor_release chihiro.kozakai
 
+#Job re-submission
+./auto_successcheck.sh
 

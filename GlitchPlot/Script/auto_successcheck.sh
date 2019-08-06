@@ -8,7 +8,36 @@ date=20190713
 Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
 #fi
 
-list=( `find log/20190608/101*.out  ` )
+INTERVAL=15
+
+#let mm=`date +"%M"`/${INTERVAL}*${INTERVAL}                                                 
+let mm=`date +"%M" | sed -e "s/^0//"`/${INTERVAL}*${INTERVAL}
+
+
+jst_end="`date +"%Y-%m-%d %H:${mm}:00"`"
+
+[ -e /usr/bin/gpstime ] && cmd_gps=/usr/bin/gpstime || cmd_gps=/home/controls/bin/gpstime
+
+#GPS_END=`${cmd_gps} ${jst_end}| head -3 | tail -1 | awk '{printf("%d\n", $2)}'`             
+GPS_END=`tconvert -l $jst_end`
+
+let GPS_START=${GPS_END}-${INTERVAL}*60
+
+#jst_start=`${cmd_gps} ${GPS_START}| head -1`                                                
+#jst_start=${jst_start#*:}                                                                   
+jst_start=`tconvert -l -f "%Y-%m-%d %H:%M:%S" $GPS_START`
+
+let tmp=${GPS_END:0:5}-1
+#echo $tmp                                                                                   
+
+list=()
+
+today=`date +%Y%m%d`
+yesterday=`date --date '1 day ago' +%Y%m%d`
+
+list+=( `find /home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/log/$today/* -newermt "$jst_start" -and ! -newermt "$jst_end"` `find /home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/log/$yesterday/* -newermt "$jst_start" -and ! -newermt "$jst_end"`  )
+
+#list=( `find log/20190608/100*.out  ` )
 #list=( `find log/20190713/10220*.out  ` )
 #list=( `find log/20190608/out_45660* -newermt "2019-06-29 08:45:00"` )
 
