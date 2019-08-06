@@ -22,14 +22,40 @@ parser = argparse.ArgumentParser(description='Make basic plots.')
 parser.add_argument('-o','--output',help='output text filename.',default='result.txt')
 #parser.add_argument('-i','--inputfile',help='input trigger filename.',default='/home/controls/triggers/K1/LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON/12440/K1-LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON-1244013258-60.xml.gz')
 parser.add_argument('-i','--inputfile',help='input trigger filename.',default='/home/controls/triggers/K1/LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON/12440/K1-LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON-1244004678-60.xml.gz')
+parser.add_argument('-f','--force',help='Flag to run without daytime skip.',action='store_true')
 
 args = parser.parse_args()
 output = args.output
 inputfile = args.inputfile
+force = args.force
 
 # Define parameters
 omicron_interval = 60.
-snrthreshold=10.
+
+#triggertype
+triggertype="Omicron"
+
+#Default
+snrthreshold=100.
+#If night, use lower threshold.
+snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":10,
+           "AOS-TMSX_IR_PD_OUT_DQ":10,
+           "IMC-CAV_TRANS_OUT_DQ":40,
+           "IMC-CAV_REFL_OUT_DQ":10,
+           "PSL-PMC_MIXER_MON_OUT_DQ":10,
+           "IMC-MCL_SERVO_OUT_DQ":30,
+           "PSL-PMC_TRANS_DC_OUT_DQ":35,
+           "IMC-SERVO_SLOW_DAQ_OUT_DQ":7,
+           "PEM-ACC_MCF_TABLE_REFL_Z_OUT_DQ":40,
+           "PEM-ACC_PSL_PERI_PSL1_Y_OUT_DQ":20,
+           "PEM-MIC_PSL_TABLE_PSL4_Z_OUT_DQ":20,
+           "LSC-REFL_PDA1_RF17_Q_ERR_DQ":16,
+           "LSC-REFL_PDA1_RF45_I_ERR_DQ":20,
+           "LSC-POP_PDA1_RF17_Q_ERR_DQ":18,
+           "LSC-POP_PDA1_DC_OUT_DQ":20,
+           "LSC-AS_PDA1_RF17_Q_ERR_DQ":25,
+           "CAL-CS_PROC_IMC_FREQUENCY_DQ":16}
+
 
 kamioka=False
 # get the time of the input file.
@@ -44,6 +70,31 @@ events = EventTable.read(inputfile, tablename='sngl_burst', columns=['peak_time'
 # Column option
 #ifo peak_time peak_time_ns start_time start_time_ns duration search process_id event_id peak_frequency central_freq bandwidth channel amplitude snr confidence chisq chisq_dof param_one_name param_one_value
 #events = EventTable.read('K1-IMC_CAV_ERR_OUT_DQ_OMICRON-1241900058-60.xml.gz', tablename='sngl_burst', columns=['peak_time', 'peak_time_ns', 'start_time', 'start_time_ns', 'duration', 'peak_frequency', 'central_freq', 'bandwidth', 'channel', 'amplitude', 'snr', 'confidence', 'chisq', 'chisq_dof', 'param_one_name', 'param_one_value'])
+
+channels = events.get_column('channel')
+
+if len(channels) == 0:
+    print("No event.")
+    print("Successfully finished!")
+    exit()
+else:
+    channel = channels[0]
+
+
+# If 0am-8am, threshold is lowered.
+
+LocklossOnly = True
+if force:
+    snrthreshold=snrdict[channel]
+    LocklossOnly = False
+elif 54018 < tfile%86400 and tfile%86400 < 82818:
+    snrthreshold=snrdict[channel]
+elif 1247020218 < tfile and tfile < 1247065218:
+    snrthreshold=snrdict[channel]
+    LocklossOnly = False
+else:
+    print("Day time file. skip. ")
+    exit()
 
 # Setup output txtfile.
 f = open(output, mode='w')
@@ -68,10 +119,8 @@ starts_ns = fevents.get_column('start_time_ns')
 if len(channels) == 0:
     print("No filtered event.")
     print("Successfully finished!")
-    exit
-else:
-    channel = channels[0]
-
+    exit()
+    
 # Initialize segments of trigger. t=0 is the start of the trigger file.
 Triggered = DataQualityFlag(known=[(0,omicron_interval)],active=[])
 
@@ -101,10 +150,13 @@ tmpactive=Triggered.active
 #safety is contracting time.
 safety=1
 
-locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="IMC",min_len=safety*3,kamioka=kamioka)
+#locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="IMC",min_len=safety*3,kamioka=True)
+locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="LSC",min_len=safety*3,kamioka=True)
+
 locked_contract=locked.copy()
 locked=locked.active
-locked_contract=locked_contract.contract(1)
+locked_contract.active=locked_contract.active.shift(-0.5)
+locked_contract=locked_contract.contract(0.5)
 unlocked_contract=~locked_contract
 
 print("locked")
@@ -137,7 +189,8 @@ for segment in tmpactive:
             eventtype="lockloss"
         else:
             eventtype="glitch"
-
+            if LocklossOnly:
+                continue
 
 #        Islockloss=unlocked_contract.intersects_segment(segment_shift)
 #        if Islockloss:
@@ -254,6 +307,9 @@ for segment in tmpactive:
 
     strtmp+=(" ")
     strtmp+=str(eventtype)
+
+    strtmp+=(" ")
+    strtmp+=str(triggertype)
 
     f.write(strtmp)
     f.write('\n')

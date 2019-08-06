@@ -9,7 +9,7 @@
 ### Set variable
 ################################
 DET_ROOT=/users/DET
-CMD_TRIGFIND=/home/controls/opt/summary-2.7/bin/gwtrigfind
+CMD_TRIGFIND=${HOME}/opt/summary-2.7/bin/gwtrigfind
 ETG_DIR=/home/controls/triggers
 ETG=OMICRON
 FLAG_FULL=0

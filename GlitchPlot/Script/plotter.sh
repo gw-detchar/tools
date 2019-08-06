@@ -42,7 +42,8 @@ let tmp=${GPS_END:0:5}-1
 
 # Please replace the - to _.
 #channels=("LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ" "IMC_SERVO_SLOW_DAQ_OUT_DQ" "AOS_TMSX_IR_PD_OUT_DQ" "IMC_CAV_TRANS_OUT_DQ" "PSL_PMC_TRANS_DC_OUT_DQ")
-channels=("IMC_CAV_TRANS_OUT_DQ" "PSL_PMC_TRANS_DC_OUT_DQ" "PEM_ACC_MCF_TABLE_REFL_Z_OUT_DQ" "PEM_ACC_PSL_PERI_PSL1_Y_OUT_DQ" "PEM_MIC_PSL_TABLE_PSL4_Z_OUT_DQ")
+#channels=("IMC_CAV_TRANS_OUT_DQ" "PSL_PMC_TRANS_DC_OUT_DQ" "PEM_ACC_MCF_TABLE_REFL_Z_OUT_DQ" "PEM_ACC_PSL_PERI_PSL1_Y_OUT_DQ" "PEM_MIC_PSL_TABLE_PSL4_Z_OUT_DQ")
+channels=("IMC_CAV_TRANS_OUT_DQ" "PSL_PMC_TRANS_DC_OUT_DQ" "LSC_REFL_PDA1_RF17_Q_ERR_DQ" "LSC_POP_PDA1_RF17_Q_ERR_DQ"  "LSC_AS_PDA1_RF17_Q_ERR_DQ" "CAL_CS_PROC_IMC_FREQUENCY_DQ")
 
 list=()
 
@@ -61,12 +62,17 @@ for channel in ${channels[@]}; do
 	
 	echo "---------trigger file reading---------"
 	# process the trigger data and determine plot parameter
-	parameterlist="/users/DET/Result/GlitchPlot/parameter/"`basename $file`".txt"
+	today="`date +%Y%m%d`"
+	if [ ! -e /users/DET/Result/GlitchPlot/parameter/$today/ ]; then
+	    mkdir -p /users/DET/Result/GlitchPlot/parameter/$today/
+	fi
+	
+	parameterlist="/users/DET/Result/GlitchPlot/parameter/$today/"`basename $file`".txt"
 	python plotter.py -i $file -o $parameterlist 
 	echo  $parameterlist
-	echo "----------plot job throwing----------"
+#	echo "----------plot job throwing----------"
 	# from the plot parameter, throw condor job to make basic plots.
-	./condor_jobfile_plotter.sh $parameterlist
+	#./condor_jobfile_plotter.sh $parameterlist
 
     done
 
@@ -96,5 +102,5 @@ jst_start=${jst_start#*:}
 #rsync /users/DET/Result/GlitchPlot/ ckozakai@icrhome05.icrr.u-tokyo.ac.jp:
 #rsync -avz -e "ssh -v -i ~/.ssh/id_rsa_icrhome_ckozakai" --exclude="parameter/*.txt" /users/DET/Result/GlitchPlot/ ckozakai@icrhome05.icrr.u-tokyo.ac.jp:public_html/KAGRA/GlitchPlot/
 
-rsync -avz -e "ssh -v -i ~/.ssh/id_rsa_icrhome_ckozakai" --exclude="p*er/*" /users/DET/Result/GlitchPlot/ chihiro.kozakai@m31-01_ckozakai:public_html/KAGRA/GlitchPlot/
+rsync -avz -e "ssh -v -i ~/.ssh/id_rsa_icrhome_ckozakai"  /users/DET/Result/GlitchPlot/parameter chihiro.kozakai@m31-01_ckozakai:public_html/KAGRA/GlitchPlot/parameter/
 

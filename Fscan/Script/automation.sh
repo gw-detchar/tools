@@ -8,15 +8,21 @@
 ################################
 ### Set variable
 ################################
-DET_ROOT=/users/DET
+if test `whoami` = "controls"
+then
+    DET_ROOT=/users/DET
+    DIR_SEG=${DET_ROOT}/Segments
+else
+    DET_ROOT=${HOME}/git/kagra-detchar
+    DIR_SEG=${HOME}/segment/UTC
+fi
 DET_FSCAN=${DET_ROOT}/tools/Fscan
-DIR_FSCAN=/home/controls/opt/Fscan
-DIR_SEG=${DET_ROOT}/Segments
+DIR_FSCAN=${HOME}/opt/Fscan
 FILE_RSC=${DIR_FSCAN}/KagraDailyFscanGenerator.rsc
-CMD_GPSTIME=/home/controls/bin/gpstime
+CMD_GPSTIME=${HOME}/bin/gpstime
 CMD_SEGGEN=${DET_ROOT}/tools/Segments/Script/makeDailySegment.py
 CMD_FSCAN=${DIR_FSCAN}/multiFscanGenerator_kagra.tcl
-CMD_LINK=/users/DET/tools/Fscan/Script/fscanSummLink.sh           
+CMD_LINK=${DET_FSCAN}/Script/fscanSummLink.sh
 
 ###################################################################################################
 ###################################################################################################
@@ -48,7 +54,8 @@ set ::masterList {\\
 {K1:PSL-REFCAV_TRANS_OUT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 4000 100 32 0.25 default}\\
 {K1:PSL-PMC_MIXER_MON_OUT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 4000 100 32 0.25 default}\\
 {K1:IMC-MCL_SERVO_OUT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 2000 100 32 0.25 default}\\
-{K1:CAL-CS_PROC_XARM_FREQUENCY_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
+{K1:CAL-CS_PROC_MICH_DISPLACEMENT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
+{K1:CAL-CS_PROC_IMC_FREQUENCY_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
 {K1:IMC-SERVO_MIXER_DAQ_OUT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
 }
 
@@ -57,10 +64,10 @@ set fixedComparisonChanDir "";
 set fixedComparisonString "";
 set fixedComparisonSNR  0;
 
-set fscanDriverPath "/home/controls/opt/Fscan/fscanDriver_kagra.py"; # complete path to fscanDriver.py
+set fscanDriverPath "${HOME}/opt/Fscan/fscanDriver_kagra.py"; # complete path to fscanDriver.py
 #set matlabPath "/ldcg/matlab_r2008a";      # Path to matlab installation to use with -m option to fscanDriver.py, e.g., /ldcg/matlab_r2008a
 
-set parentOutputDirectory "/home/controls/public_html/fscan/daily";
+set parentOutputDirectory "${HOME}/public_html/fscan/daily";
 
 set startTime "${GPS_START}";
 set timeLag 7200;
@@ -86,7 +93,7 @@ printf "==>   SEG: "
 if test ! -e ${FILE_SEG}
 then
     echo "${CMD_SEGGEN}"
-    ${CMD_SEGGEN}
+    PATH=${PATH}:${HOME}/bin ${CMD_SEGGEN}
 else
     echo "nothing to be done."
 fi
