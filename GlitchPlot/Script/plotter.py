@@ -281,7 +281,10 @@ for segment in tmpactive:
             peakfrequency_amp=frequency
     
     strtmp=""
-    strtmp+=str(time)
+    stimestr=str(tmpstart).split(".")[1]
+    stimestr=stimestr[0:5]
+    strtime=str(int(time))+"."+stimestr
+    strtmp+=strtime
     
     strtmp+=" K1:"
     strtmp+=str(channel)
@@ -310,6 +313,9 @@ for segment in tmpactive:
     strtmp+=(" ")
     strtmp+=str(triggertype)
 
+    # dummy index. it is for burst trigger.
+    strtmp+=(" 0")
+    
     f.write(strtmp)
     f.write('\n')
 
