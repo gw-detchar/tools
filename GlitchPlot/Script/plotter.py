@@ -38,14 +38,14 @@ triggertype="Omicron"
 #Default
 snrthreshold=100.
 #If night, use lower threshold.
-snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":10,
-           "AOS-TMSX_IR_PD_OUT_DQ":10,
-           "IMC-CAV_TRANS_OUT_DQ":40,
-           "IMC-CAV_REFL_OUT_DQ":10,
-           "PSL-PMC_MIXER_MON_OUT_DQ":10,
-           "IMC-MCL_SERVO_OUT_DQ":30,
-           "PSL-PMC_TRANS_DC_OUT_DQ":35,
-           "IMC-SERVO_SLOW_DAQ_OUT_DQ":7,
+snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":15,
+           "AOS-TMSX_IR_PD_OUT_DQ":15,
+           "IMC-CAV_TRANS_OUT_DQ":45,
+           "IMC-CAV_REFL_OUT_DQ":15,
+           "PSL-PMC_MIXER_MON_OUT_DQ":15,
+           "IMC-MCL_SERVO_OUT_DQ":35,
+           "PSL-PMC_TRANS_DC_OUT_DQ":40,
+           "IMC-SERVO_SLOW_DAQ_OUT_DQ":12,
            "PEM-ACC_MCF_TABLE_REFL_Z_OUT_DQ":40,
            "PEM-ACC_PSL_PERI_PSL1_Y_OUT_DQ":20,
            "PEM-MIC_PSL_TABLE_PSL4_Z_OUT_DQ":20,
@@ -54,7 +54,7 @@ snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":10,
            "LSC-POP_PDA1_RF17_Q_ERR_DQ":18,
            "LSC-POP_PDA1_DC_OUT_DQ":20,
            "LSC-AS_PDA1_RF17_Q_ERR_DQ":25,
-           "CAL-CS_PROC_IMC_FREQUENCY_DQ":16}
+           "CAL-CS_PROC_IMC_FREQUENCY_DQ":21}
 
 # get the time of the input file.
 tmp=inputfile.rsplit("-",2)
@@ -86,6 +86,7 @@ if force:
     snrthreshold=snrdict[channel]
     LocklossOnly = False
 elif 54018 < tfile%86400 and tfile%86400 < 82818:
+    #during night
     snrthreshold=snrdict[channel]
 elif 1247020218 < tfile and tfile < 1247065218:
     snrthreshold=snrdict[channel]
