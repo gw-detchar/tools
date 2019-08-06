@@ -190,6 +190,10 @@ for log in ${list[@]}; do
 	continue
     elif [ "`echo $argument | grep glitch_1244010447.5_K1:AOS-TMSX_IR_PD_OUT_DQ `" ]; then
 	continue
+    elif [ "`echo $argument | grep glitch_1244012928.0_K1:IMC-MCL_SERVO_OUT_DQ `" ]; then
+	continue
+    elif [ "`echo $argument | grep 1244018491.201172113  `" ]; then
+	argument=`echo $argument | sed s/.201172113/.20117/g`
 
 <<COMMENTOUT
  
