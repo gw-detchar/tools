@@ -197,7 +197,7 @@ do
 
     # X-arm lock
     lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
-    lnumber=31415  #number of the required state
+    lnumber=10  #number of the required state
     llabel='X-arm'  #y-axis label for the bar plot.
 
     #  lock
@@ -565,7 +565,7 @@ do
 	    #  $ python batch_timeseries.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t '${chlist[0]}_Timeseries' --nolegend --dpi 50"
+	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t ${chlist[0]}_Timeseries --nolegend --dpi 50"
 	    echo "Queue"
 	} >> job_${nametime}.sdf
 
