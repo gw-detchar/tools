@@ -592,14 +592,19 @@ do
 
 
 	# spectrum job
-	{
-	    # Please try
-	    #  $ python batch_spectrum.py -h
-	    # for option detail.
-	    
-	    echo "Arguments = -c ${chlist[@]} -s ${gpsstarts30[@]} -e ${gpsends30[@]} -o ${outdir} -i $channel -t time -f ${fft30} --title ${titles[@]} ${optionspectrum} --dpi 50"
-	    echo "Queue"
-	} >> job_${namespectrum}.sdf
+
+	if [ "$eventtype" = "lockloss" ]; then
+	    :
+	else
+	    {
+		# Please try
+		#  $ python batch_spectrum.py -h
+		# for option detail.
+		
+		echo "Arguments = -c ${chlist[@]} -s ${gpsstarts30[@]} -e ${gpsends30[@]} -o ${outdir} -i $channel -t time -f ${fft30} --title ${titles[@]} ${optionspectrum} --dpi 50"
+		echo "Queue"
+	    } >> job_${namespectrum}.sdf
+	fi
 
 	# spectrogram job
 	{

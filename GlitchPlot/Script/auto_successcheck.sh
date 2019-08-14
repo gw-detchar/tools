@@ -1,7 +1,5 @@
 #!/bin/bash
 
-date=20190713
-
 #if "${kamioka}"; then
 #    Kozapy="/users/DET/tools/GlitchPlot/Script/Kozapy/samples"
 #else
@@ -34,7 +32,7 @@ list=()
 
 today=`date +%Y%m%d`
 yesterday=`date --date '1 day ago' +%Y%m%d`
-
+date=$today
 list+=( `find /home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/log/$today/* -newermt "$jst_start" -and ! -newermt "$jst_end"` `find /home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/log/$yesterday/* -newermt "$jst_start" -and ! -newermt "$jst_end"`  )
 
 #list=( `find log/20190608/100*.out  ` )

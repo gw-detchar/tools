@@ -8,8 +8,7 @@ date=20190811
 Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
 #fi
 
-#list=( `find log/${date}/1736*.out `)
-list=( `find log/${date}/103065*.out `)
+list=( `find log/${date}/175478*.out `)
 #list=( `find log/20190713/10220*.out  ` )
 #list=( `find log/20190608/out_45660* -newermt "2019-06-29 08:45:00"` )
 echo ${list[@]}
