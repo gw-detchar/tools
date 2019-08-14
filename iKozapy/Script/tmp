@@ -1,0 +1,3 @@
+-s 1249795492 -e 1249795524 -c K1:IMC-CAV_TRANS_OUT_DQ --kamioka --stride 10 -f 10 -o /users/DET/tools/iKozapy/Result/
+/users/DET/tools/iKozapy/Result//K1:IMC-CAV_TRANS_OUT_DQ_spectrogram_1249795492_1249795524_test.png
+Successfully finished !
