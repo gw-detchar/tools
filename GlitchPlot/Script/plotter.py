@@ -87,15 +87,16 @@ LocklossOnly = False
 if force:
     snrthreshold=snrdict[channel]
     LocklossOnly = False
-elif 54018 < tfile%86400 and tfile%86400 < 82818:
+    #elif 54018 < tfile%86400 and tfile%86400 < 82818:
     #during night
-    snrthreshold=snrdict[channel]
-elif 1247020218 < tfile and tfile < 1247065218:
-    snrthreshold=snrdict[channel]
-    LocklossOnly = False
+    #    snrthreshold=snrdict[channel]
+    #elif 1247020218 < tfile and tfile < 1247065218:
+    #snrthreshold=snrdict[channel]
+    #LocklossOnly = False
 else:
-    print("Day time file. skip. ")
-    exit()
+    snrthreshold=snrdict[channel]
+    #print("Day time file. skip. ")
+    #exit()
 
 # Setup output txtfile.
 f = open(output, mode='w')
