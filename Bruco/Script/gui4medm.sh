@@ -99,7 +99,7 @@ do
 
     base_excl=`basename ${exclude} .txt`
     mkdir -p ${RESULT_DIR}/${channel}-${base_excl}
-    xterm -e bash -c "python ${CMD_BRUCO} --ifo=K1 --channel=${channel} --${filter}=\"${exclude}\" --gpsb=${gpstime} --length=${duration} --outfs=${outfs} --minfs=${minfs} --naver=${n_ave} --dir=${RESULT_DIR}/${channel}-${base_excl}/${gpstime}-${duration} --top=${n_top} --webtop=${n_disp} >&2 || sleep 15" && firefox ${RESULT_DIR}/${channel}-${base_excl}/${gpstime}-${duration}/index.html
+    xterm -e bash -c "python ${CMD_BRUCO} --ifo=K1 --channel=${channel} --${filter}=\"${exclude}\" --gpsb=${gpstime} --length=${duration} --outfs=${outfs} --minfs=${minfs} --naver=${n_ave} --dir=${RESULT_DIR}/${channel}-${base_excl}/${gpstime}-${duration} --top=${n_top} --webtop=${n_disp} >&2 || sleep 300" && firefox ${RESULT_DIR}/${channel}-${base_excl}/${gpstime}-${duration}/index.html
     # # --xlim=10:1000
 
     msg=": Done."

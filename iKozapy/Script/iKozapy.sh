@@ -28,15 +28,12 @@ while :
 do 
     def_gpsend=`gpstime | grep GPS | awk '{printf("%d\n", $2)}'`
   
-    flag=0
     #    while test ${flag} -eq 0
-    #    if [ "${realtime}" = "n" ]; then
-    if [ "true" ]; then
-    
+    if [ "${realtime}" = "n" ]; then
 
 	[ -e /usr/bin/xclip ] && printf "${def_gpsend}" | xclip
-	#ZEN_OUT=`zenity --forms --text="iKozapy for spectrogram${msg}" --separator=',' --add-entry="main channel (${def_channel})" --add-entry="gps end time (${def_gpsend})"  --add-entry="Real time update ? [y/n] (n)"  --add-entry="Duration [sec] (${def_duration})" --add-entry="Time resolution [sec] (${def_stride})"  --add-entry="Frequency resolution [Hz] (${def_bandwidth})" --add-entry="min. f [Hz] (autoscale)" --add-entry="max. f [Hz] (autoscale)" --add-entry="png resolution [dpi] (50)" --add-entry="Other option" `
-	ZEN_OUT=`zenity --forms --text="iKozapy for spectrogram${msg}" --separator=',' --add-entry="main channel (${def_channel})" --add-entry="gps end time (${def_gpsend})"  --add-entry="Now ? [y/n] (n)"  --add-entry="Duration [sec] (${def_duration})" --add-entry="Time resolution [sec] (${def_stride})"  --add-entry="Frequency resolution [Hz] (${def_bandwidth})" --add-entry="min. f [Hz] (autoscale)" --add-entry="max. f [Hz] (autoscale)" --add-entry="png resolution [dpi] (50)" --add-entry="Other option" `
+	ZEN_OUT=`zenity --forms --text="iKozapy for spectrogram${msg}" --separator=',' --add-entry="main channel (${def_channel})" --add-entry="gps end time (${def_gpsend})"  --add-entry="Real time update ? [y/n] (n)"  --add-entry="Duration [sec] (${def_duration})" --add-entry="Time resolution [sec] (${def_stride})"  --add-entry="Frequency resolution [Hz] (${def_bandwidth})" --add-entry="min. f [Hz] (autoscale)" --add-entry="max. f [Hz] (autoscale)" --add-entry="png resolution [dpi] (50)" --add-entry="Other option" `
+	#ZEN_OUT=`zenity --forms --text="iKozapy for spectrogram${msg}" --separator=',' --add-entry="main channel (${def_channel})" --add-entry="gps end time (${def_gpsend})"  --add-entry="Now ? [y/n] (n)"  --add-entry="Duration [sec] (${def_duration})" --add-entry="Time resolution [sec] (${def_stride})"  --add-entry="Frequency resolution [Hz] (${def_bandwidth})" --add-entry="min. f [Hz] (autoscale)" --add-entry="max. f [Hz] (autoscale)" --add-entry="png resolution [dpi] (50)" --add-entry="Other option" `
 	[ $? -eq 1 ] && exit 1
 	
 	#channel=`printf "${ZEN_OUT}" | cut -d',' -f1 | sed -e 's/K1://g'`
@@ -90,8 +87,6 @@ do
 	
 	[ "${channel}" = "" -a "${def_channel}" = "*" ] && msg=": Channel is not selected." && continue
 	#[ ${def_duration} -le 0 -o ${def_duration} -gt 900 ] && msg=": duration must ranges from 1 to 900s." && continue
-	flag=1
-#    done # end of while test flag
     fi
 
     if [ "${realtime}" = "y" ]; then
@@ -108,17 +103,21 @@ do
     
     output=$(tail -n 2 ${def_outdir}/tmp | head -n 1) 
 
-    
     mv $output ${def_outdir}/temp.png
-
-    sleep 1s
-#    if [ $fl = 0 ]; then
-    
+    sleep 1s    
     eog ${def_outdir}/temp.png -w &
-#	fl=1
-#    fi
-	#msg=": Done."
+done & # end of while :
 
-    #break
-done # end of while :
+bg=$!
+
+(
+    echo "0"
+) |
+zenity --text="Do you want to stop iKozapy ?" --progress --percentage=0
+tmp=$?
+
+
+kill $bg
+kill $$
+
 
