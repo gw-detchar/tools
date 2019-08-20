@@ -4,6 +4,7 @@
 #        Author: Chihiro Kozakai
 #******************************************#
 
+[ -e /usr/bin/gpstime ] && cmd_gps=/usr/bin/gpstime || cmd_gps=/home/controls/bin/gpstime
 
 ################################
 ### Set variable
@@ -26,13 +27,14 @@ fl=0
 
 while :
 do 
-    def_gpsend=`gpstime | grep GPS | awk '{printf("%d\n", $2)}'`
+    #def_gpsend=`gpstime | grep GPS | awk '{printf("%d\n", $2)}'`
+    def_gpsend=`${cmd_gps} | grep JST | awk '{printf("%s %s\n", $2, $3)}'`
   
     #    while test ${flag} -eq 0
     if [ "${realtime}" = "n" ]; then
 
 	[ -e /usr/bin/xclip ] && printf "${def_gpsend}" | xclip
-	ZEN_OUT=`zenity --forms --text="iKozapy for spectrogram${msg}" --separator=',' --add-entry="main channel (${def_channel})" --add-entry="gps end time (${def_gpsend})"  --add-entry="Real time update ? [y/n] (n)"  --add-entry="Duration [sec] (${def_duration})" --add-entry="Time resolution [sec] (${def_stride})"  --add-entry="Frequency resolution [Hz] (${def_bandwidth})" --add-entry="min. f [Hz] (autoscale)" --add-entry="max. f [Hz] (autoscale)" --add-entry="png resolution [dpi] (50)" --add-entry="Other option" `
+	ZEN_OUT=`zenity --forms --text="iKozapy for spectrogram${msg}" --separator=',' --add-entry="main channel (${def_channel})" --add-entry="JST end time (${def_gpsend})"  --add-entry="Real time update ? [y/n] (n)"  --add-entry="Duration [sec] (${def_duration})" --add-entry="Time resolution [sec] (${def_stride})"  --add-entry="Frequency resolution [Hz] (${def_bandwidth})" --add-entry="min. f [Hz] (autoscale)" --add-entry="max. f [Hz] (autoscale)" --add-entry="png resolution [dpi] (50)" --add-entry="Other option" `
 	#ZEN_OUT=`zenity --forms --text="iKozapy for spectrogram${msg}" --separator=',' --add-entry="main channel (${def_channel})" --add-entry="gps end time (${def_gpsend})"  --add-entry="Now ? [y/n] (n)"  --add-entry="Duration [sec] (${def_duration})" --add-entry="Time resolution [sec] (${def_stride})"  --add-entry="Frequency resolution [Hz] (${def_bandwidth})" --add-entry="min. f [Hz] (autoscale)" --add-entry="max. f [Hz] (autoscale)" --add-entry="png resolution [dpi] (50)" --add-entry="Other option" `
 	[ $? -eq 1 ] && exit 1
 	
@@ -48,6 +50,7 @@ do
 	
 	gpsend=`printf "${ZEN_OUT}" | cut -d',' -f2`
 	[ "${gpsend}" = "" ] && gpsend=${def_gpsend} || def_gpsend=${gpsend}
+	gpsend=`${cmd_gps} $gpsend| grep GPS | awk '{printf("%d\n", $2)}'`
 	printf "gpsend: ${gpsend}\n" >&2
 
 	realtime=`printf "${ZEN_OUT}" | cut -d',' -f3`
@@ -100,12 +103,20 @@ do
     fi
 
     ssh -i /home/controls/.ssh/id_ed25519_detchar -o StrictHostKeyChecking=no -Y controls@k1det0 /users/DET/tools/GlitchPlot/Script/Kozapy/samples/run_whitening_spectrogram.sh -s ${gpsstart} -e ${gpsend} -c ${channel} --kamioka --stride ${stride} -f ${fft}  -o ${tmpoutdir} --dpi ${dpi} --fmin ${minf} --fmax ${maxf} ${option} > ${def_outdir}/tmp 2>&1
-    
-    output=$(tail -n 2 ${def_outdir}/tmp | head -n 1) 
 
-    mv $output ${def_outdir}/temp.png
-    sleep 1s    
-    eog ${def_outdir}/temp.png -w &
+    success=$(tail -n 1 ${def_outdir}/tmp)
+    if test "$success" = "Successfully finished !" ;then
+	output=$(tail -n 2 ${def_outdir}/tmp | head -n 1) 
+
+	echo $output
+	echo ${def_outdir}
+	mv $output ${def_outdir}/temp.png
+	sleep 1s    
+	eog ${def_outdir}/temp.png -w &
+    else
+	echo "job failes."
+	echo `tail  ${def_outdir}/tmp `
+    fi
 done & # end of while :
 
 bg=$!
