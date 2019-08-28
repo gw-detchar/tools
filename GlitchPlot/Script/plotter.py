@@ -55,7 +55,8 @@ snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":15,
            "LSC-POP_PDA1_DC_OUT_DQ":20,
            "LSC-AS_PDA1_RF17_Q_ERR_DQ":25,
            "CAL-CS_PROC_IMC_FREQUENCY_DQ":21,
-           "CAL-CS_PROC_XARM_FREQUENCY_DQ":21}
+           "CAL-CS_PROC_XARM_FREQUENCY_DQ":21,
+           "CAL-CS_PROC_DARM_DISPLACEMENT_DQ":100}
 
 # get the time of the input file.
 tmp=inputfile.rsplit("-",2)
@@ -156,7 +157,7 @@ safety=1
 #locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="IMC",min_len=safety*3,kamioka=True)
 nightly=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="quiet",min_len=safety*3,kamioka=True)
 
-locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="xarm",min_len=safety*3,kamioka=True)
+locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="FPMI",min_len=safety*3,kamioka=True)
 locked = locked & nightly
 locked_contract=locked.copy()
 locked=locked.active
