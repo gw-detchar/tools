@@ -56,17 +56,18 @@ snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":15,
            "LSC-POP_PDA1_RF17_Q_ERR_DQ":8,
            "LSC-POP_PDA1_DC_OUT_DQ":10,
            "LSC-AS_PDA1_RF17_Q_ERR_DQ":15,
-           "CAL-CS_PROC_IMC_FREQUENCY_DQ":20}
+           "CAL-CS_PROC_IMC_FREQUENCY_DQ":20,
+           "CAL-CS_PROC_DARM_DISPLACEMENT_DQ":100}
 
 # get the time of the input file.
 tmp=inputfile.rsplit("-",2)
 tfile=int(tmp[1])
 
-if 1244004685 < tfile and tfile < 1244010528:
+if tfile < 1250549001:
     exit()
 
-if 1244011984 < tfile and tfile < 1244012992:
-    exit()
+#if 1244011984 < tfile and tfile < 1244012992:
+#    exit()
 
 # Open omicron file
 
@@ -155,7 +156,7 @@ tmpactive=Triggered.active
 safety=1
 
 #locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="LSC",min_len=safety*3,kamioka=kamioka)
-locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="xarm",min_len=safety*3,kamioka=kamioka)
+locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="FPMI",min_len=safety*3,kamioka=kamioka)
 locked_contract=locked.copy()
 locked=locked.active
 locked_contract=locked_contract.contract(1)

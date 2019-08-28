@@ -1,6 +1,6 @@
 #!/bin/bash
 
-date=20190811
+date=20190828
 
 #if "${kamioka}"; then
 #    Kozapy="/users/DET/tools/GlitchPlot/Script/Kozapy/samples"
@@ -8,10 +8,10 @@ date=20190811
 Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
 #fi
 
-list=( `find log/${date}/175478*.out `)
+list=( `find log/${date}/13208*.out `)
 #list=( `find log/20190713/10220*.out  ` )
 #list=( `find log/20190608/out_45660* -newermt "2019-06-29 08:45:00"` )
-echo ${list[@]}
+
 
 #outsdf=retry_$(basename $insdf)
 outsdftime=retry_timeseries.sdf

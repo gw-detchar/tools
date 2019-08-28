@@ -41,12 +41,12 @@ list+=( `find /home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/
 
 
 #outsdf=retry_$(basename $insdf)
-outsdftime=retry_timeseries.sdf
-outsdfspectrum=retry_spectrum.sdf
-outsdfspectrogram=retry_spectrogram.sdf
-outsdfcoherence=retry_coherencegram.sdf
-outsdfqtrans=retry_qtransform.sdf
-outsdflock=retry_lock.sdf
+outsdftime=autoretry_timeseries.sdf
+outsdfspectrum=autoretry_spectrum.sdf
+outsdfspectrogram=autoretry_spectrogram.sdf
+outsdfcoherence=autoretry_coherencegram.sdf
+outsdfqtrans=autoretry_qtransform.sdf
+outsdflock=autoretry_lock.sdf
 
 # Write a file for condor submission.                                                                            
 runlock="$PWD/run_lock.sh"

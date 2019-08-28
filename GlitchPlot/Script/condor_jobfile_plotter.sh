@@ -20,7 +20,7 @@ namecoherencegram="coherencegram"
 nameqtransform="qtransform"
 namelock="locksegments"
 
-cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype index
+cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype eventnumber
 do
     echo "gps time = $gpstime "
     echo "channel = $channel "
@@ -204,9 +204,15 @@ do
     #llabel='IMC_LSC'  #y-axis label for the bar plot.
 
     # X-arm lock
-    lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
-    lnumber=10  #number of the required state
-    llabel='X-arm'  #y-axis label for the bar plot.
+#    lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
+#    lnumber=10  #number of the required state
+#    llabel='X-arm'  #y-axis label for the bar plot.
+
+    # FPMI lock
+    lchannel="K1:GRD-LSC_LOCK_SIMPLE_STATE_N"  #guardian channel
+    lnumber=16  #number of the required state
+    llabel='FPMI'  #y-axis label for the bar plot.
+
 
     #  lock
 #    lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
@@ -245,7 +251,7 @@ do
     fi
 
     {
-	echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_snr $max_amp $frequency_amp  $eventtype $triggertype $index
+	echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_snr $max_amp $frequency_amp  $eventtype $triggertype $eventnumber
     } > $outdir/parameter.txt
 
     logdir="$PWD/log/$date/"
