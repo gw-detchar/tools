@@ -57,7 +57,7 @@ snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":15,
            "CAL-CS_PROC_IMC_FREQUENCY_DQ":21,
            "CAL-CS_PROC_XARM_FREQUENCY_DQ":21,
            "CAL-CS_PROC_DARM_DISPLACEMENT_DQ":100,
-           "CAL-CS_PROC_C00_DBL_DQ":100}
+           "CAL-CS_PROC_C00_STRAIN_DBL_DQ":100}
 
 # get the time of the input file.
 tmp=inputfile.rsplit("-",2)
