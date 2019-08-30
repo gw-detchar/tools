@@ -70,10 +70,12 @@ def mkSegment(gst, get, utc_date) :
     ch1 = 'K1:GRD-PMC_OK'
     ch2 = 'K1:GRD-IO_OK'
     ch3 = 'K1:GRD-LSC_LOCK_STATE_N'
+    ch4 = 'K1:GRD-LSC_FPMI_LOCK_STATE_N'
 
     file_path1 = SEGMENT_DIR + 'SegmentList_PMC_UTC_' + utc_date + '.txt'
     file_path2 = SEGMENT_DIR + 'SegmentList_IMC_UTC_' + utc_date + '.txt'
     file_path3 = SEGMENT_DIR + 'SegmentList_LSC_UTC_' + utc_date + '.txt'
+    file_path4 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '.txt'
     if getpass.getuser() == "controls":
         gwf_cache = '/users/DET/Cache/latest.cache'
         with open(gwf_cache, 'r') as fobj:
@@ -87,6 +89,7 @@ def mkSegment(gst, get, utc_date) :
     channeldata1 = TimeSeries.read(cache, ch1, start=gst, end=get, format='gwf.lalframe', gap='pad')
     channeldata2 = TimeSeries.read(cache, ch2, start=gst, end=get, format='gwf.lalframe', gap='pad')
     channeldata3 = TimeSeries.read(cache, ch3, start=gst, end=get, format='gwf.lalframe', gap='pad')
+    channeldata4 = TimeSeries.read(cache, ch4, start=gst, end=get, format='gwf.lalframe', gap='pad')
 
     #------------------------------------------------------------
     #print('Checking PMC Locking status for K1...')
@@ -108,6 +111,11 @@ def mkSegment(gst, get, utc_date) :
     segment3 = highseismic3.to_dqflag(round=True)
     with open(file_path3, mode='w') as f:
         for seg in segment3.active :
+            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+
+    segment4 = highseismic4.to_dqflag(round=True)
+    with open(file_path4, mode='w') as f:
+        for seg in segment4.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 
 #------------------------------------------------------------
