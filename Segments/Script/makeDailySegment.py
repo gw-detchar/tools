@@ -71,11 +71,14 @@ def mkSegment(gst, get, utc_date) :
     ch2 = 'K1:GRD-IO_OK'
     ch3 = 'K1:GRD-LSC_LOCK_STATE_N'
     ch4 = 'K1:GRD-LSC_FPMI_LOCK_STATE_N'
+    ch5 = 'K1:MIF-WE_ARE_DOING_NOTHING'
 
     file_path1 = SEGMENT_DIR + 'SegmentList_PMC_UTC_' + utc_date + '.txt'
     file_path2 = SEGMENT_DIR + 'SegmentList_IMC_UTC_' + utc_date + '.txt'
     file_path3 = SEGMENT_DIR + 'SegmentList_LSC_UTC_' + utc_date + '.txt'
     file_path4 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '.txt'
+    file_path5 = SEGMENT_DIR + 'SegmentList_silent_UTC_' + utc_date + '.txt'
+    file_path6 = SEGMENT_DIR + 'SegmentList_silentFPMI_UTC_' + utc_date + '.txt'
     if getpass.getuser() == "controls":
         gwf_cache = '/users/DET/Cache/latest.cache'
         with open(gwf_cache, 'r') as fobj:
@@ -90,14 +93,16 @@ def mkSegment(gst, get, utc_date) :
     channeldata2 = TimeSeries.read(cache, ch2, start=gst, end=get, format='gwf.lalframe', gap='pad')
     channeldata3 = TimeSeries.read(cache, ch3, start=gst, end=get, format='gwf.lalframe', gap='pad')
     channeldata4 = TimeSeries.read(cache, ch4, start=gst, end=get, format='gwf.lalframe', gap='pad')
-
+    channeldata5 = TimeSeries.read(cache, ch5, start=gst, end=get, format='gwf.lalframe', gap='pad')
     #------------------------------------------------------------
     #print('Checking PMC Locking status for K1...')
 
     highseismic1 = channeldata1 == 1
     highseismic2 = channeldata2 == 1
     highseismic3 = channeldata3 >= 20
-
+    highseismic4 = channeldata4 == 16
+    highseismic5 = channeldata5 == 1
+    
     segment1 = highseismic1.to_dqflag(round=True)
     with open(file_path1, mode='w') as f:
         for seg in segment1.active :
@@ -118,6 +123,15 @@ def mkSegment(gst, get, utc_date) :
         for seg in segment4.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 
+    segment5 = highseismic5.to_dqflag(round=True)
+    with open(file_path5, mode='w') as f:
+        for seg in segment5.active :
+            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+            
+    segment6 = segment4 & segment5
+    with open(file_path6, mode='w') as f:
+        for seg in segment6.active :
+            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 #------------------------------------------------------------
 
 
