@@ -21,7 +21,7 @@ do
     fi
     
 
-    OUTCH=`printf ${INCH} | sed -e 's/OUT16/OUT/g' -e 's/OUTMON/OUT/g' -e 's/OUTPUT/OUT/g' -e 's/INMON/IN1/g'`
+    OUTCH=`printf ${INCH} | sed -e 's/I_MON/I_ERR/g' -e 's/Q_MON/Q_ERR/g' -e 's/OUT16/OUT/g' -e 's/OUTMON/OUT/g' -e 's/OUTPUT/OUT/g' -e 's/INMON/IN1/g'`
 
     if test "`grep -h ${OUTCH}_DQ ${CHANS}*.ini | grep -v '^#'`" = ""
     then

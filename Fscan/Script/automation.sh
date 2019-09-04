@@ -58,6 +58,7 @@ set ::masterList {\\
 {K1:CAL-CS_PROC_IMC_FREQUENCY_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
 {K1:CAL-CS_PROC_XARM_FREQUENCY_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
 {K1:IMC-SERVO_MIXER_DAQ_OUT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
+{K1:CAL-CS_PROC_C00_STRAIN_DBL_DQ ADC_REAL8 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
 }
 
 set fixedComparison 0;

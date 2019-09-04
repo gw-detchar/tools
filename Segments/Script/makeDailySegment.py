@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from pytz import timezone
 
 from gwpy.timeseries import TimeSeries
+from gwpy.timeseries import TimeSeriesDict
 from gwpy.timeseries import StateTimeSeries
 from gwpy.segments import DataQualityFlag
 
@@ -72,7 +73,7 @@ def mkSegment(gst, get, utc_date) :
     ch3 = 'K1:GRD-LSC_LOCK_STATE_N'
     ch4 = 'K1:GRD-LSC_FPMI_LOCK_STATE_N'
     ch5 = 'K1:MIF-WE_ARE_DOING_NOTHING'
-
+    channels = [ch1,ch2,ch3,ch4,ch5]
     file_path1 = SEGMENT_DIR + 'SegmentList_PMC_UTC_' + utc_date + '.txt'
     file_path2 = SEGMENT_DIR + 'SegmentList_IMC_UTC_' + utc_date + '.txt'
     file_path3 = SEGMENT_DIR + 'SegmentList_LSC_UTC_' + utc_date + '.txt'
@@ -89,11 +90,14 @@ def mkSegment(gst, get, utc_date) :
     #------------------------------------------------------------
 
     #print('Reading {0} timeseries data...'.format(date))
-    channeldata1 = TimeSeries.read(cache, ch1, start=gst, end=get, format='gwf.lalframe', gap='pad')
-    channeldata2 = TimeSeries.read(cache, ch2, start=gst, end=get, format='gwf.lalframe', gap='pad')
-    channeldata3 = TimeSeries.read(cache, ch3, start=gst, end=get, format='gwf.lalframe', gap='pad')
-    channeldata4 = TimeSeries.read(cache, ch4, start=gst, end=get, format='gwf.lalframe', gap='pad')
-    channeldata5 = TimeSeries.read(cache, ch5, start=gst, end=get, format='gwf.lalframe', gap='pad')
+
+    channeldata = TimeSeriesDict.read(cache, channels, start=gst, end=get, format='gwf.lalframe', gap='pad')
+    channeldata1 = channeldata[ch1]
+    channeldata2 = channeldata[ch2]
+    channeldata3 = channeldata[ch3]
+    channeldata4 = channeldata[ch4]
+    channeldata5 = channeldata[ch5]
+
     #------------------------------------------------------------
     #print('Checking PMC Locking status for K1...')
 
