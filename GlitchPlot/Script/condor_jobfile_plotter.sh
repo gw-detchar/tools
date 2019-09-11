@@ -558,6 +558,7 @@ do
 	echo "lock is false."
     fi
 
+    optioncoherencegram=$option
     optionspectrogram=$option
     optionqtransform=$option
     
