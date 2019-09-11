@@ -10,8 +10,8 @@ from gwpy.table import EventTable
 from gwpy.segments import DataQualityFlag
 from gwpy.table.filters import in_segmentlist
 #import ROOT
-from ROOT import gROOT, gDirectory, gPad, gSystem, gStyle
-from ROOT import TH1D, TH2D, TH1I, TCanvas
+#from ROOT import gROOT, gDirectory, gPad, gSystem, gStyle
+#from ROOT import TH1D, TH2D, TH1I, TCanvas
 from mylib import mylib
 from astropy.table import vstack
 # argument processing
@@ -57,6 +57,8 @@ snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":15,
            "CAL-CS_PROC_IMC_FREQUENCY_DQ":21,
            "CAL-CS_PROC_XARM_FREQUENCY_DQ":21,
            "CAL-CS_PROC_DARM_DISPLACEMENT_DQ":100,
+           "CAL-CS_PROC_MICH_DISPLACEMENT_DQ":100,
+           "CAL-CS_PROC_SRCL_DISPLACEMENT_DQ":100,
            "CAL-CS_PROC_C00_STRAIN_DBL_DQ":100}
 
 # get the time of the input file.
