@@ -92,15 +92,15 @@ do
 	[ "${maxf}" = "" ] && maxf=${def_maxf} || def_maxf=${maxf}
 	printf "maxf: ${maxf}\n" >&2
 		
-	dpi=`printf "${ZEN_OUT}" | cut -d',' -f9`
+	dpi=`printf "${ZEN_OUT}" | cut -d',' -f11`
 	[ "${dpi}" = "" ] && dpi=${def_dpi} || def_dpi=${dpi}
 	printf "dpi: ${dpi}\n" >&2
 		
-	options=`printf "${ZEN_OUT}" | cut -d',' -f10`
+	options=`printf "${ZEN_OUT}" | cut -d',' -f12`
 	[ "${options}" = "" ] && options=${def_options} || def_options=${options}
 	printf "options: ${options}\n" >&2
 		
-	optionc=`printf "${ZEN_OUT}" | cut -d',' -f11`
+	optionc=`printf "${ZEN_OUT}" | cut -d',' -f13`
 	[ "${optionc}" = "" ] && optionc=${def_optionc} || def_optionc=${optionc}
 	printf "optionc: ${optionc}\n" >&2
 		
