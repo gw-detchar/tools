@@ -26,6 +26,23 @@ def_options=""
 def_optionc=""
 tmpoutdir="/users/DET/tools/iKozapy/Result/"
 
+# following will be processed only in the first time in each machine. 
+if [ ! -e ${def_outdir}/temp_spectrogram52.png ]; then
+    for i in `seq 9`
+    do
+	rm -rf ${def_outdir}/temp_*gram1.png
+	touch ${def_outdir}/temp_spectrogram${i}1.png
+	touch ${def_outdir}/temp_spectrogram${i}2.png
+	touch ${def_outdir}/temp_coherencegram${i}1.png
+    done
+
+fi
+
+s1png=`ls -t /tmp/detchar/iKozapy/Result/temp_spectrogram*1.png | tail -1`
+s2png=`ls -t /tmp/detchar/iKozapy/Result/temp_spectrogram*2.png | tail -1`
+c1png=`ls -t /tmp/detchar/iKozapy/Result/temp_coherencegram*1.png | tail -1`
+
+
 fl=0
 
 while :
@@ -91,7 +108,6 @@ do
 	[ "${bandwidth}" = "" ] && bandwidth=${def_bandwidth} || def_bandwidth=${bandwidth}
 	printf "bandwidth: ${bandwidth}\n" >&2
 	fft=`echo "scale=5; 1. / $bandwidth" | bc `
-	printf "fft: ${fft}\n" >&2
 	if [ "$(echo "$fft > $stride" | bc)" -eq 1 ]; then
 	    zenity --error --title Error --text "Time resolution > 1/Frequency resolution is required ! "
 	    continue
@@ -120,7 +136,6 @@ do
 		
     fi
 
-    echo "option reading done."
     if [ "${realtime}" = "y" ]; then
 	gpsend=`gpstime | grep GPS | awk '{printf("%d\n", $2)}'`
 	gpsstart=$(( $gpsend - $duration ))
@@ -141,12 +156,15 @@ do
 
 	    echo $output
 	    echo ${def_outdir}
-	    mv $output ${def_outdir}/temp_spectrogram1.png
+	    #mv $output ${def_outdir}/${s1png}
+	    mv $output ${s1png}
 	    if [ -e ${output} ]; then
 		rm -rf ${output}
 	    fi    
 	    sleep 1s    
-	    eog ${def_outdir}/temp_spectrogram1.png -w &
+	    #eog ${def_outdir}/temp_spectrogram1.png -w &
+	    eog ${s1png} -w &
+	    
 	else
 #	    echo "job failes."
 	    #	    echo `tail  ${def_outdir}/tmp `
@@ -163,12 +181,13 @@ do
 
 #		echo $output
 #		echo ${def_outdir}
-#		mv $output ${def_outdir}/temp_spectrogram2.png
+#		mv $output ${s2png}
 #		if [ -e ${output} ]; then
 #		    rm -rf ${output}
 #		fi    
 #		sleep 1s    
-#		eog ${def_outdir}/temp_spectrogram2.png -w &
+	#	eog ${s2png} -w &
+
 #	    else
 #		echo "job failes."
 #		echo `tail  ${def_outdir}/tmp `
@@ -186,12 +205,13 @@ do
 
 	    echo $output
 	    echo ${def_outdir}
-	    mv $output ${def_outdir}/temp_coherencegram1.png
+	    mv $output ${c1png}
 	    if [ -e ${output} ]; then
 		rm -rf ${output}
 	    fi    
 	    sleep 1s    
-	    eog ${def_outdir}/temp_coherencegram1.png -w &
+	    eog ${c1png} -w &
+	    
 	else
 	    echo "job failes."
 	    echo `tail  ${def_outdir}/tmp `
