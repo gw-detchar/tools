@@ -42,6 +42,9 @@ s1png=`ls -t /tmp/detchar/iKozapy/Result/temp_spectrogram*1.png | tail -1`
 s2png=`ls -t /tmp/detchar/iKozapy/Result/temp_spectrogram*2.png | tail -1`
 c1png=`ls -t /tmp/detchar/iKozapy/Result/temp_coherencegram*1.png | tail -1`
 
+touch $s1png
+touch $s2png
+touch $c1png
 
 fl=0
 
