@@ -34,7 +34,7 @@ do
     def_gpsend=`${cmd_gps} | grep JST | awk '{printf("%s %s\n", $2, $3)}'`
   
     #    while test ${flag} -eq 0
-    if [ "${realtime}" = "n" ]; then
+    if [ "${realtime}" != "y" ]; then
 
 	[ -e /usr/bin/xclip ] && printf "${def_gpsend}" | xclip
 	ZEN_OUT=`zenity --forms --text="iKozapy plot tool" --separator=',' --add-entry="Spectrogram or coherencegram [s/c] (${def_mode})" --add-entry="channel1 (${def_channel1})" --add-entry="channel2 for coherencegram(${def_channel2})" --add-entry="JST or GPS end time (${def_gpsend})"  --add-entry="Real time update ? [y/n] (n)"  --add-entry="Duration [sec] (${def_duration})" --add-entry="Time resolution [sec] (${def_stride})"  --add-entry="Frequency resolution [Hz] (${def_bandwidth})" --add-entry="min. f [Hz] (autoscale)" --add-entry="max. f [Hz] (autoscale)" --add-entry="png resolution [dpi] (50)" --add-entry="Other option for spectrogram" --add-entry="Other option for coherencegram" `
@@ -45,6 +45,7 @@ do
 	[ "${mode}" = ""  ] && mode=${def_mode}
 	[ "${mode}" != "" ] && def_mode=${mode}
 	printf "mode: ${mode} \n" >&2
+	[ "${mode}" != "s" ] && [ "${mode}" != "c" ] && [ "${mode}" != "sc" ] && [ "${mode}" != "cs" ] && zenity --error --title Error --text "Invalid mode ! Please use 's' or 'c'. " && continue
 		
 	#channel=`printf "${ZEN_OUT}" | cut -d',' -f1 | sed -e 's/K1://g'`
 	channel1=`printf "${ZEN_OUT}" | cut -d',' -f2 `
@@ -65,11 +66,13 @@ do
 	[ "${gpsend}" = "" ] && gpsend=${def_gpsend} || def_gpsend=${gpsend}
 	gpsend=`${cmd_gps} $gpsend| grep GPS | awk '{printf("%d\n", $2)}'`
 	printf "gpsend: ${gpsend}\n" >&2
+	[ ! -e /frame0/full/${gpsend:0:5} ]  && zenity --error --title Error --text "Data doesn't exist in Kamioka. Please go to Kashiwa server. " && continue
 
 	realtime=`printf "${ZEN_OUT}" | cut -d',' -f5`
 	[ "${realtime}" = "" ] && realtime=${def_realtime} || def_realtime=${realtime}
 	printf "realtime: ${realtime}\n" >&2
-	
+	[ "${realtime}" != "y" ] && [ "${realtime}" != "n" ] && zenity --error --title Error --text "Invalid option in real time update ! Please use 'y' or 'n'. " && continue
+
 	duration=`printf "${ZEN_OUT}" | cut -d',' -f6`
 	[ "${duration}" = "" ] && duration=${def_duration} || def_duration=${duration}
 	printf "duration: ${duration}\n" >&2
@@ -79,10 +82,21 @@ do
 	stride=`printf "${ZEN_OUT}" | cut -d',' -f7`
 	[ "${stride}" = "" ] && stride=${def_stride} || def_stride=${stride}
 	printf "stride: ${stride}\n" >&2
+	if [ "$(echo "$duration < $stride" | bc)" -eq 1 ]; then
+	    zenity --error --title Error --text "Duration must be longer than time resolution ! "
+	    continue
+	fi
 	
 	bandwidth=`printf "${ZEN_OUT}" | cut -d',' -f8`
 	[ "${bandwidth}" = "" ] && bandwidth=${def_bandwidth} || def_bandwidth=${bandwidth}
 	printf "bandwidth: ${bandwidth}\n" >&2
+	fft=`echo "scale=5; 1. / $bandwidth" | bc `
+	printf "fft: ${fft}\n" >&2
+	if [ "$(echo "$fft > $stride" | bc)" -eq 1 ]; then
+	    zenity --error --title Error --text "Time resolution > 1/Frequency resolution is required ! "
+	    continue
+	fi
+
 	
 	minf=`printf "${ZEN_OUT}" | cut -d',' -f9`
 	[ "${minf}" = "" ] && minf=${def_minf} || def_minf=${minf}
@@ -106,6 +120,7 @@ do
 		
     fi
 
+    echo "option reading done."
     if [ "${realtime}" = "y" ]; then
 	gpsend=`gpstime | grep GPS | awk '{printf("%d\n", $2)}'`
 	gpsstart=$(( $gpsend - $duration ))
@@ -133,8 +148,10 @@ do
 	    sleep 1s    
 	    eog ${def_outdir}/temp_spectrogram1.png -w &
 	else
-	    echo "job failes."
-	    echo `tail  ${def_outdir}/tmp `
+#	    echo "job failes."
+	    #	    echo `tail  ${def_outdir}/tmp `
+	    errormessage=`tail  ${def_outdir}/tmp `
+	    zenity --error --title Error --text "Job failed. Full log is in ${def_outdir}/tmp. \n $errormessage "
 	fi
 
 #	if test "$channel2" != "" ;then
