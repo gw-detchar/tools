@@ -69,9 +69,9 @@ def GetFilelist(gpsstart,gpsend):
 def mkSegment(gst, get, utc_date) :
 
     ch1 = 'K1:GRD-PMC_OK'
-    ch2 = 'K1:GRD-IO_OK'
+    ch2 = 'K1:GRD-IMC_STATE_N'
     ch3 = 'K1:GRD-LSC_LOCK_STATE_N'
-    ch4 = 'K1:GRD-LSC_FPMI_LOCK_STATE_N'
+    ch4 = 'K1:GRD-LSC_LOCK_STATE_N'
     ch5 = 'K1:MIF-WE_ARE_DOING_NOTHING'
     channels = [ch1,ch2,ch3,ch4,ch5]
     file_path1 = SEGMENT_DIR + 'SegmentList_PMC_UTC_' + utc_date + '.txt'
@@ -102,9 +102,9 @@ def mkSegment(gst, get, utc_date) :
     #print('Checking PMC Locking status for K1...')
 
     highseismic1 = channeldata1 == 1
-    highseismic2 = channeldata2 == 1
+    highseismic2 = channeldata2 >= 134
     highseismic3 = channeldata3 >= 20
-    highseismic4 = channeldata4 == 16
+    highseismic4 = channeldata4 == 60
     highseismic5 = channeldata5 == 1
     
     segment1 = highseismic1.to_dqflag(round=True)

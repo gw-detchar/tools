@@ -60,7 +60,9 @@ OVERLAP=`printf "${STR_PARAM}" | grep "PARAMETER TIMING " | awk '{print $4}'`
 let GPS_END=`__get_periodic_gps_epoch ${CRON_INTERVAL}`+${OVERLAP}/2
 let GPS_START=${GPS_END}-${CRON_INTERVAL}*60-${OVERLAP}
 
-
+echo $GPS_START
+echo $GPS_END
+exit 0
 ################################
 ### Execute
 ################################
