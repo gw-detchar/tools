@@ -62,7 +62,7 @@ let GPS_START=${GPS_END}-${CRON_INTERVAL}*60-${OVERLAP}
 
 echo $GPS_START
 echo $GPS_END
-exit 0
+
 ################################
 ### Execute
 ################################
