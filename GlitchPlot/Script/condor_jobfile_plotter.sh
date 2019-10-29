@@ -36,7 +36,7 @@ do
 
     channels=$channel".dat"
     ./chlist_plotter.sh $channels $channel
-
+    channels=test.dat
     # For timeseries, gps time start from 2s before glitch and end at 2s after glitch.
 
     # For spectrum, spectogram, and coherencegram,
@@ -80,7 +80,7 @@ do
     if [ "$(echo "$fft < $min_duration" | bc)" -eq 1 ]; then
 	fft=$min_duration
     fi
-    echo fft $fft
+
 
     # select fft to take 2^n data points.
     sampling=( 1 0.5 0.25 0.125 0.0625 0.03125 0.015625 0.0078125 0.00390625 0.001953125 0.00097656250 0.00048828125 0.000244140625 0.000122703125 0.00006103515625 )
@@ -90,7 +90,7 @@ do
     if [ "$(echo "$tmp < 0" | bc)" -eq 1 ]; then
 	tmp2=`echo "scale=0; 0 - ${tmp} "| bc | awk '{printf("%d\n",$1 + 1)}'`
 	fft=${sampling[$tmp2]}
-	while [ "$(echo "scale=5; $fft < 1. / ${frequency_snr}" | bc)" -eq 1 ]
+	while [ "$(echo "scale=5; $fft < 2. / ${frequency_snr}" | bc)" -eq 1 ]
 	do
 	    tmp2=$(($tmp2 - 1))
 	    fft=${sampling[$tmp2]}
@@ -98,7 +98,7 @@ do
     else
 	tmp2=`echo "scale=0; $tmp "| bc | awk '{printf("%d\n",$1 )}'`
 	fft=`awk "BEGIN {print 2**$tmp2}"`
-	while [ "$(echo "scale=5; $fft < 1. / ${frequency_snr}" | bc)" -eq 1 ]
+	while [ "$(echo "scale=5; $fft < 2. / ${frequency_snr}" | bc)" -eq 1 ]
 	do
 	    tmp2=$(($tmp2 + 1))
 	    fft=`awk "BEGIN {print 2**$tmp2}"`
@@ -107,7 +107,7 @@ do
 
     # stride is minimum of a and b.
 
-    a=`echo "scale=5; $min_duration * 10. " | bc `
+    a=`echo "scale=5; $min_duration * 4. " | bc `
     b=`echo "scale=5; $max_duration / 2. " | bc `
     stride=0
     span=0
@@ -125,8 +125,8 @@ do
 
     # make the time span to be multiple of stride.
     span=`echo "scale=5; $max_duration * 10 " | bc `
-    if [ "$(echo "$span < 2.0" | bc)" -eq 1 ]; then
-	span=2.
+    if [ "$(echo "$span < 0.5" | bc)" -eq 1 ]; then
+	span=0.5
     fi
 
     divide=`echo "scale=5; $span / $stride" | bc | awk '{printf("%d\n",$1 + 1)}'`
@@ -136,11 +136,6 @@ do
     echo fft $fft
     echo divide $divide
     echo span $span
-
-    tmpend=`echo "scale=5; $span30 + 2. " | bc `
-
-    #    gpsstart=`expr $gpstime - 30`
-#    gpsend=`expr $gpstime + 30`
 
     gpsstart=`echo "scale=5; $gpstime - $span " | bc `
     gpsend=`echo "scale=5; $gpstime + $span " | bc `
@@ -160,9 +155,9 @@ do
 
     # after trigger
     gpsstart1=`echo "scale=5; $gpstime + 2. + $max_duration " | bc | awk '{printf("%d\n",$1 + 1)}'`
-    gpsend1=`echo "scale=5; $gpstime + $span30 + 2. +$max_duration " | bc | awk '{printf("%d\n",$1 + 1)}'`
+    gpsend1=`echo "scale=5; $gpstime + 2. + $max_duration + $span30 " | bc | awk '{printf("%d\n",$1 + 1)}'`
     #before trigger
-    gpsstart2=`echo "scale=5; $gpstime - $span30 - 2. " | bc | awk '{printf("%d\n",$1 - 1)}'`
+    gpsstart2=`echo "scale=5; $gpstime - 2. - $span30 " | bc | awk '{printf("%d\n",$1 - 1)}'`
     gpsend2=`echo "scale=5; $gpstime - 2. " | bc | awk '{printf("%d\n",$1 - 1)}'`
 
 
@@ -252,7 +247,8 @@ do
 	date=`tconvert -l -f %Y%m%d ${gpstime}`
     fi
 
-    outdir="$condir/$date/${index}/"
+    #outdir="$condir/$date/${index}/"
+    outdir="$PWD/test/${index}/"
 
     # Confirm the existance of output directory.
 
