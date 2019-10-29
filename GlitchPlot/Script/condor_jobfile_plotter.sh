@@ -83,7 +83,7 @@ do
     echo fft $fft
 
     # select fft to take 2^n data points.
-    sampling=( 1 0.5 0.25 0.125 0.0625 0.03125 0.015625 0.0078125 0.0390625 0.001953125 0.00097656250 0.00048828125 0.000244140625 0.000122703125 0.00006103515625 )
+    sampling=( 1 0.5 0.25 0.125 0.0625 0.03125 0.015625 0.0078125 0.00390625 0.001953125 0.00097656250 0.00048828125 0.000244140625 0.000122703125 0.00006103515625 )
     tmp=`awk "BEGIN {print log($fft) / log(2)}"`
     dif=0
 
@@ -209,9 +209,19 @@ do
 #    llabel='X-arm'  #y-axis label for the bar plot.
 
     # FPMI lock
-    lchannel="K1:GRD-LSC_LOCK_SIMPLE_STATE_N"  #guardian channel
-    lnumber=16  #number of the required state
+    lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
+    lnumber=60  #number of the required state
     llabel='FPMI'  #y-axis label for the bar plot.
+
+    # ALSDARM lock
+    #lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
+    #lnumber=40  #number of the required state
+    #llabel='ALSDARM'  #y-axis label for the bar plot.
+
+    # ALSDARM+PR lock
+    #lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
+    #lnumber=171  #number of the required state
+    #llabel='PRMI+ALSDARM'  #y-axis label for the bar plot.
 
 
     #  lock
