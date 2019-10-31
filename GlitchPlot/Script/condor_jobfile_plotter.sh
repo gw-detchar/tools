@@ -36,7 +36,7 @@ do
 
     channels=$channel".dat"
     ./chlist_plotter.sh $channels $channel
-    channels=test.dat
+    
     # For timeseries, gps time start from 2s before glitch and end at 2s after glitch.
 
     # For spectrum, spectogram, and coherencegram,
@@ -247,9 +247,8 @@ do
 	date=`tconvert -l -f %Y%m%d ${gpstime}`
     fi
 
-    #outdir="$condir/$date/${index}/"
-    outdir="$PWD/test/${index}/"
-
+    outdir="$condir/$date/${index}/"
+    
     # Confirm the existance of output directory.
 
     if [ ! -e $outdir ]; then
