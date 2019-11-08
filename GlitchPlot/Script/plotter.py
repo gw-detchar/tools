@@ -274,23 +274,25 @@ for segment in tmpactive:
     max_snr = 0
     snrs = tmpevents.get_column('snr')
     frequencys = tmpevents.get_column('peak_frequency')
-
-    for snr,frequency in zip(snrs,frequencys):
+    durations = tmpevents.get_column('duration')
+    
+    for snr,frequency,duration in zip(snrs,frequencys,durations):
         if max_snr < snr:
             max_snr = snr
             peakfrequency=frequency
-
+            peakQ=2.*math.pi*frequency*duration
     #Amplitude, frequency
 
     #initialize
     max_amp = 0
     amplitudes = tmpevents.get_column('amplitude')
 
-    for amplitude,frequency in zip(amplitudes,frequencys):
+    for amplitude,frequency,duration in zip(amplitudes,frequencys,durations):
         if max_amp < amplitude:
             max_amp = amplitude
             peakfrequency_amp=frequency
-    
+            peakduration_amp=duration
+            peakQ_amp=2.*math.pi*frequency*duration
     strtmp=""
     stimestr=str(tmpstart).split(".")[1]
     stimestr=stimestr[0:5]
@@ -323,6 +325,12 @@ for segment in tmpactive:
 
     strtmp+=(" ")
     strtmp+=str(triggertype)
+
+    strtmp+=(" ")
+    strtmp+=str(peakQ)
+
+    strtmp+=(" ")
+    strtmp+=str(peakQ_amp)
 
     # dummy index. it is for burst trigger.
     strtmp+=(" 0")
