@@ -20,7 +20,8 @@ namecoherencegram="coherencegram"
 nameqtransform="qtransform"
 namelock="locksegments"
 
-cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype eventnumber
+#cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype eventnumber
+cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype eventnumber peakQ peakQ_amp
 do
     echo "gps time = $gpstime "
     echo "channel = $channel "
@@ -648,7 +649,7 @@ do
 	    #  $ python batch_coherencegram.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s ${qgpsstart} -e ${qgpsend} -o ${outdir} -i $channel ${optionqtransform} -f ${fmin} --dpi 50"
+	    echo "Arguments = -c ${chlist[@]} -s ${qgpsstart} -e ${qgpsend} -o ${outdir} -i $channel ${optionqtransform} -f ${fmin} --dpi 50 -q ${peakQ}"
 	    echo "Queue"
 
 	} >> job_${nameqtransform}.sdf
