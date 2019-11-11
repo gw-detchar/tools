@@ -19,6 +19,7 @@ namespectrogram="whitening_spectrogram"
 namecoherencegram="coherencegram"
 nameqtransform="qtransform"
 namelock="locksegments"
+namesuggestion="suggestion"
 
 #cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype eventnumber
 cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype eventnumber peakQ peakQ_amp
@@ -161,11 +162,12 @@ do
     gpsstart2=`echo "scale=5; $gpstime - 2. - $span30 " | bc | awk '{printf("%d\n",$1 - 1)}'`
     gpsend2=`echo "scale=5; $gpstime - 2. " | bc | awk '{printf("%d\n",$1 - 1)}'`
 
+    # during trigger
+    gpsstart3=$gpstime
+    gpsend3=`echo "scale=5; $gpstime + $max_duration " | bc `
 
     # during trigger, for CBC
     if [ "$eventtype" = "CBC" ]; then
-	gpsstart3=$gpstime
-	gpsend3=`echo "scale=5; $gpstime + $max_duration " | bc `
 
 	gpsstarts30=($gpsstart1 $gpsstart2 $gpsstart3 )
 	gpsends30=($gpsend1 $gpsend2 $gpsend3 )
@@ -548,6 +550,46 @@ do
 	
     echo job_${namelock}.sdf
     condor_submit job_${namelock}.sdf
+
+    # suggestion
+
+    runsuggestion="$PWD/run_${namesuggestion}.sh"
+
+    # Write a file for condor submission.
+    
+    {
+	echo "PWD = $Fp(SUBMIT_FILE)"
+	echo "transfer_input_files = rm_if_empty.sh"
+	echo '+PostCmd = "rm_if_empty.sh"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)/$(Output) $(PWD)/$(Error) $(PWD)/$(Log)"'
+	echo "Executable = ${runsuggestion}"
+	echo "Universe   = vanilla"
+	echo "Notification = never"
+	# if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.
+	echo "request_memory = 1 GB"
+	echo "Getenv  = True            # the environment variables will be copied."
+	echo ""
+	echo "should_transfer_files = YES"
+	echo "when_to_transfer_output = ON_EXIT"
+	echo ""
+	echo "Log          = log/$date/log_${namesuggestion}.txt"
+	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+	echo ""
+    } > job_${namesuggestion}.sdf
+
+    {
+	# Please try
+	#  $ python batch_locksegments.py -h
+	# for option detail.
+	
+	echo "Arguments = -s $gpsstart2 -e $gpsend2 -st $gpsstart3 -et $gpsend3 -r $channel  -o ${outdir} -ft $frequency_snr -f fft "
+	echo "Queue"
+    } >> job_${namesuggestion}.sdf
+	
+    echo job_${namesuggestion}.sdf
+    condor_submit job_${namesuggestion}.sdf
+
 
     # Loop over each plot. 
     option=""
