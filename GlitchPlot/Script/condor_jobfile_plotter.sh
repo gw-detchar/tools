@@ -583,7 +583,7 @@ do
 	#  $ python batch_locksegments.py -h
 	# for option detail.
 	
-	echo "Arguments = -s $gpsstart2 -e $gpsend2 -st $gpsstart3 -et $gpsend3 -r $channel  -o ${outdir} -ft $frequency_snr -f fft "
+	echo "Arguments = -s $gpsstart2 -e $gpsend2 -st $gpsstart3 -et $gpsend3 -r $channel  -o ${outdir} -ft $frequency_snr -f $fft "
 	echo "Queue"
     } >> job_${namesuggestion}.sdf
 	
