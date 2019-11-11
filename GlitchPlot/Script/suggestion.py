@@ -28,14 +28,14 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Make coherencegram.')
 parser.add_argument('-o','--outdir',help='output directory.',default='/tmp')
-parser.add_argument('-r','--refchannel',help='main reference channel.',default='K1:LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ')#required=True)
+parser.add_argument('-r','--refchannel',help='main reference channel.',required=True)
 #parser.add_argument('-c','--channel',help='compared channel.',default='K1:PEM-SEIS_IXV_GND_UD_IN1_DQ')#required=True)
-parser.add_argument('-s','--gpsstartbefore',help='GPS starting time for before trigger.',default='1244014906')#,required=True)
-parser.add_argument('-e','--gpsendbefore',help='GPS ending time for before trigger.',default='1244014926')#,required=True)
-parser.add_argument('-st','--gpsstarttrigger',help='GPS starting time for during trigger.',default='1244014927')#,required=True)
-parser.add_argument('-et','--gpsendtrigger',help='GPS ending time for during trigger.',default='1244014928')#,required=True)
-parser.add_argument('-f','--fftlength',help='FFT length.',type=float,default=0.125)
-parser.add_argument('-ft','--frequency',help='Frequency of the trigger.',type=float,default=12.8)
+parser.add_argument('-s','--gpsstartbefore',help='GPS starting time for before trigger.',required=True)
+parser.add_argument('-e','--gpsendbefore',help='GPS ending time for before trigger.',required=True)
+parser.add_argument('-st','--gpsstarttrigger',help='GPS starting time for during trigger.',required=True)
+parser.add_argument('-et','--gpsendtrigger',help='GPS ending time for during trigger.',required=True)
+parser.add_argument('-f','--fftlength',help='FFT length.',type=float,default=1.)
+parser.add_argument('-ft','--frequency',help='Frequency of the trigger.',type=float,default=100)
 parser.add_argument('-k','--kamioka',help='Flag to run on Kamioka server.',action='store_true')
 
 # define variables                                                                                                 
