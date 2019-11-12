@@ -690,7 +690,10 @@ do
 	    # Please try
 	    #  $ python batch_coherencegram.py -h
 	    # for option detail.
-	    
+
+	    if [ "$peakQ" = "" ]; then
+		peakQ=-1
+	    fi
 	    echo "Arguments = -c ${chlist[@]} -s ${qgpsstart} -e ${qgpsend} -o ${outdir} -i $channel ${optionqtransform} -f ${fmin} --dpi 50 -q ${peakQ}"
 	    echo "Queue"
 
