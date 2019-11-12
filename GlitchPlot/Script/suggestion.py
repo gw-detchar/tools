@@ -1,8 +1,8 @@
 '''
 This is to extract interesting channel in GlitchPlot. 
 The requirement is
-* The coherence is usually small
-* The coherence increases during glitch
+* The coherence is usually small, <0.2
+* The coherence increases during glitch, >0.5
 
 Author: Chihiro Kozakai
 '''
@@ -34,10 +34,12 @@ parser.add_argument('-s','--gpsstartbefore',help='GPS starting time for before t
 parser.add_argument('-e','--gpsendbefore',help='GPS ending time for before trigger.',required=True)
 parser.add_argument('-st','--gpsstarttrigger',help='GPS starting time for during trigger.',required=True)
 parser.add_argument('-et','--gpsendtrigger',help='GPS ending time for during trigger.',required=True)
+parser.add_argument('-sq','--gpsstartqgram',help='GPS starting time for GlitchPlot.',required=True)
+parser.add_argument('-eq','--gpsendqgram',help='GPS ending time for GlitchPlot.',required=True)
 parser.add_argument('-f','--fftlength',help='FFT length.',type=float,default=1.)
 parser.add_argument('-ft','--frequency',help='Frequency of the trigger.',type=float,default=100)
 parser.add_argument('-k','--kamioka',help='Flag to run on Kamioka server.',action='store_true')
-
+parser.add_argument('-q','--q',help='Q range.',default=-1 )
 # define variables                                                                                                 
 args = parser.parse_args()
 
@@ -53,10 +55,20 @@ gpsend=args.gpsendbefore
 gpsstartT=args.gpsstarttrigger
 gpsendT=args.gpsendtrigger
 
+gpsstartQ=args.gpsstartqgram
+gpsendQ=args.gpsendqgram
+
 frequency = args.frequency
 
 fft=args.fftlength
 ol=fft/2.  #  overlap in FFTs.
+
+qmin = 4
+qmax = 100
+
+if args.q > 0:
+    qmin = args.q
+    qmax = args.q
 
 # Make coherence before trigger
 # Get data from frame files                                                                                        
@@ -68,6 +80,7 @@ else:
 f = open('/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/'+refchannel+".dat")
 channels = f.read().split()
 f.close()
+#channels=['K1:CAL-CS_PROC_C00_STRAIN_DBL_DQ','K1:CAL-CS_PROC_DARM_DELTA_CTRL_MN_DBL_DQ']
 
 data = TimeSeriesDict.read(sources,channels,format='gwf.lalframe',start=float(gpsstart),end=float(gpsend))
 
@@ -78,12 +91,32 @@ else:
 
 dataT = TimeSeriesDict.read(sources,channels,format='gwf.lalframe',start=float(gpsstartT),end=float(gpsendT))
 
+margin=4
+
+gpsstartmargin=float(gpsstartQ)-margin
+gpsendmargin=float(gpsendQ)+margin
+
+if kamioka:
+    sources = mylib.GetFilelist_Kamioka(gpsstartmargin,gpsendmargin)
+else:
+    sources = mylib.GetFilelist(gpsstartmargin,gpsendmargin)
+
+dataQ = TimeSeriesDict.read(sources,channels,format='gwf.lalframe',start=float(gpsstartmargin),end=float(gpsendmargin))
+
 # Loop over channel. 
 
-detected = []
+detectedc = []
+detectedq = []
+notdetected = []
+
+ref = data[refchannel]
+refT = dataT[refchannel]
 for channel in channels:
 
-    ref = data[refchannel]
+    if 'K1:LSC' in channel or 'K1:CAL' in channel:
+        notdetected.append(channel)
+        continue
+
     com = data[channel]
 
     if fft < ref.dt.value:
@@ -92,20 +125,18 @@ for channel in channels:
         print("Given fft/stride was bad against the sampling rate. Automatically set to:")
         print("fft="+str(fft))
         print("ol="+str(ol))
-        print("stride="+str(stride))
+
     if fft < com.dt.value:
         fft=2*com.dt.value
         ol=fft/2.  #  overlap in FFTs.                                                                                 
         print("Given fft/stride was bad against the sampling rate. Automatically set to:")
         print("fft="+str(fft))
         print("ol="+str(ol))
-        print("stride="+str(stride))
 
     cohbefore = ref.coherence(com,fftlength=fft,overlap=ol)
 
     # Make coherence for trigger time
 
-    refT = dataT[refchannel]
     comT = dataT[channel]
 
     cohtrigger = refT.coherence(comT,fftlength=fft,overlap=ol)
@@ -114,9 +145,30 @@ for channel in channels:
     diff=np.abs(np.asarray(cohbefore.frequencies)-frequency).argmin()
     
     if cohbefore.value[diff] < 0.2 and cohtrigger.value[diff] > 0.5:
-        print("Detected ! "+channel)
-        detected.append(channel)
+        detectedc.append(channel)
+        continue
 
-print(detected)
-with open(outdir+"suggestion.txt", mode='w') as f:
-    f.write('\n'.join(detected))
+    # Using Qtransform
+
+    comQ = dataQ[channel]
+
+    qgram = comQ.q_gram(qrange=(qmin,qmax),snrthresh=20)
+
+    qgram = qgram.filter(('time', mylib.between,  (float(gpsstartT)-1.,float(gpsendT))))
+
+    if len(qgram) > 0: 
+        detectedq.append(channel)
+        continue
+
+    notdetected.append(channel)
+
+print(detectedc)
+print(detectedq)
+with open(outdir+"/suggestion1.txt", mode='w') as f:
+    f.write('\n'.join(detectedc))
+with open(outdir+"/suggestion2.txt", mode='w') as f:
+    f.write('\n'.join(detectedq))
+with open(outdir+"/notsuggestion.txt", mode='w') as f:
+    f.write('\n'.join(notdetected))
+
+print(outdir+"suggestion.txt")
