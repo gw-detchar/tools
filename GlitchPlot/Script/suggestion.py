@@ -152,7 +152,7 @@ for channel in channels:
 
     comQ = dataQ[channel]
 
-    qgram = comQ.q_gram(qrange=(qmin,qmax),snrthresh=20)
+    qgram = comQ.q_gram(qrange=(qmin,qmax),snrthresh=5.5)
 
     qgram = qgram.filter(('time', mylib.between,  (float(gpsstartT)-1.,float(gpsendT))))
 
