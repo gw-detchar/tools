@@ -113,16 +113,13 @@ ref = data[refchannel]
 refT = dataT[refchannel]
 for channel in channels:
 
+    lowSRflag=False
+
     if 'K1:LSC' in channel or 'K1:CAL' in channel:
         notdetected.append(channel)
         continue
 
     com = data[channel]
-
-    if com.dt.value > 0.05:
-        print("Skip because of low sampling rate.")
-        notdetected.append(channel)
-        continue
 
     if fft < ref.dt.value:
         fft=2*ref.dt.value
@@ -133,7 +130,8 @@ for channel in channels:
 
     if fft < com.dt.value:
         fft=2*com.dt.value
-        ol=fft/2.  #  overlap in FFTs.                                                                                 
+        ol=fft/2.  #  overlap in FFTs.
+        lowSRflag=True
         print("Given fft/stride was bad against the sampling rate. Automatically set to:")
         print("fft="+str(fft))
         print("ol="+str(ol))
@@ -155,10 +153,12 @@ for channel in channels:
 
     # Using Qtransform
 
+    if loaSRflag:
+        notdetected.append(channel)
+        continue
+
     comQ = dataQ[channel]
-    print(qmin)
-    print(qmax)
-    print(comQ)
+
     qgram = comQ.q_gram(qrange=(qmin,qmax),snrthresh=5.5)
 
     qgram = qgram.filter(('time', mylib.between,  (float(gpsstartT)-1.,float(gpsendT))))
@@ -178,4 +178,5 @@ with open(outdir+"/suggestion2.txt", mode='w') as f:
 with open(outdir+"/notsuggestion.txt", mode='w') as f:
     f.write('\n'.join(notdetected))
 
-print(outdir+"suggestion.txt")
+print(outdir+"suggestion1.txt")
+print(outdir+"suggestion2.txt")
