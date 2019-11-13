@@ -102,7 +102,7 @@ def mkSegment(gst, get, utc_date) :
     #print('Checking PMC Locking status for K1...')
 
     highseismic1 = channeldata1 == 1
-    highseismic2 = channeldata2 >= 134
+    highseismic2 = channeldata2 >= 100
     highseismic3 = channeldata3 >= 20
     highseismic4 = channeldata4 == 60
     highseismic5 = channeldata5 == 1
