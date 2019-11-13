@@ -300,10 +300,10 @@ for segment in tmpactive:
     minf=100000
 
     for frequency,bandwidth in zip(frequencys,bandwidths):
-        if maxf < fequency + bandwidth:
-            maxf = fequency + bandwidth
-        if minf > fequency - bandwidth:
-            minf = fequency - bandwidth
+        if maxf < frequency + bandwidth:
+            maxf = frequency + bandwidth
+        if minf > frequency - bandwidth:
+            minf = frequency - bandwidth
 
 
     strtmp=""
