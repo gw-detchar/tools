@@ -339,6 +339,9 @@ for segment in tmpactive:
     strtmp+=(" ")
     strtmp+=str(triggertype)
 
+    # dummy index. it is for burst trigger.
+    strtmp+=(" 0")
+
     strtmp+=(" ")
     strtmp+=str(peakQ)
 
@@ -351,8 +354,6 @@ for segment in tmpactive:
     strtmp+=(" ")
     strtmp+=str(maxf)
     
-    # dummy index. it is for burst trigger.
-    strtmp+=(" 0")
     
     f.write(strtmp)
     f.write('\n')
