@@ -293,6 +293,19 @@ for segment in tmpactive:
             peakfrequency_amp=frequency
             peakduration_amp=duration
             peakQ_amp=2.*math.pi*frequency*duration
+
+    # Get frequency range of the event
+    # initialize
+    maxf=0
+    minf=100000
+
+    for frequency,bandwidth in zip(frequencys,bandwidths):
+        if maxf < fequency + bandwidth:
+            maxf = fequency + bandwidth
+        if minf > fequency - bandwidth:
+            minf = fequency - bandwidth
+
+
     strtmp=""
     stimestr=str(tmpstart).split(".")[1]
     stimestr=stimestr[0:5]
@@ -332,6 +345,12 @@ for segment in tmpactive:
     strtmp+=(" ")
     strtmp+=str(peakQ_amp)
 
+    strtmp+=(" ")
+    strtmp+=str(minf)
+    
+    strtmp+=(" ")
+    strtmp+=str(maxf)
+    
     # dummy index. it is for burst trigger.
     strtmp+=(" 0")
     
