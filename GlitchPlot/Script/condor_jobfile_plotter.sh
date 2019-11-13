@@ -22,7 +22,7 @@ namelock="locksegments"
 namesuggestion="suggestion"
 
 #cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype eventnumber
-cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype eventnumber peakQ peakQ_amp
+cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype eventnumber peakQ peakQ_amp minf maxf
 do
     echo "gps time = $gpstime "
     echo "channel = $channel "
@@ -263,7 +263,7 @@ do
     fi
 
     {
-	echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_snr $max_amp $frequency_amp  $eventtype $triggertype $eventnumber
+	echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_snr $max_amp $frequency_amp  $eventtype $triggertype $eventnumber $peakQ $peakQ_amp $minf $maxf 
     } > $outdir/parameter.txt
 
     logdir="$PWD/log/$date/"
@@ -633,6 +633,9 @@ do
 	    # for option detail.
 	    
 	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t ${chlist[0]}_Timeseries --nolegend --dpi 50"
+	    echo "Queue"
+
+	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t ${chlist[0]}_Timeseries --nolegend --dpi 50 -b --blow ${minf} --bhigh ${maxf}"
 	    echo "Queue"
 	} >> job_${nametime}.sdf
 
