@@ -119,6 +119,11 @@ for channel in channels:
 
     com = data[channel]
 
+    if com.dt > 0.05:
+        print("Skip because of low sampling rate.")
+        notdetected.append(channel)
+        continue
+
     if fft < ref.dt.value:
         fft=2*ref.dt.value
         ol=fft/2.  #  overlap in FFTs.                                                                                 
