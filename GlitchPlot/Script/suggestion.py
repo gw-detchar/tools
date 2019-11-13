@@ -121,14 +121,17 @@ for channel in channels:
 
     com = data[channel]
 
-    if fft < ref.dt.value:
+    print(channel)
+    print(com)
+
+    if fft < 2*ref.dt.value:
         fft=2*ref.dt.value
         ol=fft/2.  #  overlap in FFTs.                                                                                 
         print("Given fft/stride was bad against the sampling rate. Automatically set to:")
         print("fft="+str(fft))
         print("ol="+str(ol))
 
-    if fft < com.dt.value:
+    if fft < 2*com.dt.value:
         fft=2*com.dt.value
         ol=fft/2.  #  overlap in FFTs.
         lowSRflag=True
@@ -136,24 +139,31 @@ for channel in channels:
         print("fft="+str(fft))
         print("ol="+str(ol))
 
-    cohbefore = ref.coherence(com,fftlength=fft,overlap=ol)
+    # length of trigger
+    duration=float(gpsendT)-float(gpsstartT)
 
-    # Make coherence for trigger time
+    # Coherence chack is done if enough average can be taken.
+    if duration > fft*2:
 
-    comT = dataT[channel]
-
-    cohtrigger = refT.coherence(comT,fftlength=fft,overlap=ol)
-
-    # Get nearest frequency bin index of the glitch
-    diff=np.abs(np.asarray(cohbefore.frequencies)-frequency).argmin()
-    
-    if cohbefore.value[diff] < 0.2 and cohtrigger.value[diff] > 0.5:
-        detectedc.append(channel)
-        continue
+        cohbefore = ref.coherence(com,fftlength=fft,overlap=ol)
+        
+        # Make coherence for trigger time
+        
+        comT = dataT[channel]
+        
+        cohtrigger = refT.coherence(comT,fftlength=fft,overlap=ol)
+        
+        # Get nearest frequency bin index of the glitch
+        diff=np.abs(np.asarray(cohbefore.frequencies)-frequency).argmin()
+        
+        if cohbefore.value[diff] < 0.2 and cohtrigger.value[diff] > 0.5:
+            detectedc.append(channel)
+            continue
 
     # Using Qtransform
 
-    if loaSRflag:
+    # if sampling rate is 16 Hz, skipped.
+    if 0.05 < com.dt.value:
         notdetected.append(channel)
         continue
 
