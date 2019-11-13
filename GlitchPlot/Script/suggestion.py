@@ -119,7 +119,7 @@ for channel in channels:
 
     com = data[channel]
 
-    if com.dt > 0.05:
+    if com.dt.value > 0.05:
         print("Skip because of low sampling rate.")
         notdetected.append(channel)
         continue
