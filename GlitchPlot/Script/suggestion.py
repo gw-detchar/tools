@@ -124,9 +124,6 @@ for channel in channels:
 
     com = data[channel]
 
-    print(channel)
-    print(com)
-
     if fft < 2*ref.dt.value:
         fft=2*ref.dt.value
         ol=fft/2.  #  overlap in FFTs.                                                                                 
@@ -193,3 +190,4 @@ with open(outdir+"/notsuggestion.txt", mode='w') as f:
 
 print(outdir+"suggestion1.txt")
 print(outdir+"suggestion2.txt")
+print('Successfully finished !')
