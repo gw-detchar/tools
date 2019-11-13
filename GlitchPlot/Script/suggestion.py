@@ -39,7 +39,7 @@ parser.add_argument('-eq','--gpsendqgram',help='GPS ending time for GlitchPlot.'
 parser.add_argument('-f','--fftlength',help='FFT length.',type=float,default=1.)
 parser.add_argument('-ft','--frequency',help='Frequency of the trigger.',type=float,default=100)
 parser.add_argument('-k','--kamioka',help='Flag to run on Kamioka server.',action='store_true')
-parser.add_argument('-q','--q',help='Q range.',default=-1 )
+parser.add_argument('-q','--q',help='Q range.',default=-1,type=float )
 # define variables                                                                                                 
 args = parser.parse_args()
 
@@ -151,7 +151,9 @@ for channel in channels:
     # Using Qtransform
 
     comQ = dataQ[channel]
-
+    print(qmin)
+    print(qmax)
+    print(comQ)
     qgram = comQ.q_gram(qrange=(qmin,qmax),snrthresh=5.5)
 
     qgram = qgram.filter(('time', mylib.between,  (float(gpsstartT)-1.,float(gpsendT))))

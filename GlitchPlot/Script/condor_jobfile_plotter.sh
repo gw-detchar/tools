@@ -30,6 +30,10 @@ do
     echo "max_duration = $max_duration "
     echo "bandwidth = $bandwidth "
 
+    if [ "$peakQ" = "" ]; then
+	peakQ=-1
+    fi
+
     # $index will be added to the output file name to distinguish from others. 
     index=$eventtype"_"$gpstime"_"$channel
 
