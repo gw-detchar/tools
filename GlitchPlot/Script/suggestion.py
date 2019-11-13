@@ -60,7 +60,9 @@ gpsendQ=args.gpsendqgram
 
 frequency = args.frequency
 
+originalfft=args.fftlength
 fft=args.fftlength
+originalol=fft/2.  #  overlap in FFTs.
 ol=fft/2.  #  overlap in FFTs.
 
 qmin = 4
@@ -112,7 +114,8 @@ notdetected = []
 ref = data[refchannel]
 refT = dataT[refchannel]
 for channel in channels:
-
+    fft = originalfft
+    ol = originalol
     lowSRflag=False
 
     if 'K1:LSC' in channel or 'K1:CAL' in channel:
@@ -142,7 +145,7 @@ for channel in channels:
     # length of trigger
     duration=float(gpsendT)-float(gpsstartT)
 
-    # Coherence chack is done if enough average can be taken.
+    # Coherence check is done if enough average can be taken.
     if duration > fft*2:
 
         cohbefore = ref.coherence(com,fftlength=fft,overlap=ol)
