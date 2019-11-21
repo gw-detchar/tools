@@ -80,6 +80,7 @@ def mkSegment(gst, get, utc_date) :
     file_path4 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '.txt'
     file_path5 = SEGMENT_DIR + 'SegmentList_silent_UTC_' + utc_date + '.txt'
     file_path6 = SEGMENT_DIR + 'SegmentList_silentFPMI_UTC_' + utc_date + '.txt'
+    file_path7 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '.xml'
     if getpass.getuser() == "controls":
         gwf_cache = '/users/DET/Cache/latest.cache'
         with open(gwf_cache, 'r') as fobj:
@@ -135,6 +136,11 @@ def mkSegment(gst, get, utc_date) :
     segment6 = segment4 & segment5
     with open(file_path6, mode='w') as f:
         for seg in segment6.active :
+            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+            
+    segment7 = segment4
+    with open(file_path7, mode='w') as f:
+        for seg in segment7.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 #------------------------------------------------------------
 
