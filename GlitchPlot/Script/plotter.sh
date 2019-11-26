@@ -114,3 +114,4 @@ jst_start=${jst_start#*:}
 
 rsync -avz -e "ssh -v -i ~/.ssh/id_rsa_icrhome_ckozakai"  /users/DET/Result/GlitchPlot/parameter chihiro.kozakai@m31-01_ckozakai:public_html/KAGRA/GlitchPlot/parameter/
 
+rsync -avz -e "ssh -v -i ~/.ssh/id_rsa_icrhome_ckozakai"  /users/.ckozakai/KashiwaAnalysis/analysis/code/gwpy/trigger/triggerStudy/OmicronRate chihiro.kozakai@m31-01_ckozakai:public_html/KAGRA/OmicronRate/
