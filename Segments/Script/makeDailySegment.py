@@ -31,7 +31,8 @@ if getpass.getuser() == "controls":
     SEGMENT_DIR = "/users/DET/Segments/"
     
 else:
-    SEGMENT_DIR = "/home/detchar/segment/UTC/"
+    #SEGMENT_DIR = "/home/detchar/segment/UTC/"
+    SEGMENT_DIR = "/home/detchar/Segments/"
 
 
 
@@ -155,7 +156,7 @@ utc_date = (datetime.now() + timedelta(days=-1)).strftime("%Y-%m-%d")
 start_utc_time = utc_date + ' 09:00:00'
 
 cmd = 'gpstime ' + start_utc_time + ' | awk \'NR == 3 {print $2}\''
-start_gps_time = int (subprocess.check_output(cmd, shell = True) )
+start_gps_time = int (float(subprocess.check_output(cmd, shell = True)) )
 end_gps_time = int(start_gps_time) + 86400
 
 try :
