@@ -29,6 +29,7 @@ start_time = time.time()
 
 if getpass.getuser() == "controls":
     SEGMENT_DIR = "/users/DET/Segments/"
+    
 else:
     SEGMENT_DIR = "/home/detchar/segment/UTC/"
 
@@ -81,6 +82,7 @@ def mkSegment(gst, get, utc_date) :
     file_path5 = SEGMENT_DIR + 'SegmentList_silent_UTC_' + utc_date + '.txt'
     file_path6 = SEGMENT_DIR + 'SegmentList_silentFPMI_UTC_' + utc_date + '.txt'
     file_path7 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '.xml'
+    file_path8 = SEGMENT_DIR + 'SegmentList_IMC_UTC_' + utc_date + '.xml'
     if getpass.getuser() == "controls":
         gwf_cache = '/users/DET/Cache/latest.cache'
         with open(gwf_cache, 'r') as fobj:
@@ -105,7 +107,8 @@ def mkSegment(gst, get, utc_date) :
     highseismic1 = channeldata1 == 1
     highseismic2 = channeldata2 >= 100
     highseismic3 = channeldata3 >= 20
-    highseismic4 = channeldata4 == 60
+    highseismic4 = channeldata4 == 60 # with ASC
+    highseismic4_2 = channeldata4 == 59 # without ASC
     highseismic5 = channeldata5 == 1
     
     segment1 = highseismic1.to_dqflag(round=True)
@@ -123,7 +126,9 @@ def mkSegment(gst, get, utc_date) :
         for seg in segment3.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 
-    segment4 = highseismic4.to_dqflag(round=True)
+    segment4_1 = highseismic4.to_dqflag(round=True)
+    segment4_2 = highseismic4_2.to_dqflag(round=True)
+    segment4 = segment4_1 | segment4_2
     with open(file_path4, mode='w') as f:
         for seg in segment4.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
@@ -139,9 +144,10 @@ def mkSegment(gst, get, utc_date) :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
             
     segment7 = segment4
-    with open(file_path7, mode='w') as f:
-        for seg in segment7.active :
-            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+    segment7.write(file_path7)
+            
+    segment8 = segment2
+    segment8.write(file_path8)
 #------------------------------------------------------------
 
 
