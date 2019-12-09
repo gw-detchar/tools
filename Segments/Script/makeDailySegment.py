@@ -107,8 +107,9 @@ def mkSegment(gst, get, utc_date) :
     highseismic1 = channeldata1 == 1
     highseismic2 = channeldata2 >= 100
     highseismic3 = channeldata3 >= 20
-    highseismic4 = channeldata4 == 60 # with ASC
-    highseismic4_2 = channeldata4 == 59 # without ASC
+    highseismic4 = channeldata4 >= 300 # temporary
+    # should be modified to it just before ER
+    #highseismic4 = channeldata4 == 1000 
     highseismic5 = channeldata5 == 1
     
     segment1 = highseismic1.to_dqflag(round=True)
@@ -126,9 +127,7 @@ def mkSegment(gst, get, utc_date) :
         for seg in segment3.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 
-    segment4_1 = highseismic4.to_dqflag(round=True)
-    segment4_2 = highseismic4_2.to_dqflag(round=True)
-    segment4 = segment4_1 | segment4_2
+    segment4 = highseismic4.to_dqflag(round=True)
     with open(file_path4, mode='w') as f:
         for seg in segment4.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
