@@ -69,15 +69,11 @@ def GetFilelist(gpsstart,gpsend):
 
 def mkSegment(gst, get, utc_date) :
 
-    ch1 = 'K1:GRD-PMC_OK'
     ch2 = 'K1:GRD-IMC_STATE_N'
-    ch3 = 'K1:GRD-LSC_LOCK_STATE_N'
     ch4 = 'K1:GRD-LSC_LOCK_STATE_N'
     ch5 = 'K1:MIF-WE_ARE_DOING_NOTHING'
-    channels = [ch1,ch2,ch3,ch4,ch5]
-    file_path1 = SEGMENT_DIR + 'SegmentList_PMC_UTC_' + utc_date + '.txt'
+    channels = [ch2,ch4,ch5]
     file_path2 = SEGMENT_DIR + 'SegmentList_IMC_UTC_' + utc_date + '.txt'
-    file_path3 = SEGMENT_DIR + 'SegmentList_LSC_UTC_' + utc_date + '.txt'
     file_path4 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '.txt'
     file_path5 = SEGMENT_DIR + 'SegmentList_silent_UTC_' + utc_date + '.txt'
     file_path6 = SEGMENT_DIR + 'SegmentList_silentFPMI_UTC_' + utc_date + '.txt'
@@ -95,36 +91,27 @@ def mkSegment(gst, get, utc_date) :
     #print('Reading {0} timeseries data...'.format(date))
 
     channeldata = TimeSeriesDict.read(cache, channels, start=gst, end=get, format='gwf.lalframe', gap='pad')
-    channeldata1 = channeldata[ch1]
     channeldata2 = channeldata[ch2]
-    channeldata3 = channeldata[ch3]
     channeldata4 = channeldata[ch4]
     channeldata5 = channeldata[ch5]
 
     #------------------------------------------------------------
     #print('Checking PMC Locking status for K1...')
 
-    highseismic1 = channeldata1 == 1
     highseismic2 = channeldata2 >= 100
-    highseismic3 = channeldata3 >= 20
-    highseismic4 = channeldata4 >= 300 # temporary
-    # should be modified to it just before ER
-    #highseismic4 = channeldata4 == 1000 
+
+    # Requirement will change on 2019/12/17 9:00
+    if gst < 1260576000:
+        highseismic4 = channeldata4 >= 300 # temporary
+    else:
+        # should be modified to it just before ER
+        highseismic4 = channeldata4 == 1000 
+
     highseismic5 = channeldata5 == 1
     
-    segment1 = highseismic1.to_dqflag(round=True)
-    with open(file_path1, mode='w') as f:
-        for seg in segment1.active :
-            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-
     segment2 = highseismic2.to_dqflag(round=True)
     with open(file_path2, mode='w') as f:
         for seg in segment2.active :
-            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-
-    segment3 = highseismic3.to_dqflag(round=True)
-    with open(file_path3, mode='w') as f:
-        for seg in segment3.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 
     segment4 = highseismic4.to_dqflag(round=True)
