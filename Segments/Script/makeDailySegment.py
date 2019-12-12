@@ -75,6 +75,7 @@ def mkSegment(gst, get, utc_date) :
     ch5 = 'K1:MIF-WE_ARE_DOING_NOTHING'
     channels = [ch2,ch4,ch5]
     file_path2 = SEGMENT_DIR + 'SegmentList_IMC_UTC_' + utc_date + '.txt'
+    file_path3 = SEGMENT_DIR + 'SegmentList_unlocked_UTC_' + utc_date + '.txt'
     file_path4 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '.txt'
     file_path5 = SEGMENT_DIR + 'SegmentList_silent_UTC_' + utc_date + '.txt'
     file_path6 = SEGMENT_DIR + 'SegmentList_silentFPMI_UTC_' + utc_date + '.txt'
@@ -104,9 +105,11 @@ def mkSegment(gst, get, utc_date) :
     # Requirement will change on 2019/12/17 9:00
     if gst < 1260576000:
         highseismic4 = channeldata4 >= 300 # temporary
+        highseismic3 = channeldata4 < 300 # temporary
     else:
         # should be modified to it just before ER
         highseismic4 = channeldata4 == 1000 
+        highseismic3 = channeldata4 != 1000 
 
     highseismic5 = channeldata5 == 1
     
@@ -115,7 +118,15 @@ def mkSegment(gst, get, utc_date) :
         for seg in segment2.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 
+
+    segment3 = highseismic3.to_dqflag(round=True)
+    with open(file_path3, mode='w') as f:
+        for seg in segment3.active :
+            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+
     segment4 = highseismic4.to_dqflag(round=True)
+    # To avoid locked and unlocked segments overlap, unlocked segment3 is subtracted from locked segment4.
+    segment4 -= segment3
     with open(file_path4, mode='w') as f:
         for seg in segment4.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
