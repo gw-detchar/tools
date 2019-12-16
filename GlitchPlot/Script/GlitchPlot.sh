@@ -63,8 +63,8 @@ for file in ${list[@]};do
     
 done
 
-condor_release chihiro.kozakai
+#condor_release chihiro.kozakai
 
 #Job re-submission
-./auto_successcheck.sh
+#./auto_successcheck.sh
 

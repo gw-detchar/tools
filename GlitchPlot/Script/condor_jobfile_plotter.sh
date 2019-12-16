@@ -212,7 +212,7 @@ do
 
     # FPMI lock
     lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
-    lnumber=60  #number of the required state
+    lnumber=300  #number of the required state
     llabel='FPMI'  #y-axis label for the bar plot.
 
     # ALSDARM lock
