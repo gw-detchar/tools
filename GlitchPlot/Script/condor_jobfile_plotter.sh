@@ -212,7 +212,7 @@ do
 
     # FPMI lock
     lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
-    lnumber=300  #number of the required state
+    lnumber=1000  #number of the required state
     llabel='FPMI'  #y-axis label for the bar plot.
 
     # ALSDARM lock
@@ -272,6 +272,49 @@ do
     fi
 
     # make main script.
+
+    # suggestion
+
+    runsuggestion="$PWD/run_${namesuggestion}.sh"
+
+    # Write a file for condor submission.
+    
+    {
+	echo "PWD = $Fp(SUBMIT_FILE)"
+	echo "transfer_input_files = rm_if_empty.sh"
+	echo '+PostCmd = "rm_if_empty.sh"'
+	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)/$(Output) $(PWD)/$(Error) $(PWD)/$(Log)"'
+	echo "Executable = ${runsuggestion}"
+	echo "Universe   = vanilla"
+	echo "Notification = never"
+	# if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.
+	echo "request_memory = 1 GB"
+	echo "Getenv  = True            # the environment variables will be copied."
+	echo ""
+	echo "should_transfer_files = YES"
+	echo "when_to_transfer_output = ON_EXIT"
+	echo ""
+	echo "Log          = log/$date/log_${namesuggestion}.txt"
+	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+	echo ""
+    } > job_${namesuggestion}.sdf
+
+    {
+	# Please try
+	#  $ python batch_locksegments.py -h
+	# for option detail.
+	
+	echo "Arguments = -s $gpsstart2 -e $gpsend2 -st $gpsstart3 -et $gpsend3 -sq $qgpsstart -eq $qgpsend -r $channel  -o ${outdir} -ft $frequency_snr -f $fft -q $peakQ "
+	echo "Queue"
+    } >> job_${namesuggestion}.sdf
+	
+    echo job_${namesuggestion}.sdf
+    condor_submit job_${namesuggestion}.sdf
+
+    if [ $channel = "K1:CAL-CS_PROC_C00_STRAIN_DBL_DQ" ]; then
+	continue
+    fi
 
     # for time series.
 
@@ -554,45 +597,6 @@ do
 	
     echo job_${namelock}.sdf
     condor_submit job_${namelock}.sdf
-
-    # suggestion
-
-    runsuggestion="$PWD/run_${namesuggestion}.sh"
-
-    # Write a file for condor submission.
-    
-    {
-	echo "PWD = $Fp(SUBMIT_FILE)"
-	echo "transfer_input_files = rm_if_empty.sh"
-	echo '+PostCmd = "rm_if_empty.sh"'
-	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)/$(Output) $(PWD)/$(Error) $(PWD)/$(Log)"'
-	echo "Executable = ${runsuggestion}"
-	echo "Universe   = vanilla"
-	echo "Notification = never"
-	# if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.
-	echo "request_memory = 1 GB"
-	echo "Getenv  = True            # the environment variables will be copied."
-	echo ""
-	echo "should_transfer_files = YES"
-	echo "when_to_transfer_output = ON_EXIT"
-	echo ""
-	echo "Log          = log/$date/log_${namesuggestion}.txt"
-	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
-	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
-	echo ""
-    } > job_${namesuggestion}.sdf
-
-    {
-	# Please try
-	#  $ python batch_locksegments.py -h
-	# for option detail.
-	
-	echo "Arguments = -s $gpsstart2 -e $gpsend2 -st $gpsstart3 -et $gpsend3 -sq $qgpsstart -eq $qgpsend -r $channel  -o ${outdir} -ft $frequency_snr -f $fft -q $peakQ "
-	echo "Queue"
-    } >> job_${namesuggestion}.sdf
-	
-    echo job_${namesuggestion}.sdf
-    condor_submit job_${namesuggestion}.sdf
 
 
     # Loop over each plot. 

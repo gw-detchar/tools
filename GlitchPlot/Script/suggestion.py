@@ -118,9 +118,9 @@ for channel in channels:
     ol = originalol
     lowSRflag=False
 
-    if 'K1:LSC' in channel or 'K1:CAL' in channel:
-        notdetected.append(channel)
-        continue
+    #if 'K1:LSC' in channel or 'K1:CAL' in channel:
+    #    notdetected.append(channel)
+    #    continue
 
     com = data[channel]
 
