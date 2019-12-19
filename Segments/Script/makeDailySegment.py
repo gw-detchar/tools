@@ -74,6 +74,8 @@ def mkSegment(gst, get, utc_date) :
     ch4 = 'K1:GRD-LSC_LOCK_STATE_N'
     ch5 = 'K1:MIF-WE_ARE_DOING_NOTHING'
     channels = [ch2,ch4,ch5]
+
+    file_path1 = SEGMENT_DIR + 'SegmentList_locked_UTC_' + utc_date + '.txt'
     file_path2 = SEGMENT_DIR + 'SegmentList_IMC_UTC_' + utc_date + '.txt'
     file_path3 = SEGMENT_DIR + 'SegmentList_unlocked_UTC_' + utc_date + '.txt'
     file_path4 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '.txt'
@@ -102,22 +104,22 @@ def mkSegment(gst, get, utc_date) :
 
     highseismic2 = channeldata2 >= 100
 
-    # Requirement will change on 2019/12/17 9:00
-    if gst < 1260576000:
-        highseismic4 = channeldata4 >= 300 # temporary
-        highseismic3 = channeldata4 < 300 # temporary
-    else:
-        # should be modified to it just before ER
-        highseismic4 = channeldata4 == 1000 
-        highseismic3 = channeldata4 != 1000 
+    highseismic1 = channeldata4 >= 300 # temporary
+    
+    highseismic3 = channeldata4 != 1000 
+    highseismic4 = channeldata4 == 1000 
 
     highseismic5 = channeldata5 == 1
     
+    segment1 = highseismic1.to_dqflag(round=True)
+    with open(file_path1, mode='w') as f:
+        for seg in segment1.active :
+            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+
     segment2 = highseismic2.to_dqflag(round=True)
     with open(file_path2, mode='w') as f:
         for seg in segment2.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-
 
     segment3 = highseismic3.to_dqflag(round=True)
     with open(file_path3, mode='w') as f:
