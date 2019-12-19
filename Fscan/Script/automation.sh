@@ -1,8 +1,8 @@
 #!/bin/bash
 #******************************************#
 #     File Name: Fscan/automation.sh
-#        Author: Takahiro Yamamoto
-# Last Modified: 2019/04/09 21:51:25
+#        Author: Takahiro Yamamoto, Shoichi Oshino
+# Last Modified: 2019/12/12 8:44
 #******************************************#
 
 ################################
@@ -48,16 +48,9 @@ FILE_SEG=${DIR_SEG}/SegmentList_IMC_UTC_${JST_DATE}.txt
 ################################
 cat <<EOF > ${FILE_RSC}
 set ::masterList {\\
-{K1:PSL-TTFSS_MIXER_MON_OUT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 4000 100 32 0.25 default}\\
-{K1:PSL-TTFSS_EOM_MON_OUT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 4000 100 32 0.25 default}\\
-{K1:PSL-REFCAV_REFL_OUT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 4000 100 32 0.25 default}\\
-{K1:PSL-REFCAV_TRANS_OUT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 4000 100 32 0.25 default}\\
-{K1:PSL-PMC_MIXER_MON_OUT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 4000 100 32 0.25 default}\\
-{K1:IMC-MCL_SERVO_OUT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 2000 100 32 0.25 default}\\
 {K1:CAL-CS_PROC_MICH_DISPLACEMENT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
+{K1:CAL-CS_PROC_DARM_DISPLACEMENT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
 {K1:CAL-CS_PROC_IMC_FREQUENCY_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
-{K1:CAL-CS_PROC_XARM_FREQUENCY_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
-{K1:IMC-SERVO_MIXER_DAQ_OUT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
 {K1:CAL-CS_PROC_C00_STRAIN_DBL_DQ ADC_REAL8 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
 }
 
