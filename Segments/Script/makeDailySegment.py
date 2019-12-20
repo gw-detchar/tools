@@ -112,7 +112,7 @@ def mkSegment(gst, get, utc_date) :
     highseismic5 = channeldata5 == 1
     
     segment1 = highseismic1.to_dqflag(round=True)
-    print(segment1)
+
     # To omit fraction. round=True option is inclusive in default. 
     segment1.active = segment1.active.contract(1.0)
     print(segment1)
