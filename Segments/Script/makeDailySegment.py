@@ -112,8 +112,10 @@ def mkSegment(gst, get, utc_date) :
     highseismic5 = channeldata5 == 1
     
     segment1 = highseismic1.to_dqflag(round=True)
+    print(segment1)
     # To omit fraction. round=True option is inclusive in default. 
-    segment1 = segment1.contract(1.0)
+    segment1.active = segment1.active.contract(1.0)
+    print(segment1)
     with open(file_path1, mode='w') as f:
         for seg in segment1.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
