@@ -104,7 +104,7 @@ def mkSegment(gst, get, utc_date) :
 
     highseismic2 = channeldata2 >= 100
 
-    highseismic1 = channeldata4 >= 300 # temporary
+    highseismic1 = channeldata4 >= 300 
     
     highseismic3 = channeldata4 != 1000 
     highseismic4 = channeldata4 == 1000 
