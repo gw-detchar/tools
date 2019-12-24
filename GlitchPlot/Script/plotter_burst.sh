@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #infile=ER2_triggers_cWB.txt
-infile=burst/EVENTS_HVK.txt
+#infile=burst/EVENTS_HVK.txt
+infile=burst/EVENTS_LHVK.txt
 first=true
 outfile=parameter.txt
 
@@ -9,7 +10,8 @@ rm -rf $outfile
 touch $outfile
 
 #cat $infile | while read Index   Det     SNR             hrss            S_t                     C_t             C_f             BW              duration
-cat $infile | while read passed dump rho cc01 cc2 cc3 camp tshift tsshift lh pf ed C_f BW duration npixel fres cwb tH tV tK SNRH SNRV SNRK hrssH hrssV hrssK phi theta psi
+#cat $infile | while read passed dump rho cc01 cc2 cc3 camp tshift tsshift lh pf ed C_f BW duration npixel fres cwb tH tV tK SNRH SNRV SNRK hrssH hrssV hrssK phi theta psi
+cat $infile | while read passed dump rho cc01 cc2 cc3 camp tshift tsshift lh pf ed C_f BW duration npixel fres cwb tL tH tV tK SNRL SNRH SNRV SNRK hrssL hrssH hrssV hrssK phi theta psi
 do
     #if "$first"; then
 	#first=false
