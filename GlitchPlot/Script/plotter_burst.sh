@@ -3,7 +3,7 @@
 #infile=ER2_triggers_cWB.txt
 #infile=burst/EVENTS_HVK.txt
 #infile=burst/EVENTS_LHVK.txt
-infile=burst/EVENTS_LHVK_20191222.txt
+infile=burst/EVENTS_LHVK_20191224.txt
 first=true
 outfile=parameter.txt
 
