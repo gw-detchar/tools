@@ -80,8 +80,8 @@ filepath_txt = {}
 filepath_xml = {}
     
 for key in keys:
-    filepath_txt[key] = SEGMENT_DIR + '/Partial/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.txt'
-    filepath_xml[key] = SEGMENT_DIR + '/Partial/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.xml'
+    filepath_txt[key] = SEGMENT_DIR + '/Partial/'+year+'/K1-SegmentList_'+key+'_UTC_' + utc_date + '.txt'
+    filepath_xml[key] = SEGMENT_DIR + '/Partial/'+year+'/K1-SegmentList_'+key+'_UTC_' + utc_date + '.xml'
 
 def mkSegment(gst, get, utc_date) :
 
@@ -181,15 +181,15 @@ print('\n--- Total {0}h {1}m ---'.format( int((time.time()-start_time)/3600), in
 
 
 # whole day file should be produced at the end of the day.
-end_time = (datetime.now() + timedelta(hours=-24)).strftime("%Y-%m-%d")
+end_time = (datetime.now() + timedelta(hours=-9)).strftime("%Y-%m-%d")
 if utc_date != end_time:
     print("date changed.")
     for key in keys:
 
         tmp = DataQualityFlag.read(filepath_xml[key])
-        tmp.write(SEGMENT_DIR +key+'/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.xml',overwrite=True)
+        tmp.write(SEGMENT_DIR +key+'/'+year+'/K1-SegmentList_'+key+'_UTC_' + utc_date + '.xml',overwrite=True)
 
-        with open(SEGMENT_DIR +key+'/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.txt', mode='w') as f:
+        with open(SEGMENT_DIR +key+'/'+year+'/K1-SegmentList_'+key+'_UTC_' + utc_date + '.txt', mode='w') as f:
             for seg in tmp.active :
                 f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 
