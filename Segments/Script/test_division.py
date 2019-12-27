@@ -40,6 +40,7 @@ if test:
     #SEGMENT_DIR = "/tmp/"
     SEGMENT_DIR = "/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"
 
+year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
 #------------------------------------------------------------
 
 def GetFilelist(gpsstart,gpsend):
@@ -72,6 +73,8 @@ def GetFilelist(gpsstart,gpsend):
 
     return sources
 
+keys = ['ScienceMode','NonScienceMode','IMC','FPMILocked','Silent','SilentFPMILocked']
+
 def mkSegment(gst, get, utc_date) :
 
     chIMC = 'K1:GRD-IMC_STATE_N'
@@ -79,104 +82,73 @@ def mkSegment(gst, get, utc_date) :
     chSilent = 'K1:MIF-WE_ARE_DOING_NOTHING'
     channels = [chIMC, chGRDLSC, chSilent]
 
-    
-    file_path1 = SEGMENT_DIR + 'SegmentList_locked_UTC_' + utc_date + '.txt'
-    file_path2 = SEGMENT_DIR + 'SegmentList_IMC_UTC_' + utc_date + '.txt'
-    file_path3 = SEGMENT_DIR + 'SegmentList_unlocked_UTC_' + utc_date + '.txt'
-    file_path4 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '.txt'
-    file_path5 = SEGMENT_DIR + 'SegmentList_silent_UTC_' + utc_date + '.txt'
-    file_path6 = SEGMENT_DIR + 'SegmentList_silentFPMI_UTC_' + utc_date + '.txt'
-    file_path7 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '.xml'
-    file_path8 = SEGMENT_DIR + 'SegmentList_IMC_UTC_' + utc_date + '.xml'
+    filepath_txt = {}
+    filepath_xml = {}
+
+    for key in keys:
+        filepath_txt[key] = SEGMENT_DIR + '/Partial/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.txt'
+        filepath_xml[key] = SEGMENT_DIR + '/Partial/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.xml'
     
     if getpass.getuser() == "controls":
         gwf_cache = '/users/DET/Cache/latest.cache'
         with open(gwf_cache, 'r') as fobj:
             cache = Cache.fromfile(fobj)
     else:
-        cache = GetFilelist(gst, get)
+        # add 1sec margin for locked segments contract.
+        cache = GetFilelist(gst-1, get+1)
 
     #------------------------------------------------------------
 
     #print('Reading {0} timeseries data...'.format(date))
-
-    channeldata = TimeSeriesDict.read(cache, channels, start=gst, end=get, format='gwf.lalframe', gap='pad')
-    channeldata2 = channeldata[ch2]
-    channeldata4 = channeldata[ch4]
-    channeldata5 = channeldata[ch5]
+    # add 1sec margin for locked segments contract.
+    channeldata = TimeSeriesDict.read(cache, channels, start=gst-1, end=get+1, format='gwf.lalframe', gap='pad')
+    channeldataIMC = channeldata[chIMC]
+    channeldataGRDLSC = channeldata[chGRDLSC]
+    channeldataSilent = channeldata[chSilent]
 
     #------------------------------------------------------------
     #print('Checking PMC Locking status for K1...')
 
-    highseismic2 = channeldata2 >= 100
+    sv={}
+    sv['ScienceMode'] = channeldataGRDLSC == 1000 
+    sv['NonScienceMode'] = channeldataGRDLSC != 1000 
+    sv['IMC'] = channeldataIMC >= 100
+    sv['FPMILocked'] =  channeldataGRDLSC >= 300 
+    sv['Silent'] = channeldataSilent == 1
 
-    highseismic1 = channeldata4 >= 300 
-    
-    highseismic3 = channeldata4 != 1000 
-    highseismic4 = channeldata4 == 1000 
+    dqflag = {}
+    for key in keys:
+        if key != 'SilentFPMILocked':
+            dqflag[key] = sv[key].to_dqflag(round=True)
 
-    highseismic5 = channeldata5 == 1
-    
-    segment1 = highseismic1.to_dqflag(round=True)
+    # To omit fraction. round=True option is inclusive in default.         
+    dqflag['ScienceMode'].active = dqflag['ScienceMode'].active.contract(1.0)
+    dqflag['FPMILocked'].active = dqflag['FPMILocked'].active.contract(1.0)
 
-    # To omit fraction. round=True option is inclusive in default. 
-    segment1.active = segment1.active.contract(1.0)
+    dqflag['SilentFPMILocked'] = dqflag['Silent'] & dqflag['FPMILocked']
 
-    with open(file_path1, mode='w') as f:
-        for seg in segment1.active :
-            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+    for key in keys:
 
-    segment2 = highseismic2.to_dqflag(round=True)
-    with open(file_path2, mode='w') as f:
-        for seg in segment2.active :
-            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+        # added 1sec margin for locked segments contract is removed.
+        margin = DataQualityFlag(known=[(gst,get)],active=[(gst-1,gst),(get,get+1)])
+        dqflag[key] -= margin
 
-    segment3 = highseismic3.to_dqflag(round=True)
-    with open(file_path3, mode='w') as f:
-        for seg in segment3.active :
-            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+        # write down 15 min segments. 
+        with open(filepath_txt[key], mode='w') as f:
+            for seg in dqflag[key].active :
+                f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+        
+        # if accumulated file exists, it is added. 
+        if os.path.exists(filepath_xml[key]):
+            tmp = DataQualityFlag.read(filepath_xml[key])        
+            dqflag[key] = dqflag[key] + tmp
 
-    segment4 = highseismic4.to_dqflag(round=True)
-    # To avoid locked and unlocked segments overlap, unlocked segment3 is subtracted from locked segment4.
-    segment4 -= segment3
-    with open(file_path4, mode='w') as f:
-        for seg in segment4.active :
-            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-
-    segment5 = highseismic5.to_dqflag(round=True)
-    with open(file_path5, mode='w') as f:
-        for seg in segment5.active :
-            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-            
-    segment6 = segment4 & segment5
-    with open(file_path6, mode='w') as f:
-        for seg in segment6.active :
-            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-
-    if os.path.exists(file_path7):
-        segment7_tmp = DataQualityFlag.read(file_path7)        
-        segment7 = segment4 + segment7_tmp
-    else:
-        segment7 = segment4 
-
-    segment7.write(file_path7,overwrite=True)
-            
-    if os.path.exists(file_path8):
-        segment8_tmp = DataQualityFlag.read(file_path8)        
-        segment8 = segment4 + segment8_tmp
-    else:
-        segment8 = segment2 
-
-    segment8.write(file_path8,overwrite=True)
+        dqflag[key].write(filepath_xml[key],overwrite=True)
             
 #------------------------------------------------------------
 
 #utc_date = (datetime.now() + timedelta(days=-1)).strftime("%Y-%m-%d")
-utc_date = (datetime.now() + timedelta(hours=-9)).strftime("%Y-%m-%d")
-print(datetime.now())
-print(utc_date)
-
-year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
+utc_date = (datetime.now() + timedelta(hours=-9,minutes=-15)).strftime("%Y-%m-%d")
 
 if not os.path.exists(SEGMENT_DIR+'/ScienceMode/'+year):
     os.makedirs(SEGMENT_DIR+'/ScienceMode/'+year)
@@ -191,9 +163,10 @@ if not os.path.exists(SEGMENT_DIR+'/ScienceMode/'+year):
 end_gps_time = int (float(subprocess.check_output('/home/detchar/git/kagra-detchar/tools/Segments/Script/periodictime.sh', shell = True)) )
 start_gps_time = int(end_gps_time) - 900
 
-end_gps_time = end_gps_time + 1
+# For locked segment contract, take 1sec margin.
+#end_gps_time = end_gps_time + 1
 
-start_gps_time = start_gps_time - 1
+#start_gps_time = start_gps_time - 1
 
 try :
     mkSegment(start_gps_time, end_gps_time, utc_date)
