@@ -40,7 +40,7 @@ if test:
     #SEGMENT_DIR = "/tmp/"
     SEGMENT_DIR = "/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"
 
-year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
+
 #------------------------------------------------------------
 
 def GetFilelist(gpsstart,gpsend):
@@ -74,6 +74,14 @@ def GetFilelist(gpsstart,gpsend):
     return sources
 
 keys = ['ScienceMode','NonScienceMode','IMC','FPMILocked','Silent','SilentFPMILocked']
+utc_date = (datetime.now() + timedelta(hours=-9,minutes=-15)).strftime("%Y-%m-%d")
+year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
+filepath_txt = {}
+filepath_xml = {}
+    
+for key in keys:
+    filepath_txt[key] = SEGMENT_DIR + '/Partial/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.txt'
+    filepath_xml[key] = SEGMENT_DIR + '/Partial/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.xml'
 
 def mkSegment(gst, get, utc_date) :
 
@@ -81,13 +89,6 @@ def mkSegment(gst, get, utc_date) :
     chGRDLSC = 'K1:GRD-LSC_LOCK_STATE_N'
     chSilent = 'K1:MIF-WE_ARE_DOING_NOTHING'
     channels = [chIMC, chGRDLSC, chSilent]
-
-    filepath_txt = {}
-    filepath_xml = {}
-
-    for key in keys:
-        filepath_txt[key] = SEGMENT_DIR + '/Partial/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.txt'
-        filepath_xml[key] = SEGMENT_DIR + '/Partial/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.xml'
     
     if getpass.getuser() == "controls":
         gwf_cache = '/users/DET/Cache/latest.cache'
@@ -148,7 +149,7 @@ def mkSegment(gst, get, utc_date) :
 #------------------------------------------------------------
 
 #utc_date = (datetime.now() + timedelta(days=-1)).strftime("%Y-%m-%d")
-utc_date = (datetime.now() + timedelta(hours=-9,minutes=-15)).strftime("%Y-%m-%d")
+
 
 if not os.path.exists(SEGMENT_DIR+'/ScienceMode/'+year):
     os.makedirs(SEGMENT_DIR+'/ScienceMode/'+year)
@@ -180,6 +181,17 @@ print('\n--- Total {0}h {1}m ---'.format( int((time.time()-start_time)/3600), in
 
 
 # whole day file should be produced at the end of the day.
-#if utc_date != datetime.now().strftime("%Y-%m-%d"):
-#    print("date changed.")
+end_time = (datetime.now() + timedelta(hours=-24)).strftime("%Y-%m-%d")
+if utc_date != end_time:
+    print("date changed.")
+    for key in keys:
 
+        tmp = DataQualityFlag.read(filepath_xml[key])
+        tmp.write(SEGMENT_DIR +key+'/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.xml',overwrite=True)
+
+        with open(SEGMENT_DIR +key+'/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.txt', mode='w') as f:
+            for seg in tmp.active :
+                f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+
+else:
+    print("Not")
