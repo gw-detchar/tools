@@ -1,0 +1,12 @@
+Executable = /home/detchar/git/kagra-detchar/tools/Segments/Script/automation_kashiwa.sh
+Universe   = vanilla
+Notification = never
+request_memory = 1 GB
+Getenv  = True            # the environment variables will be copied.
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+Output       = log/out_$(Cluster).$(Process).txt
+Error        = log/err_$(Cluster).$(Process).txt
+Queue
