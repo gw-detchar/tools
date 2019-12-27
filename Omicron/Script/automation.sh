@@ -63,6 +63,28 @@ let GPS_START=${GPS_END}-${CRON_INTERVAL}*60-${OVERLAP}
 echo $GPS_START
 echo $GPS_END
 
+# Using segments file
+#date=`date -d '9 hours ago' '+%Y-%m-%d'`
+#year=`date -d '9 hours ago' '+%Y'`
+#segment="/users/DET/Segments/SegmentList_silentFPMI_UTC_"$date".txt"
+#cat $segment | while read GPS_START GPS_END
+#do
+    ################################
+    ### Execute
+    ################################
+
+#    duration=$(( $GPS_END - $GPS_START ))
+
+#    if [ $duration -lt 60 ]; then
+#	GPS_START=$(( $GPS_START - 60 ))
+#    fi
+
+#    GPS_START=$(( $GPS_START - 2 ))
+#    GPS_END=$(( $GPS_END + 2 ))
+#    ${CMD_OMICRON} ${GPS_START} ${GPS_END} ${FILE_PARAM}
+#done
+
+
 ################################
 ### Execute
 ################################
