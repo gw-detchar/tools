@@ -33,6 +33,7 @@ if getpass.getuser() == "controls":
 else:
     #SEGMENT_DIR = "/home/detchar/segment/UTC/"
     SEGMENT_DIR = "/home/detchar/Segments/"
+    
 
 test = True
 if test:
@@ -73,19 +74,21 @@ def GetFilelist(gpsstart,gpsend):
 
 def mkSegment(gst, get, utc_date) :
 
-    ch2 = 'K1:GRD-IMC_STATE_N'
-    ch4 = 'K1:GRD-LSC_LOCK_STATE_N'
-    ch5 = 'K1:MIF-WE_ARE_DOING_NOTHING'
-    channels = [ch2,ch4,ch5]
+    chIMC = 'K1:GRD-IMC_STATE_N'
+    chGRDLSC = 'K1:GRD-LSC_LOCK_STATE_N'
+    chSilent = 'K1:MIF-WE_ARE_DOING_NOTHING'
+    channels = [chIMC, chGRDLSC, chSilent]
 
-    file_path1 = SEGMENT_DIR + 'SegmentList_locked_UTC_' + utc_date + '_2.txt'
-    file_path2 = SEGMENT_DIR + 'SegmentList_IMC_UTC_' + utc_date + '_2.txt'
-    file_path3 = SEGMENT_DIR + 'SegmentList_unlocked_UTC_' + utc_date + '_2.txt'
-    file_path4 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '_2.txt'
-    file_path5 = SEGMENT_DIR + 'SegmentList_silent_UTC_' + utc_date + '_2.txt'
-    file_path6 = SEGMENT_DIR + 'SegmentList_silentFPMI_UTC_' + utc_date + '_2.txt'
-    file_path7 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '_2.xml'
-    file_path8 = SEGMENT_DIR + 'SegmentList_IMC_UTC_' + utc_date + '_2.xml'
+    
+    file_path1 = SEGMENT_DIR + 'SegmentList_locked_UTC_' + utc_date + '.txt'
+    file_path2 = SEGMENT_DIR + 'SegmentList_IMC_UTC_' + utc_date + '.txt'
+    file_path3 = SEGMENT_DIR + 'SegmentList_unlocked_UTC_' + utc_date + '.txt'
+    file_path4 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '.txt'
+    file_path5 = SEGMENT_DIR + 'SegmentList_silent_UTC_' + utc_date + '.txt'
+    file_path6 = SEGMENT_DIR + 'SegmentList_silentFPMI_UTC_' + utc_date + '.txt'
+    file_path7 = SEGMENT_DIR + 'SegmentList_FPMI_UTC_' + utc_date + '.xml'
+    file_path8 = SEGMENT_DIR + 'SegmentList_IMC_UTC_' + utc_date + '.xml'
+    
     if getpass.getuser() == "controls":
         gwf_cache = '/users/DET/Cache/latest.cache'
         with open(gwf_cache, 'r') as fobj:
@@ -118,7 +121,7 @@ def mkSegment(gst, get, utc_date) :
 
     # To omit fraction. round=True option is inclusive in default. 
     segment1.active = segment1.active.contract(1.0)
-    print(segment1)
+
     with open(file_path1, mode='w') as f:
         for seg in segment1.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
@@ -149,42 +152,48 @@ def mkSegment(gst, get, utc_date) :
     with open(file_path6, mode='w') as f:
         for seg in segment6.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+
+    if os.path.exists(file_path7):
+        segment7_tmp = DataQualityFlag.read(file_path7)        
+        segment7 = segment4 + segment7_tmp
+    else:
+        segment7 = segment4 
+
+    segment7.write(file_path7,overwrite=True)
             
-    segment7 = segment4
-    segment7.write(file_path7)
+    if os.path.exists(file_path8):
+        segment8_tmp = DataQualityFlag.read(file_path8)        
+        segment8 = segment4 + segment8_tmp
+    else:
+        segment8 = segment2 
+
+    segment8.write(file_path8,overwrite=True)
             
-    segment8 = segment2
-    segment8.write(file_path8)
 #------------------------------------------------------------
 
-
-utc_date = (datetime.now() + timedelta(days=-1)).strftime("%Y-%m-%d")
+#utc_date = (datetime.now() + timedelta(days=-1)).strftime("%Y-%m-%d")
+utc_date = (datetime.now() + timedelta(hours=-9)).strftime("%Y-%m-%d")
 print(datetime.now())
 print(utc_date)
-start_utc_time = utc_date + ' 09:00:00'
-print(start_utc_time)
+
+year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
+
+if not os.path.exists(SEGMENT_DIR+'/ScienceMode/'+year):
+    os.makedirs(SEGMENT_DIR+'/ScienceMode/'+year)
+    os.makedirs(SEGMENT_DIR+'/NonScienceMode/'+year)
+    os.makedirs(SEGMENT_DIR+'/FPMILocked/'+year)
+    os.makedirs(SEGMENT_DIR+'/IMC/'+year)
+    os.makedirs(SEGMENT_DIR+'/SilentFPMILocked/'+year)
+    os.makedirs(SEGMENT_DIR+'/Silent/'+year)
+    os.makedirs(SEGMENT_DIR+'/Partial/'+year)
 
 # Set time every 15 min. 
 end_gps_time = int (float(subprocess.check_output('/home/detchar/git/kagra-detchar/tools/Segments/Script/periodictime.sh', shell = True)) )
 start_gps_time = int(end_gps_time) - 900
 
 end_gps_time = end_gps_time + 1
-print(end_gps_time)
 
 start_gps_time = start_gps_time - 1
-print(start_gps_time)
-#cmd = 'gpstime ' + start_utc_time + ' | awk \'NR == 3 {print $2}\''
-#print(cmd)
-
-#start_gps_time = int (float(subprocess.check_output(cmd, shell = True)) )
-#end_gps_time = int(start_gps_time) + 86400
-
-#print(start_gps_time)
-
-#if test:
-#    end_gps_time = int(start_gps_time) + 100
-#print(end_gps_time)
-
 
 try :
     mkSegment(start_gps_time, end_gps_time, utc_date)
@@ -195,3 +204,9 @@ except ValueError :
 #------------------------------------------------------------
 
 print('\n--- Total {0}h {1}m ---'.format( int((time.time()-start_time)/3600), int(( (time.time()-start_time)/3600 - int((time.time()-start_time)/3600) )*60) ))
+
+
+# whole day file should be produced at the end of the day.
+#if utc_date != datetime.now().strftime("%Y-%m-%d"):
+#    print("date changed.")
+

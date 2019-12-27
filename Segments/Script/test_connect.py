@@ -11,4 +11,4 @@ total = locked+locked2
 
 print(total)
 
-total.write('tmp/SegmentList_IMC_UTC_2019-12-25_total.xml')
+total.write('tmp/SegmentList_IMC_UTC_2019-12-25_total.xml',overwrite=True)
