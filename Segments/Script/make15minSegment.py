@@ -140,7 +140,7 @@ def mkSegment(gst, get, utc_date) :
     dqflag['K1-DET_SILENT_LOCKED'].description = "K1-DET_SILENT & K1-GRD_LOCKED"
 
     for key in keys:
-        print(dqflag[key])
+
         # added 1sec margin for locked segments contract is removed.
         margin = DataQualityFlag(known=[(gst,get)],active=[(gst-1,gst),(get,get+1)])
         dqflag[key] -= margin
