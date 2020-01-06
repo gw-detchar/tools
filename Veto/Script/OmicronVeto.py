@@ -22,6 +22,10 @@ parser.add_argument('-s','--snr',help='Veto SNR threshold.',default=100)
 args = parser.parse_args()
 inputfile = args.inputfile
 outfile = args.outfile
+# force the outfile name to be xml.
+if outfile[-4:] !=  '.xml':
+    outfile = outfile + '.xml'
+
 SNR = args.snr
 # Open omicron file
 
@@ -76,7 +80,8 @@ start_time_nss = fevents.get_column('start_time_ns')
             
 for peak_time,peak_time_ns,duration,start_time,start_time_ns in zip(peak_times,peak_time_nss,durations,start_times,start_time_nss):
 
-    tmpstart=start_time-tfile
+    #tmpstart=start_time-tfile
+    tmpstart=start_time
     tmpstart+=start_time_ns*1e-9
     tmpend=tmpstart+duration
     tmpstart=round(tmpstart,4)
@@ -84,10 +89,6 @@ for peak_time,peak_time_ns,duration,start_time,start_time_ns in zip(peak_times,p
     
     tmpTriggered = DataQualityFlag(known=[(gpsstart,gpsend)],active=[(tmpstart,tmpend)])
     Triggered |= tmpTriggered
-
-tmpactive=Triggered.active
-print("count is " + str(len(tmpactive)))
-count=len(tmpactive)
 
 #if kamioka:
 #    fname='/users/.ckozakai/KashiwaAnalysis/analysis/code/gwpy/trigger/triggerStudy/condor/'+date+'/segment/'+date+'_segment_SNR' + str(SNR) + '_' + channel + '_' + str(tfile) +'_60.xml'
@@ -98,4 +99,8 @@ count=len(tmpactive)
 Triggered.write(outfile,overwrite=True)
 print(Triggered)
 
-
+txt = outfile.replace('.xml','.txt')
+with open(txt, mode='w') as f:
+    for seg in Triggered.active :
+        #f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+        f.write('{0} {1}\n'.format(seg[0], seg[1]))
