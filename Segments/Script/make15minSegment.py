@@ -131,6 +131,14 @@ def mkSegment(gst, get, utc_date) :
 
     dqflag['K1-DET_SILENT_LOCKED'] = dqflag['K1-DET_SILENT'] & dqflag['K1-GRD_LOCKED']
 
+    #keys = ['K1-GRD_SCIENCE_MODE','K1-GRD_UNLOCKED','K1-GRD_IMC','K1-GRD_LOCKED','K1-DET_SILENT','K1-DET_SILENT_LOCKED']
+    dqflag['K1-GRD_SCIENCE_MODE'].description = "Observation mode. K1:GRD-LSC_LOCK_STATE_N == 1000"
+    dqflag['K1-GRD_UNLOCKED'].description = "Interferometer is not locked. K1:GRD-LSC_LOCK_STATE_N < 300"
+    dqflag['K1-GRD_LOCKED'].description = "Interferometer is locked. K1:GRD-LSC_LOCK_STATE_N >= 300"
+    dqflag['K1-GRD_IMC'].description = "IMC is locked. K1:GRD-IMC_STATE_N >= 100"
+    dqflag['K1-DET_SILENT'].description = "No human activity. K1:MIF-WE_ARE_DOING_NOTHING == 1"
+    dqflag['K1-DET_SILENT_LOCKED'].description = "K1-DET_SILENT & K1-GRD_LOCKED"
+
     for key in keys:
         print(dqflag[key])
         # added 1sec margin for locked segments contract is removed.
@@ -196,5 +204,3 @@ if utc_date != end_time:
             for seg in tmp.active :
                 f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 
-else:
-    print("Not")
