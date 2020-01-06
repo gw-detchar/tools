@@ -37,8 +37,10 @@ else:
 
 test = True
 if test:
-    SEGMENT_DIR = "/users/DET/tools/Segments/Script/tmp/"
-    #SEGMENT_DIR = "/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"
+    if getpass.getuser() == "controls":
+        SEGMENT_DIR = "/users/DET/tools/Segments/Script/tmp/"
+    else:
+        SEGMENT_DIR = "/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"
 
 
 #------------------------------------------------------------
