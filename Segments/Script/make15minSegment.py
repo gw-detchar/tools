@@ -37,8 +37,8 @@ else:
 
 test = True
 if test:
-    #SEGMENT_DIR = "/tmp/"
-    SEGMENT_DIR = "/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"
+    SEGMENT_DIR = "/users/DET/tools/Segments/Script/tmp/"
+    #SEGMENT_DIR = "/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"
 
 
 #------------------------------------------------------------
@@ -161,7 +161,11 @@ if not os.path.exists(SEGMENT_DIR+'/ScienceMode/'+year):
     os.makedirs(SEGMENT_DIR+'/Partial/'+year)
 
 # Set time every 15 min. 
-end_gps_time = int (float(subprocess.check_output('/home/detchar/git/kagra-detchar/tools/Segments/Script/periodictime.sh', shell = True)) )
+if getpass.getuser() == "controls":
+    end_gps_time = int (float(subprocess.check_output('/users/DET/tools/Segments/Script/periodictime.sh', shell = True)) )
+else:
+    end_gps_time = int (float(subprocess.check_output('/home/detchar/git/kagra-detchar/tools/Segments/Script/periodictime.sh', shell = True)) )
+    
 start_gps_time = int(end_gps_time) - 900
 
 # For locked segment contract, take 1sec margin.
