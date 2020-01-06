@@ -74,7 +74,7 @@ def GetFilelist(gpsstart,gpsend):
     return sources
 
 #keys = ['ScienceMode','NonScienceMode','IMC','FPMILocked','Silent','SilentFPMILocked']
-keys = ['K1-GRD_SCIENCE_MODE','K1-GRD_UNLOCKED','K1-GRD_IMC','K1-GRD_FPMI_LOCKED','K1-DET_SILENT','K1-DET_SILENT_FPMI_LOCKED']
+keys = ['K1-GRD_SCIENCE_MODE','K1-GRD_UNLOCKED','K1-GRD_IMC','K1-GRD_LOCKED','K1-DET_SILENT','K1-DET_SILENT_LOCKED']
 utc_date = (datetime.now() + timedelta(hours=-9,minutes=-15)).strftime("%Y-%m-%d")
 year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
 filepath_txt = {}
@@ -115,19 +115,19 @@ def mkSegment(gst, get, utc_date) :
     sv['K1-GRD_SCIENCE_MODE'] = channeldataGRDLSC == 1000 
     sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC < 300 
     sv['K1-GRD_IMC'] = channeldataIMC >= 100
-    sv['K1-GRD_FPMI_LOCKED'] =  channeldataGRDLSC >= 300 
+    sv['K1-GRD_LOCKED'] =  channeldataGRDLSC >= 300 
     sv['K1-DET_SILENT'] = channeldataSilent == 1
 
     dqflag = {}
     for key in keys:
-        if key != 'K1-DET_SILENT_FPMI_LOCKED':
+        if key != 'K1-DET_SILENT_LOCKED':
             dqflag[key] = sv[key].to_dqflag(round=True)
 
     # To omit fraction. round=True option is inclusive in default.         
     dqflag['K1-GRD_SCIENCE_MODE'].active = dqflag['K1-GRD_SCIENCE_MODE'].active.contract(1.0)
-    dqflag['K1-GRD_FPMI_LOCKED'].active = dqflag['K1-GRD_FPMI_LOCKED'].active.contract(1.0)
+    dqflag['K1-GRD_LOCKED'].active = dqflag['K1-GRD_LOCKED'].active.contract(1.0)
 
-    dqflag['K1-DET_SILENT_FPMI_LOCKED'] = dqflag['K1-DET_SILENT'] & dqflag['K1-GRD_FPMI_LOCKED']
+    dqflag['K1-DET_SILENT_LOCKED'] = dqflag['K1-DET_SILENT'] & dqflag['K1-GRD_LOCKED']
 
     for key in keys:
 
