@@ -73,15 +73,16 @@ def GetFilelist(gpsstart,gpsend):
 
     return sources
 
-keys = ['ScienceMode','NonScienceMode','IMC','FPMILocked','Silent','SilentFPMILocked']
+#keys = ['ScienceMode','NonScienceMode','IMC','FPMILocked','Silent','SilentFPMILocked']
+keys = ['K1-GRD_SCIENCE_MODE','K1-GRD_UNLOCKED','K1-GRD_IMC','K1-GRD_FPMI_LOCKED','K1-DET_SILENT','K1-DET_SILENT_FPMI_LOCKED']
 utc_date = (datetime.now() + timedelta(hours=-9,minutes=-15)).strftime("%Y-%m-%d")
 year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
 filepath_txt = {}
 filepath_xml = {}
     
 for key in keys:
-    filepath_txt[key] = SEGMENT_DIR + '/Partial/'+year+'/K1-SegmentList_'+key+'_UTC_' + utc_date + '.txt'
-    filepath_xml[key] = SEGMENT_DIR + '/Partial/'+year+'/K1-SegmentList_'+key+'_UTC_' + utc_date + '.xml'
+    filepath_txt[key] = SEGMENT_DIR + '/Partial/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.txt'
+    filepath_xml[key] = SEGMENT_DIR + '/Partial/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.xml'
 
 def mkSegment(gst, get, utc_date) :
 
@@ -111,22 +112,22 @@ def mkSegment(gst, get, utc_date) :
     #print('Checking PMC Locking status for K1...')
 
     sv={}
-    sv['ScienceMode'] = channeldataGRDLSC == 1000 
-    sv['NonScienceMode'] = channeldataGRDLSC != 1000 
-    sv['IMC'] = channeldataIMC >= 100
-    sv['FPMILocked'] =  channeldataGRDLSC >= 300 
-    sv['Silent'] = channeldataSilent == 1
+    sv['K1-GRD_SCIENCE_MODE'] = channeldataGRDLSC == 1000 
+    sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC < 300 
+    sv['K1-GRD_IMC'] = channeldataIMC >= 100
+    sv['K1-GRD_FPMI_LOCKED'] =  channeldataGRDLSC >= 300 
+    sv['K1-DET_SILENT'] = channeldataSilent == 1
 
     dqflag = {}
     for key in keys:
-        if key != 'SilentFPMILocked':
+        if key != 'K1-DET_SILENT_FPMI_LOCKED':
             dqflag[key] = sv[key].to_dqflag(round=True)
 
     # To omit fraction. round=True option is inclusive in default.         
-    dqflag['ScienceMode'].active = dqflag['ScienceMode'].active.contract(1.0)
-    dqflag['FPMILocked'].active = dqflag['FPMILocked'].active.contract(1.0)
+    dqflag['K1-GRD_SCIENCE_MODE'].active = dqflag['K1-GRD_SCIENCE_MODE'].active.contract(1.0)
+    dqflag['K1-GRD_FPMI_LOCKED'].active = dqflag['K1-GRD_FPMI_LOCKED'].active.contract(1.0)
 
-    dqflag['SilentFPMILocked'] = dqflag['Silent'] & dqflag['FPMILocked']
+    dqflag['K1-DET_SILENT_FPMI_LOCKED'] = dqflag['K1-DET_SILENT'] & dqflag['K1-GRD_FPMI_LOCKED']
 
     for key in keys:
 
@@ -151,13 +152,9 @@ def mkSegment(gst, get, utc_date) :
 #utc_date = (datetime.now() + timedelta(days=-1)).strftime("%Y-%m-%d")
 
 
-if not os.path.exists(SEGMENT_DIR+'/ScienceMode/'+year):
-    os.makedirs(SEGMENT_DIR+'/ScienceMode/'+year)
-    os.makedirs(SEGMENT_DIR+'/NonScienceMode/'+year)
-    os.makedirs(SEGMENT_DIR+'/FPMILocked/'+year)
-    os.makedirs(SEGMENT_DIR+'/IMC/'+year)
-    os.makedirs(SEGMENT_DIR+'/SilentFPMILocked/'+year)
-    os.makedirs(SEGMENT_DIR+'/Silent/'+year)
+if not os.path.exists(SEGMENT_DIR+'/K1-GRD_SCIENCE_MODE/'+year):
+    for key in keys:
+        os.makedirs(SEGMENT_DIR+'/'+key+'/'+year)
     os.makedirs(SEGMENT_DIR+'/Partial/'+year)
 
 # Set time every 15 min. 
@@ -191,9 +188,9 @@ if utc_date != end_time:
     for key in keys:
 
         tmp = DataQualityFlag.read(filepath_xml[key])
-        tmp.write(SEGMENT_DIR +key+'/'+year+'/K1-SegmentList_'+key+'_UTC_' + utc_date + '.xml',overwrite=True)
+        tmp.write(SEGMENT_DIR +key+'/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.xml',overwrite=True)
 
-        with open(SEGMENT_DIR +key+'/'+year+'/K1-SegmentList_'+key+'_UTC_' + utc_date + '.txt', mode='w') as f:
+        with open(SEGMENT_DIR +key+'/'+year+'/SegmentList_'+key+'_UTC_' + utc_date + '.txt', mode='w') as f:
             for seg in tmp.active :
                 f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 
