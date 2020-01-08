@@ -162,9 +162,13 @@ def mkSegment(gst, get, utc_date) :
 #utc_date = (datetime.now() + timedelta(days=-1)).strftime("%Y-%m-%d")
 
 
-if not os.path.exists(SEGMENT_DIR+'/K1-GRD_SCIENCE_MODE/'+year):
-    for key in keys:
+#if not os.path.exists(SEGMENT_DIR+'/K1-GRD_SCIENCE_MODE/'+year):
+#    for key in keys:
+for key in keys:
+    if not os.path.exists(SEGMENT_DIR+'/'+key+'/'+year):
         os.makedirs(SEGMENT_DIR+'/'+key+'/'+year)
+
+if not os.path.exists(SEGMENT_DIR+'/Partial/'+year):
     os.makedirs(SEGMENT_DIR+'/Partial/'+year)
 
 # Set time every 15 min. 
