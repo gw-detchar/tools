@@ -156,7 +156,7 @@ def mkSegment(gst, get, utc_date) :
             dqflag[key] = dqflag[key] + tmp
 
         dqflag[key].write(filepath_xml[key],overwrite=True)
-            
+        print(dqflag[key])
 #------------------------------------------------------------
 
 #utc_date = (datetime.now() + timedelta(days=-1)).strftime("%Y-%m-%d")

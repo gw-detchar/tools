@@ -101,11 +101,8 @@ def mkSegment(gst, get, utc_date) :
         #if key != 'K1-DET_SILENT_LOCKED':
         #    dqflag[key] = sv[key].to_dqflag(round=True)
         dqflag[key] = DataQualityFlag(known=[(gst,get)],active=[(gst,get)],name=key)
-        print(dqflag[key])
         valid = DataQualityFlag(known=[(gst,get)],active=[period[key]],name=key)
-        print(valid)
         dqflag[key] = dqflag[key] & valid
-        print(dqflag[key])
 
     #dqflag['K1-GRD_SCIENCE_MODE'].description = "Observation mode. K1:GRD-LSC_LOCK_STATE_N == 1000"
 
