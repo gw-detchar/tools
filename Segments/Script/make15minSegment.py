@@ -76,7 +76,7 @@ def GetFilelist(gpsstart,gpsend):
     return sources
 
 #keys = ['ScienceMode','NonScienceMode','IMC','FPMILocked','Silent','SilentFPMILocked']
-keys = ['K1-GRD_SCIENCE_MODE','K1-GRD_UNLOCKED','K1-GRD_IMC','K1-GRD_LOCKED','K1-DET_SILENT','K1-DET_SILENT_LOCKED']
+keys = ['K1-GRD_SCIENCE_MODE','K1-GRD_UNLOCKED','K1-GRD_LOCKED']
 utc_date = (datetime.now() + timedelta(hours=-9,minutes=-15)).strftime("%Y-%m-%d")
 year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
 filepath_txt = {}
@@ -88,10 +88,8 @@ for key in keys:
 
 def mkSegment(gst, get, utc_date) :
 
-    chIMC = 'K1:GRD-IMC_STATE_N'
     chGRDLSC = 'K1:GRD-LSC_LOCK_STATE_N'
-    chSilent = 'K1:MIF-WE_ARE_DOING_NOTHING'
-    channels = [chIMC, chGRDLSC, chSilent]
+    channels = [chGRDLSC]
     
     if getpass.getuser() == "controls":
         gwf_cache = '/users/DET/Cache/latest.cache'
@@ -106,9 +104,7 @@ def mkSegment(gst, get, utc_date) :
     #print('Reading {0} timeseries data...'.format(date))
     # add 1sec margin for locked segments contract.
     channeldata = TimeSeriesDict.read(cache, channels, start=gst-1, end=get+1, format='gwf.lalframe', gap='pad')
-    channeldataIMC = channeldata[chIMC]
     channeldataGRDLSC = channeldata[chGRDLSC]
-    channeldataSilent = channeldata[chSilent]
 
     #------------------------------------------------------------
     #print('Checking PMC Locking status for K1...')
@@ -116,28 +112,22 @@ def mkSegment(gst, get, utc_date) :
     sv={}
     sv['K1-GRD_SCIENCE_MODE'] = channeldataGRDLSC == 1000 
     sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC < 300 
-    sv['K1-GRD_IMC'] = channeldataIMC >= 100
-    sv['K1-GRD_LOCKED'] =  channeldataGRDLSC >= 300 
-    sv['K1-DET_SILENT'] = channeldataSilent == 1
+    # K1-GRD_LOCKED is 300 <= GRDLSC <= 1000. Later unlocked is subtracted.
+    sv['K1-GRD_LOCKED'] = channeldataGRDLSC <= 1000 
 
     dqflag = {}
     for key in keys:
-        if key != 'K1-DET_SILENT_LOCKED':
-            dqflag[key] = sv[key].to_dqflag(round=True)
+        dqflag[key] = sv[key].to_dqflag(round=True)
+
+    dqflag['K1-GRD_LOCKED'] = dqflag['K1-GRD_LOCKED'] - dqflag['K1-GRD_UNLOCKED']  
 
     # To omit fraction. round=True option is inclusive in default.         
     dqflag['K1-GRD_SCIENCE_MODE'].active = dqflag['K1-GRD_SCIENCE_MODE'].active.contract(1.0)
     dqflag['K1-GRD_LOCKED'].active = dqflag['K1-GRD_LOCKED'].active.contract(1.0)
 
-    dqflag['K1-DET_SILENT_LOCKED'] = dqflag['K1-DET_SILENT'] & dqflag['K1-GRD_LOCKED']
-
-    #keys = ['K1-GRD_SCIENCE_MODE','K1-GRD_UNLOCKED','K1-GRD_IMC','K1-GRD_LOCKED','K1-DET_SILENT','K1-DET_SILENT_LOCKED']
     dqflag['K1-GRD_SCIENCE_MODE'].description = "Observation mode. K1:GRD-LSC_LOCK_STATE_N == 1000"
     dqflag['K1-GRD_UNLOCKED'].description = "Interferometer is not locked. K1:GRD-LSC_LOCK_STATE_N < 300"
-    dqflag['K1-GRD_LOCKED'].description = "Interferometer is locked. K1:GRD-LSC_LOCK_STATE_N >= 300"
-    dqflag['K1-GRD_IMC'].description = "IMC is locked. K1:GRD-IMC_STATE_N >= 100"
-    dqflag['K1-DET_SILENT'].description = "No human activity. K1:MIF-WE_ARE_DOING_NOTHING == 1"
-    dqflag['K1-DET_SILENT_LOCKED'].description = "K1-DET_SILENT & K1-GRD_LOCKED"
+    dqflag['K1-GRD_LOCKED'].description = "Interferometer is locked. 300 <= K1:GRD-LSC_LOCK_STATE_N <= 1000"
 
     for key in keys:
 
@@ -156,7 +146,7 @@ def mkSegment(gst, get, utc_date) :
             dqflag[key] = dqflag[key] + tmp
 
         dqflag[key].write(filepath_xml[key],overwrite=True)
-        print(dqflag[key])
+
 #------------------------------------------------------------
 
 #utc_date = (datetime.now() + timedelta(days=-1)).strftime("%Y-%m-%d")
