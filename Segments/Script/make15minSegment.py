@@ -35,7 +35,7 @@ else:
     SEGMENT_DIR = "/home/detchar/Segments/"
     
 
-test = True
+test = False
 if test:
     if getpass.getuser() == "controls":
         SEGMENT_DIR = "/users/DET/tools/Segments/Script/tmp/"
