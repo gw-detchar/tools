@@ -76,14 +76,14 @@ def GetFilelist(gpsstart,gpsend):
     return sources
 
 #keys = ['ScienceMode','NonScienceMode','IMC','FPMILocked','Silent','SilentFPMILocked']
-keys = ['K1:DET-CONFIG_O3_TEST','K1:DET-CONFIG_O3_V1']
+keys = ['K1-DET_CONFIG_COMMISSIONING','K1-DET_CONFIG_O3_V1']
 
 # Period of each configuration
 period = {}
 # Before O3 start, JST 2020/1/8 ~ 2020/1/29 9:00:00
-period['K1:DET-CONFIG_O3_TEST'] = (1262500000, 1264291218)
+period['K1-DET_CONFIG_COMMISIONING'] = (1262500000, 1264291218)
 # during O3, JST 2020/1/29 9:00:00 ~ 2020/5/1 9:00:00
-period['K1:DET-CONFIG_O3_V1'] = (1264291218, 1272326418)
+period['K1-DET_CONFIG_O3_V1'] = (1264291218, 1272326418)
 
 utc_date = (datetime.now() + timedelta(hours=-9,minutes=-15)).strftime("%Y-%m-%d")
 year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
@@ -96,6 +96,7 @@ for key in keys:
 
 def mkSegment(gst, get, utc_date) :
 
+    
     dqflag = {}
     for key in keys:
         #if key != 'K1-DET_SILENT_LOCKED':
