@@ -82,9 +82,14 @@ year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
 filepath_txt = {}
 filepath_xml = {}
     
+if getpass.getuser() == "controls":
+    tmp_DIR = "/users/DET/tools/Segments/Script/tmp/"
+else:
+    tmp_DIR = "/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"
+
 for key in keys:
-    filepath_txt[key] = SEGMENT_DIR + '/Partial/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.txt'
-    filepath_xml[key] = SEGMENT_DIR + '/Partial/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.xml'
+    filepath_txt[key] = tmp_DIR + '/Partial/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.txt'
+    filepath_xml[key] = tmp_DIR + '/Partial/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.xml'
 
 def mkSegment(gst, get, utc_date) :
 
@@ -128,6 +133,7 @@ def mkSegment(gst, get, utc_date) :
     dqflag['K1-GRD_SCIENCE_MODE'].description = "Observation mode. K1:GRD-LSC_LOCK_STATE_N == 1000"
     dqflag['K1-GRD_UNLOCKED'].description = "Interferometer is not locked. K1:GRD-LSC_LOCK_STATE_N < 300"
     dqflag['K1-GRD_LOCKED'].description = "Interferometer is locked. 300 <= K1:GRD-LSC_LOCK_STATE_N <= 1000"
+    dqflag['K1-GRD_LOCKED'].name = "K1:GRD-LSC_LOCK_STATE_N >= 300 & K1:GRD-LSC_LOCK_STATE_N <= 1000"
 
     for key in keys:
 
@@ -197,4 +203,5 @@ if utc_date != end_time:
         with open(SEGMENT_DIR +key+'/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.txt', mode='w') as f:
             for seg in tmp.active :
                 f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-
+        os.remove(filepath_xml[key])
+        os.remove(filepath_txt[key])
