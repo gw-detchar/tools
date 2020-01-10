@@ -83,13 +83,13 @@ filepath_txt = {}
 filepath_xml = {}
     
 if getpass.getuser() == "controls":
-    tmp_DIR = "/users/DET/tools/Segments/Script/tmp/"
+    tmp_DIR = "/users/DET/tools/Segments/Script/Partial/"
 else:
-    tmp_DIR = "/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"
+    tmp_DIR = "/home/detchar/git/kagra-detchar/tools/Segments/Script/Partial/"
 
 for key in keys:
-    filepath_txt[key] = tmp_DIR + '/Partial/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.txt'
-    filepath_xml[key] = tmp_DIR + '/Partial/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.xml'
+    filepath_txt[key] = tmp_DIR +key+'_SEGMENT_UTC_' + utc_date + '.txt'
+    filepath_xml[key] = tmp_DIR +key+'_SEGMENT_UTC_' + utc_date + '.xml'
 
 def mkSegment(gst, get, utc_date) :
 
@@ -164,8 +164,8 @@ for key in keys:
     if not os.path.exists(SEGMENT_DIR+'/'+key+'/'+year):
         os.makedirs(SEGMENT_DIR+'/'+key+'/'+year)
 
-if not os.path.exists(SEGMENT_DIR+'/Partial/'+year):
-    os.makedirs(SEGMENT_DIR+'/Partial/'+year)
+#if not os.path.exists(SEGMENT_DIR+'/Partial/'+year):
+#    os.makedirs(SEGMENT_DIR+'/Partial/'+year)
 
 # Set time every 15 min. 
 if getpass.getuser() == "controls":
