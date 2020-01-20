@@ -127,16 +127,14 @@ def mkSegment(gst, get, utc_date) :
     for key in keys:
         dqflag[key] = sv[key].to_dqflag(round=True)
 
-    dqflag['K1-GRD_LOCKED'] = dqflag['K1-GRD_LOCKED'] - dqflag['K1-GRD_UNLOCKED']  
-
     # To omit fraction. round=True option is inclusive in default.         
     dqflag['K1-GRD_SCIENCE_MODE'].active = dqflag['K1-GRD_SCIENCE_MODE'].active.contract(1.0)
     dqflag['K1-GRD_LOCKED'].active = dqflag['K1-GRD_LOCKED'].active.contract(1.0)
 
-    dqflag['K1-GRD_SCIENCE_MODE'].description = "Observation mode. K1:GRD-LSC_LOCK_STATE_N == 1000"
-    dqflag['K1-GRD_UNLOCKED'].description = "Interferometer is not locked. K1:GRD-LSC_LOCK_STATE_N < 300"
-    dqflag['K1-GRD_LOCKED'].description = "Interferometer is locked. 300 <= K1:GRD-LSC_LOCK_STATE_N <= 1000"
-    dqflag['K1-GRD_LOCKED'].name = "K1:GRD-LSC_LOCK_STATE_N >= 300 & K1:GRD-LSC_LOCK_STATE_N <= 1000"
+    dqflag['K1-GRD_SCIENCE_MODE'].description = "Observation mode. K1:GRD-IFO_STATE_N == 1000"
+    dqflag['K1-GRD_UNLOCKED'].description = "Interferometer is not locked. K1:GRD-IFO_STATE_N < 100"
+    dqflag['K1-GRD_LOCKED'].description = "Interferometer is locked. K1:GRD-IFO_STATE_N >= 100"
+    #dqflag['K1-GRD_LOCKED'].name = "K1:GRD-LSC_LOCK_STATE_N >= 300 & K1:GRD-LSC_LOCK_STATE_N <= 1000"
 
     for key in keys:
 
