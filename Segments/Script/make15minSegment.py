@@ -118,7 +118,7 @@ def mkSegment(gst, get, utc_date) :
     sv={}
     sv['K1-GRD_SCIENCE_MODE'] = channeldataGRDLSC == 1000 
     #sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC < 300 
-    sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC <= 10 
+    sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC < 100 
     # K1-GRD_LOCKED is 300 <= GRDLSC <= 1000. Later unlocked is subtracted.
     #sv['K1-GRD_LOCKED'] = channeldataGRDLSC <= 1000 
     sv['K1-GRD_LOCKED'] = channeldataGRDLSC >= 100 
