@@ -93,7 +93,8 @@ for key in keys:
 
 def mkSegment(gst, get, utc_date) :
 
-    chGRDLSC = 'K1:GRD-LSC_LOCK_STATE_N'
+    #chGRDLSC = 'K1:GRD-LSC_LOCK_STATE_N'
+    chGRDLSC = 'K1:GRD-IFO_STATE_N'
     channels = [chGRDLSC]
     
     if getpass.getuser() == "controls":
@@ -116,9 +117,11 @@ def mkSegment(gst, get, utc_date) :
 
     sv={}
     sv['K1-GRD_SCIENCE_MODE'] = channeldataGRDLSC == 1000 
-    sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC < 300 
+    #sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC < 300 
+    sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC <= 10 
     # K1-GRD_LOCKED is 300 <= GRDLSC <= 1000. Later unlocked is subtracted.
-    sv['K1-GRD_LOCKED'] = channeldataGRDLSC <= 1000 
+    #sv['K1-GRD_LOCKED'] = channeldataGRDLSC <= 1000 
+    sv['K1-GRD_LOCKED'] = channeldataGRDLSC >= 100 
 
     dqflag = {}
     for key in keys:
