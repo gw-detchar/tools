@@ -161,7 +161,7 @@ safety=1
 #locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="IMC",min_len=safety*3,kamioka=True)
 nightly=mylib.GetDQFlag(tfile-safety*2, tfile+omicron_interval+safety*2, config="quiet",min_len=safety*3,kamioka=True)
 
-locked=mylib.GetDQFlag(tfile-safety*2, tfile+omicron_interval+safety*2, config="FPMI",min_len=safety*3,kamioka=True)
+locked=mylib.GetDQFlag(tfile-safety*2, tfile+omicron_interval+safety*2, config="IFO",min_len=safety*3,kamioka=True)
 locked = locked & nightly
 locked_contract=locked.copy()
 locked=locked.active
