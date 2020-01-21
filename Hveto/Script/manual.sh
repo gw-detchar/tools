@@ -33,7 +33,8 @@ echo $SEGMENTFILE
 #SEGMENTFILE=/users/DET/Segments/SegmentList_FPMI_UTC_2019-12-19.xml
 
 IFO='K1'
-INIFILE=/users/DET/tools/Hveto/etc/manual.ini
+#INIFILE=/users/DET/tools/Hveto/etc/manual.ini
+INIFILE=/users/DET/tools/Hveto/etc/burst.ini
 DIRNAME_DATE=$3
 OUTPUTDIR=/home/controls/public_html/hveto/manual/${DIRNAME_DATE}_burst
 
