@@ -7,9 +7,9 @@ curl http://157.82.231.182/~ctsweb/ER3_DEC_19_2/M1.R_rMRA_i0cc00_i0rho0_freq16_2
 
 echo "Download completed."
 echo "Convert txt file to xml file."
-echo python makeBurstXML.py -f -i $bursttxt 
+echo python makeBurstXML.py -i $bursttxt 
 
-python makeBurstXML.py -f -i $bursttxt 
+python makeBurstXML.py -i $bursttxt 
 
 echo "Conversion finished."
 
