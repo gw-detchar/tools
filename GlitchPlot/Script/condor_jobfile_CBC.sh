@@ -19,20 +19,13 @@ namespectrogram="whitening_spectrogram"
 namecoherencegram="coherencegram"
 nameqtransform="qtransform"
 namelock="locksegments"
-namesuggestion="suggestion"
+
+eventtype="CBC"
+channel="K1:CAL-CS_PROC_C00_STRAIN_DBL_DQ"
 
 #cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype eventnumber
-cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype eventnumber peakQ peakQ_amp minf maxf
+cat $1 | while read gpstime rho reduced_chi_square detection_statistics
 do
-    echo "gps time = $gpstime "
-    echo "channel = $channel "
-    echo "min_duration = $min_duration "
-    echo "max_duration = $max_duration "
-    echo "bandwidth = $bandwidth "
-
-    if [ "$peakQ" = "" ]; then
-	peakQ=-1
-    fi
 
     # $index will be added to the output file name to distinguish from others. 
     index=$eventtype"_"$gpstime"_"$channel
@@ -42,145 +35,48 @@ do
 
     channels=$channel".dat"
     ./chlist_plotter.sh $channels $channel
-    
+
     # For timeseries, gps time start from 2s before glitch and end at 2s after glitch.
 
     # For spectrum, spectogram, and coherencegram,
     # fftlength is defined based on bandwidth of the trigger event.
     # For spectrum, fft length = 1/bandwidth, rounded to integer.
-    fft30=`echo "scale=5; 1. / $bandwidth" | bc | awk '{printf("%d\n",$1 + 1)}'`
-    # select fft to take 2^n data points.
-    tmp=`awk "BEGIN {print log($fft30) / log(2)}"`
-    dif=0
-    if [ "$(echo "$tmp < 0" | bc)" -eq 1 ]; then
-#	tmp2=`echo $tmp | awk '{printf("%i\n", $tmp + 16)}'`
-	tmp2=0
-#	fft30=${sampling[tmp2]}
-    else
-	tmp2=`echo $tmp | awk '{printf("%i\n", $tmp )}'`
-    fi
-
-    fft30=`awk "BEGIN {print 2**$tmp2}"`
-
-    if [ "$(echo "$fft30 > 30" | bc)" -eq 1 ]; then
-	fft30=16
-    fi 
+    fft30=1
 
     # determine time scale to use. around 30s, use a nice round number.
     # divide is number of bins. 
-    ndivide30=`echo "scale=5; 30. / $fft30" | bc | awk '{printf("%d\n",$1 + 1)}'`
     # span is total data length.
-    span30=`echo "scale=5; $fft30 * $ndivide30" | bc `
-
-    echo fft30 $fft30
-    echo ndivide30 $ndivide30
-    echo span30 $span30
+    span30=30
 
     # for spectrogram etc.
     # fft length = larger one of [min_duration] or [max_duration/10]
     # stride = multiple of fft length, 
 
-    # 
-    fft=`echo "scale=5; $max_duration / 10. " | bc `
+    fft=0.125
 
-    if [ "$(echo "$fft < $min_duration" | bc)" -eq 1 ]; then
-	fft=$min_duration
-    fi
-
-
-    # select fft to take 2^n data points.
-    sampling=( 1 0.5 0.25 0.125 0.0625 0.03125 0.015625 0.0078125 0.00390625 0.001953125 0.00097656250 0.00048828125 0.000244140625 0.000122703125 0.00006103515625 )
-    tmp=`awk "BEGIN {print log($fft) / log(2)}"`
-    dif=0
-
-    if [ "$(echo "$tmp < 0" | bc)" -eq 1 ]; then
-	tmp2=`echo "scale=0; 0 - ${tmp} "| bc | awk '{printf("%d\n",$1 + 1)}'`
-	fft=${sampling[$tmp2]}
-	while [ "$(echo "scale=5; $fft < 2. / ${frequency_snr}" | bc)" -eq 1 ]
-	do
-	    tmp2=$(($tmp2 - 1))
-	    fft=${sampling[$tmp2]}
-	done
-    else
-	tmp2=`echo "scale=0; $tmp "| bc | awk '{printf("%d\n",$1 )}'`
-	fft=`awk "BEGIN {print 2**$tmp2}"`
-	while [ "$(echo "scale=5; $fft < 2. / ${frequency_snr}" | bc)" -eq 1 ]
-	do
-	    tmp2=$(($tmp2 + 1))
-	    fft=`awk "BEGIN {print 2**$tmp2}"`
-	done
-    fi
-
-    # stride is minimum of a and b.
-
-    a=`echo "scale=5; $min_duration * 4. " | bc `
-    b=`echo "scale=5; $max_duration / 2. " | bc `
-    stride=0
-    span=0
-
-    if [ "$(echo "$b < $a" | bc)" -eq 1 ]; then
-	stride=$b
-    else
-	stride=$a
-    fi
-
-    divide=`echo "scale=5; $stride / $fft" | bc | awk '{printf("%d\n",$1 + 2)}'`
-
-    # make the stride to be multiple of fft length.
-    stride=`echo "scale=5; $fft * $divide" | bc `
-
-    # make the time span to be multiple of stride.
-    span=`echo "scale=5; $max_duration * 10 " | bc `
-    if [ "$(echo "$span < 0.5" | bc)" -eq 1 ]; then
-	span=0.5
-    fi
-
-    divide=`echo "scale=5; $span / $stride" | bc | awk '{printf("%d\n",$1 + 1)}'`
-
-    span=`echo "scale=5; $stride * $divide" | bc | awk '{printf("%d\n",$1 + 1)}'`
-
-    echo fft $fft
-    echo divide $divide
-    echo span $span
+    stride=0.125
+    span=5
 
     gpsstart=`echo "scale=5; $gpstime - $span " | bc `
     gpsend=`echo "scale=5; $gpstime + $span " | bc `
 
-    if [ "$(echo "$span > 30.0" | bc)" -eq 1 ]; then
-	span=30.
-    fi
-
     qgpsstart=`echo "scale=5; $gpstime - $span " | bc `
     qgpsend=`echo "scale=5; $gpstime + $span " | bc `
 
-    if [ "$(echo "$frequency_snr < 20.0" | bc)" -eq 1 ]; then
-	fmin=`echo "scale=5; $frequency_snr / 2. " | bc `
-    else
-	fmin=10
-    fi
-
     # after trigger
-    gpsstart1=`echo "scale=5; $gpstime + 2. + $max_duration " | bc | awk '{printf("%d\n",$1 + 1)}'`
-    gpsend1=`echo "scale=5; $gpstime + 2. + $max_duration + $span30 " | bc | awk '{printf("%d\n",$1 + 1)}'`
+    gpsstart1=`echo "scale=5; $gpstime + 2. " | bc | awk '{printf("%d\n",$1 + 1)}'`
+    gpsend1=`echo "scale=5; $gpstime + 2. + $span30 " | bc | awk '{printf("%d\n",$1 + 1)}'`
     #before trigger
-    gpsstart2=`echo "scale=5; $gpstime - 2. - $span30 " | bc | awk '{printf("%d\n",$1 - 1)}'`
-    gpsend2=`echo "scale=5; $gpstime - 2. " | bc | awk '{printf("%d\n",$1 - 1)}'`
+    gpsstart2=`echo "scale=5; $gpstime - 30. - $span30 " | bc | awk '{printf("%d\n",$1 - 1)}'`
+    gpsend2=`echo "scale=5; $gpstime - 30. " | bc | awk '{printf("%d\n",$1 - 1)}'`
 
-    # during trigger
-    gpsstart3=$gpstime
-    gpsend3=`echo "scale=5; $gpstime + $max_duration " | bc `
 
-    # during trigger, for CBC
-    if [ "$eventtype" = "CBC" ]; then
-
-	gpsstarts30=($gpsstart1 $gpsstart2 $gpsstart3 )
-	gpsends30=($gpsend1 $gpsend2 $gpsend3 )
-	titles=("After" "Before" "Trigger")
-    else 
-	gpsstarts30=($gpsstart1 $gpsstart2 )
-	gpsends30=($gpsend1 $gpsend2 )
-	titles=("After" "Before")
-    fi
+    gpsstart3=`echo "scale=5; $gpstime - 1. " | bc `
+    gpsend3=$gpstime
+    
+    gpsstarts30=($gpsstart3 $gpsstart1 $gpsstart2 )
+    gpsends30=($gpsend3 $gpsend1 $gpsend2 )
+    titles=("Trigger" "After" "Before")
 
     # Data type for time series. Default is to use minutes trend. second trend or full data can be used with following flags. Please set one of them true and set the others false. Or it will give warning message and exit. 
     #data="minute"
@@ -212,7 +108,7 @@ do
 
     # FPMI lock
     lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
-    lnumber=1000  #number of the required state
+    lnumber=60  #number of the required state
     llabel='FPMI'  #y-axis label for the bar plot.
 
     # ALSDARM lock
@@ -255,7 +151,8 @@ do
     fi
 
     outdir="$condir/$date/${index}/"
-    
+  
+
     # Confirm the existance of output directory.
 
     if [ ! -e $outdir ]; then
@@ -263,7 +160,8 @@ do
     fi
 
     {
-	echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_snr $max_amp $frequency_amp  $eventtype $triggertype $eventnumber $peakQ $peakQ_amp $minf $maxf 
+	#echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_snr $max_amp $frequency_amp  $eventtype $triggertype $eventnumber
+	echo $gpstime $channel 0.125 0.125 8 $detection_statistics 100 $detection_statistics 100  CBC kagalin 0
     } > $outdir/parameter.txt
 
     logdir="$PWD/log/$date/"
@@ -272,48 +170,6 @@ do
     fi
 
     # make main script.
-
-    # suggestion
-
-    runsuggestion="$PWD/run_${namesuggestion}.sh"
-
-    # Write a file for condor submission.
-    
-    {
-	echo "PWD = $Fp(SUBMIT_FILE)"
-	echo "transfer_input_files = rm_if_empty.sh"
-	echo '+PostCmd = "rm_if_empty.sh"'
-	echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)/$(Output) $(PWD)/$(Error) $(PWD)/$(Log)"'
-	echo "Executable = ${runsuggestion}"
-	echo "Universe   = vanilla"
-	echo "Notification = never"
-	# if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.
-	echo "request_memory = 1 GB"
-	echo "Getenv  = True            # the environment variables will be copied."
-	echo ""
-	echo "should_transfer_files = YES"
-	echo "when_to_transfer_output = ON_EXIT"
-	echo ""
-	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
-	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
-	echo ""
-    } > job_${namesuggestion}.sdf
-
-    {
-	# Please try
-	#  $ python batch_locksegments.py -h
-	# for option detail.
-	
-	echo "Arguments = -s $gpsstart2 -e $gpsend2 -st $gpsstart3 -et $gpsend3 -sq $qgpsstart -eq $qgpsend -r $channel  -o ${outdir} -ft $frequency_snr -f $fft -q $peakQ "
-	echo "Queue"
-    } >> job_${namesuggestion}.sdf
-	
-    echo job_${namesuggestion}.sdf
-    condor_submit job_${namesuggestion}.sdf
-
-    if [ $channel = "K1:CAL-CS_PROC_C00_STRAIN_DBL_DQ" ]; then
-	continue
-    fi
 
     # for time series.
 
@@ -359,6 +215,7 @@ do
 	echo "should_transfer_files = YES"
 	echo "when_to_transfer_output = ON_EXIT"
 	echo ""
+	echo "Log          = log/$date/log_${nametime}.txt"
 	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
 	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
 	echo ""
@@ -402,6 +259,7 @@ do
 	echo "should_transfer_files = YES"
 	echo "when_to_transfer_output = ON_EXIT"
 	echo ""
+	echo "Log          = log/$date/log_${namespectrum}.txt"
 	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
 	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
 	echo ""
@@ -445,6 +303,7 @@ do
 	echo "should_transfer_files = YES"
 	echo "when_to_transfer_output = ON_EXIT"
 	echo ""
+	echo "Log          = log/$date/log_${namespectrogram}.txt"
 	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
 	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
 	echo ""
@@ -488,6 +347,7 @@ do
 	echo "should_transfer_files = YES"
 	echo "when_to_transfer_output = ON_EXIT"
 	echo ""
+	echo "Log          = log/$date/log_${namecoherencegram}.txt"
 	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
 	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
 	echo ""
@@ -531,6 +391,7 @@ do
 	echo "should_transfer_files = YES"
 	echo "when_to_transfer_output = ON_EXIT"
 	echo ""
+	echo "Log          = log/$date/log_${nameqtransform}.txt"
 	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
 	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
 	echo ""
@@ -574,6 +435,7 @@ do
 	echo "should_transfer_files = YES"
 	echo "when_to_transfer_output = ON_EXIT"
 	echo ""
+	echo "Log          = log/$date/log_${namelock}.txt"
 	echo "Output       = log/$date/\$(Cluster).\$(Process).out"
 	echo "Error       = log/$date/\$(Cluster).\$(Process).err"
 	echo ""
@@ -590,7 +452,6 @@ do
 	
     echo job_${namelock}.sdf
     condor_submit job_${namelock}.sdf
-
 
     # Loop over each plot. 
     option=""
@@ -629,10 +490,7 @@ do
 	    #  $ python batch_timeseries.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t ${chlist[0]}_Timeseries --nolegend --dpi 50"
-	    echo "Queue"
-
-	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t ${chlist[0]}_Timeseries --nolegend --dpi 50 -b --blow ${minf} --bhigh ${maxf}"
+	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t ${chlist[0]}_Timeseries --nolegend --dpi 50 -w -b"
 	    echo "Queue"
 	} >> job_${nametime}.sdf
 
@@ -653,6 +511,7 @@ do
 #	    echo "Arguments = -r $channel -c ${chlist[@]} -s ${gpsstart} -e ${gpsend} -o ${outdir} -i $channeldur -f ${duration} --stride ${durstride} ${optioncoherencegram}"
 #	    echo "Output       = log/$date/out_\$(Cluster).\$(Process).txt"
 #	    echo "Error        = log/$date/err_\$(Cluster).\$(Process).txt"
+#	    echo "Log          = log/$date/log_\$(Cluster).\$(Process).txt"
 #	    echo "Queue"
 	} >> job_${namecoherencegram}.sdf
 
@@ -693,11 +552,8 @@ do
 	    # Please try
 	    #  $ python batch_coherencegram.py -h
 	    # for option detail.
-
-	    if [ "$peakQ" = "" ]; then
-		peakQ=-1
-	    fi
-	    echo "Arguments = -c ${chlist[@]} -s ${qgpsstart} -e ${qgpsend} -o ${outdir} -i $channel ${optionqtransform} -f ${fmin} --dpi 50 -q ${peakQ}"
+	    
+	    echo "Arguments = -c ${chlist[@]} -s ${qgpsstart} -e ${qgpsend} -o ${outdir} -i $channel ${optionqtransform} -f ${fmin} --dpi 50"
 	    echo "Queue"
 
 	} >> job_${nameqtransform}.sdf
