@@ -1,0 +1,37 @@
+* How to use GlitchPlot for burst/CBC events
+
+--------------------------------------------------------------------------------
+
+CBC:
+
+1.　Edit plotter_CBC.sh
+1.1 In L3, modify CBC trigger file name.
+1.2 In L29~, modify requirement of trigger property.
+
+2.  Run the script.
+2.1 $ ./plotter_CBC.sh
+2.2 Wait for job finish. You can check the jjob status by condor_q. 
+2.3 Plots are put under /home/detchar/public_html/GlitchPlot/${yyyymmdd}/CBC_*
+
+3.  Ask Yuzurihara-san to update the webpage.
+
+4.  Check the plots. 
+
+--------------------------------------------------------------------------------
+
+Burst
+
+1.　Edit plotter_burst.sh
+1.1 In L3, modify burst trigger file name.
+1.2 In L60~, modify requirement of trigger property.
+
+2.  Run the script.
+2.1 $ ./plotter_burst.sh
+2.2 Wait for job finish. You can check the jjob status by condor_q. 
+2.3 Plots are put under /home/detchar/public_html/GlitchPlot/${yyyymmdd}/Burst_*
+
+3.  Ask Yuzurihara-san to update the webpage.
+
+4.  Check the plots. 
+
+--------------------------------------------------------------------------------
