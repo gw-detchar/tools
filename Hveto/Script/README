@@ -1,0 +1,15 @@
+* How to use hveto with burst trigger
+
+1.  Edit burst_manual.sh
+1.1 In L6, edit URL of the trigger file location.
+1.2 In L3, it is recommended to rename the file name according to the trigger file property. (Job runs without doing so.)
+
+2.  Run the script.
+2.1 ./burst_manual.sh
+2.2 Warning: It uses segment file. You may need to wait 9:10AM next day of the event, or edit some part.
+2.3 Warning: It runs only for slag==0 events in default. There are option to use other events. 
+
+3.  Check the output.
+3.1 If the job completed successfully, you can access http://10.68.10.130/~controls/hveto/manual/${yyyy-mm-dd}_burst/ to see the result.
+3.1.1 It is better to analyse more on round winner channel. If it looks not the cause of the DARM noise, please rerun hveto modifying /users/DET/tools/Hveto/etc/burst.ini by moving round winner channel to unsafe channel.
+3.2 If the job failed, please check the log on the screen. The cause maybe that there is no coincident glitch.
