@@ -14,7 +14,7 @@ do
 	continue
     fi
 
-    channel=K1:LSC-POP_PDA1_RF17_Q_ERR_DQ
+    channel=K1:CAL-CS_PROC_C00_STRAIN_DBL_DQ
     min_duration=0.1
     max_duration=10
     bandwidth=1
