@@ -17,7 +17,8 @@ EXEC=hveto
 
 GPSSTART=$1
 GPSEND=$2
-SEGMENTFILE=/users/DET/Segments/SegmentList_FPMI_UTC_$3.xml
+#SEGMENTFILE=/users/DET/Segments/SegmentList_FPMI_UTC_$3.xml
+SEGMENTFILE=`ls /users/DET/Segments/K1-GRD_SCIENCE_MODE/*/K1-GRD_SCIENCE_MODE_SEGMENT_UTC_$3.xml`
 
 echo $GPSSTART
 echo $GPSEND

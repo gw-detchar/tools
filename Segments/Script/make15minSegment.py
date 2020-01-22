@@ -204,8 +204,17 @@ if utc_date != end_time:
         tmp = DataQualityFlag.read(filepath_xml[key])
         tmp.write(SEGMENT_DIR +key+'/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.xml',overwrite=True)
 
+        # Check if missing part exist
+        day = DataQualityFlag(known=[(end_gps_time-86400,end_gps_time)],active=[(end_gps_time-86400,end_gps_time)],name=key)
+        missing = day.known - tmp.known
+
+        for seg in missing:
+            mkSegment(seg[0], seg[1], utc_date)
+        tmp = DataQualityFlag.read(filepath_xml[key])
+
+        tmp.write(SEGMENT_DIR +key+'/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.xml',overwrite=True)   
         with open(SEGMENT_DIR +key+'/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.txt', mode='w') as f:
-            for seg in tmp.active :
-                f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+        for seg in tmp.active :
+            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
         os.remove(filepath_xml[key])
         os.remove(filepath_txt[key])
