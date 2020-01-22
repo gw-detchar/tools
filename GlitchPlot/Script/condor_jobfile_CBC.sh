@@ -91,6 +91,11 @@ do
     #kamioka=true
     #kamioka=false
 
+    if [ $USER == "detchar" ]; then
+        detchar=true
+    else
+        detchar=false
+    fi
     # For locked segments bar plot.
     lock=true
     #lock=false
@@ -133,6 +138,8 @@ do
 
     if "${kamioka}"; then
 	condir="/users/DET/Result/GlitchPlot"
+    elif "${detchar}"; then
+        condir="/home/detchar/public_html/GlitchPlot"
     else
 	condir="/home/chihiro.kozakai/public_html/KAGRA/GlitchPlot"
     fi
