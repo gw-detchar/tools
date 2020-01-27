@@ -35,7 +35,7 @@ else:
     SEGMENT_DIR = "/home/detchar/Segments/"
     
 
-test = True
+test = False
 if test:
     if getpass.getuser() == "controls":
         SEGMENT_DIR = "/users/DET/tools/Segments/Script/tmp/"
@@ -80,10 +80,10 @@ keys = ['K1-DET_CONFIG_COMMISSIONING','K1-DET_CONFIG_O3_V1']
 
 # Period of each configuration
 period = {}
-# Before O3 start, JST 2020/1/8 ~ 2020/1/29 9:00:00
-period['K1-DET_CONFIG_COMMISIONING'] = (1262500000, 1264291218)
-# during O3, JST 2020/1/29 9:00:00 ~ 2020/5/1 9:00:00
-period['K1-DET_CONFIG_O3_V1'] = (1264291218, 1272326418)
+# Before O3 start, JST 2020/1/8 ~ 2020/2/18 17:00:00
+period['K1-DET_CONFIG_COMMISSIONING'] = (1262500000,1266048018)
+# during O3, JST 2020/2/18 17:00:00 ~ 2020/5/1 9:00:00
+period['K1-DET_CONFIG_O3_V1'] = (1266048018, 1272326418)
 
 utc_date = (datetime.now() + timedelta(hours=-9,minutes=-15)).strftime("%Y-%m-%d")
 year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
@@ -95,26 +95,21 @@ for key in keys:
     filepath_xml[key] = SEGMENT_DIR + '/'+key+'/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.xml'
 
 def mkSegment(gst, get, utc_date) :
-
     
     dqflag = {}
     for key in keys:
-        #if key != 'K1-DET_SILENT_LOCKED':
-        #    dqflag[key] = sv[key].to_dqflag(round=True)
-        dqflag[key] = DataQualityFlag(known=[(gst,get)],active=[(gst,get)],name=key)
+        # For name, "K1:" is requiredto run the job successfully. 
+        dqflag[key] = DataQualityFlag(known=[(gst,get)],active=[(gst,get)],name="K1:"+key)
         valid = DataQualityFlag(known=[(gst,get)],active=[period[key]],name=key)
         dqflag[key] = dqflag[key] & valid
 
-    #dqflag['K1-GRD_SCIENCE_MODE'].description = "Observation mode. K1:GRD-LSC_LOCK_STATE_N == 1000"
-
-    for key in keys:
         # write down 1-day segments. 
         with open(filepath_txt[key], mode='w') as f:
             for seg in dqflag[key].active :
                 f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-
+        dqflag[key].description = "Configuration flag."
         dqflag[key].write(filepath_xml[key],overwrite=True)
-            
+        print(dqflag[key])
 #------------------------------------------------------------
 
 #utc_date = (datetime.now() + timedelta(days=-1)).strftime("%Y-%m-%d")
