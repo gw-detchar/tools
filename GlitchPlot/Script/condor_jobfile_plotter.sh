@@ -218,9 +218,14 @@ do
 #    llabel='X-arm'  #y-axis label for the bar plot.
 
     # FPMI lock
-    lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
+    #lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
+    #lnumber=1000  #number of the required state
+    #llabel='FPMI'  #y-axis label for the bar plot.
+
+    # IFO lock
+    lchannel="K1:GRD-IFO_STATE_N"  #guardian channel
     lnumber=1000  #number of the required state
-    llabel='FPMI'  #y-axis label for the bar plot.
+    llabel='IFO'  #y-axis label for the bar plot.
 
     # ALSDARM lock
     #lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
