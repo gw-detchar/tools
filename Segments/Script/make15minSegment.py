@@ -91,7 +91,7 @@ for key in keys:
     filepath_txt[key] = tmp_DIR +key+'_SEGMENT_UTC_' + utc_date + '.txt'
     filepath_xml[key] = tmp_DIR +key+'_SEGMENT_UTC_' + utc_date + '.xml'
 
-def mkSegment(gst, get, utc_date) :
+def mkSegment(gst, get, utc_date, txt=True) :
 
     #chGRDLSC = 'K1:GRD-LSC_LOCK_STATE_N'
     chGRDLSC = 'K1:GRD-IFO_STATE_N'
@@ -146,9 +146,10 @@ def mkSegment(gst, get, utc_date) :
         dqflag[key] -= margin
 
         # write down 15 min segments. 
-        with open(filepath_txt[key], mode='w') as f:
-            for seg in dqflag[key].active :
-                f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+        if txt:
+            with open(filepath_txt[key], mode='w') as f:
+                for seg in dqflag[key].active :
+                    f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
         
         # if accumulated file exists, it is added. 
         if os.path.exists(filepath_xml[key]):
@@ -209,7 +210,7 @@ if utc_date != end_time:
         missing = day.known - tmp.known
 
         for seg in missing:
-            mkSegment(seg[0], seg[1], utc_date)
+            mkSegment(seg[0], seg[1], utc_date, txt=False)
         tmp = DataQualityFlag.read(filepath_xml[key])
 
         tmp.write(SEGMENT_DIR +key+'/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.xml',overwrite=True)   
