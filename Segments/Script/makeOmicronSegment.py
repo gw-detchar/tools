@@ -108,7 +108,7 @@ def mkSegment(gst, get, utc_date, txt=True) :
 
     for key in keys:
         sources = GetFilelist(gst,get,key)
-        sources = []
+
         first=True
         for source in sources:
             events = EventTable.read(source, tablename='sngl_burst',columns=['start_time', 'start_time_ns', 'duration',  'snr'])
@@ -165,7 +165,8 @@ if getpass.getuser() == "controls":
     end_gps_time = int (float(subprocess.check_output('/users/DET/tools/Segments/Script/periodictime.sh', shell = True)) )
 else:
     end_gps_time = int (float(subprocess.check_output('/home/detchar/git/kagra-detchar/tools/Segments/Script/periodictime.sh', shell = True)) )
-    
+
+end_gps_time = int(end_gps_time) - 900
 start_gps_time = int(end_gps_time) - 900
 
 # For locked segment contract, take 1sec margin.
@@ -187,8 +188,10 @@ print('\n--- Total {0}h {1}m ---'.format( int((time.time()-start_time)/3600), in
 
 
 # whole day file should be produced at the end of the day.
-end_time = (datetime.now() + timedelta(hours=-9)).strftime("%Y-%m-%d")
+end_time = (datetime.now() + timedelta(hours=-9) + timedelta(minutes=-15)).strftime("%Y-%m-%d")
+
 if utc_date != end_time:
+
     print("date changed.")
     for key in keys:
         for snr in snrs[key]:

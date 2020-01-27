@@ -76,7 +76,7 @@ def GetFilelist(gpsstart,gpsend):
     return sources
 
 #keys = ['ScienceMode','NonScienceMode','IMC','FPMILocked','Silent','SilentFPMILocked']
-keys = ['K1-GRD_SCIENCE_MODE','K1-GRD_UNLOCKED','K1-GRD_LOCKED','K1-GRD_EARTHQUAKE']
+keys = ['K1-GRD_SCIENCE_MODE','K1-GRD_UNLOCKED','K1-GRD_LOCKED','K1-GRD_PEM_EARTHQUAKE']
 utc_date = (datetime.now() + timedelta(hours=-9,minutes=-15)).strftime("%Y-%m-%d")
 year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
 filepath_txt = {}
@@ -95,7 +95,7 @@ def mkSegment(gst, get, utc_date, txt=True) :
 
     #chGRDLSC = 'K1:GRD-LSC_LOCK_STATE_N'
     chGRDLSC = 'K1:GRD-IFO_STATE_N'
-    chGRDEQ = 'K1:GRD-EARTHQUAKE_OK'
+    chGRDEQ = 'K1:GRD-PEM_EARTHQUAKE_STATE_N'
     channels = [chGRDLSC,chGRDEQ]
     
     if getpass.getuser() == "controls":
@@ -124,7 +124,7 @@ def mkSegment(gst, get, utc_date, txt=True) :
     # K1-GRD_LOCKED is 300 <= GRDLSC <= 1000. Later unlocked is subtracted.
     #sv['K1-GRD_LOCKED'] = channeldataGRDLSC <= 1000 
     sv['K1-GRD_LOCKED'] = channeldataGRDLSC >= 100 
-    sv['K1-GRD_EARTHQUAKE'] = channeldataGRDEQ == 1
+    sv['K1-GRD_EARTHQUAKE'] = channeldataGRDEQ == 1000
 
     dqflag = {}
     for key in keys:
