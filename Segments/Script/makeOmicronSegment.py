@@ -82,10 +82,12 @@ def GetFilelist(gpsstart,gpsend,channel):
     return sources
 
 
-keys = ['CAL_CS_PROC_C00_STRAIN_DBL_DQ', 'PEM_SEIS_EXV_GND_Z_OUT_DQ']
+keys = ['CAL_CS_PROC_C00_STRAIN_DBL_DQ', 'PEM_SEIS_EXV_GND_X_OUT_DQ','PEM_SEIS_EXV_GND_Y_OUT_DQ','PEM_SEIS_EXV_GND_Z_OUT_DQ','PEM_SEIS_EYV_GND_X_OUT_DQ','PEM_SEIS_EYV_GND_Y_OUT_DQ','PEM_SEIS_EYV_GND_Z_OUT_DQ','PEM_SEIS_IXV_GND_X_OUT_DQ','PEM_SEIS_IXV_GND_Y_OUT_DQ','PEM_SEIS_IXV_GND_Z_OUT_DQ',]
 snrs = {}
 snrs['CAL_CS_PROC_C00_STRAIN_DBL_DQ'] = [20,100]
-snrs['PEM_SEIS_EXV_GND_Z_OUT_DQ'] = [20]
+for key in keys:
+    if "PEM_SEIS" in key:
+        snrs[key] = [20]
 
 utc_date = (datetime.now() + timedelta(hours=-9,minutes=-15)).strftime("%Y-%m-%d")
 year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
@@ -190,8 +192,8 @@ print('\n--- Total {0}h {1}m ---'.format( int((time.time()-start_time)/3600), in
 # whole day file should be produced at the end of the day.
 end_time = (datetime.now() + timedelta(hours=-9) + timedelta(minutes=-15)).strftime("%Y-%m-%d")
 
-if utc_date != end_time:
-
+#if utc_date != end_time:
+if False:
     print("date changed.")
     for key in keys:
         for snr in snrs[key]:
