@@ -80,9 +80,20 @@ else:
     sources = mylib.GetFilelist(gpsstart,gpsend)
 
 f = open('/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/'+refchannel+".dat")
-channels = f.read().split()
+allchannels = f.read().split()
 f.close()
 #channels=['K1:CAL-CS_PROC_C00_STRAIN_DBL_DQ','K1:CAL-CS_PROC_DARM_DELTA_CTRL_MN_DBL_DQ']
+f = open('/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/DARMaffected.dat')
+ignore = f.read().split()
+f.close()
+
+#channels = [ channel in allchannels if not channel in ignore ]
+channels = []
+while allchannels:
+    e = allchannels.pop()
+    if e not in ignore:
+        channels.append(e)
+print(channels)
 
 data = TimeSeriesDict.read(sources,channels,format='gwf.lalframe',start=float(gpsstart),end=float(gpsend))
 
@@ -110,17 +121,18 @@ dataQ = TimeSeriesDict.read(sources,channels,format='gwf.lalframe',start=float(g
 detectedc = []
 detectedq = []
 notdetected = []
+# Skip channels affected by DARM
+if channel in ignore:
+    notdetected.append(channel)
 
 ref = data[refchannel]
 refT = dataT[refchannel]
+
 for channel in channels:
+
     fft = originalfft
     ol = originalol
     lowSRflag=False
-
-    #if 'K1:LSC' in channel or 'K1:CAL' in channel:
-    #    notdetected.append(channel)
-    #    continue
 
     com = data[channel]
 
@@ -177,6 +189,7 @@ for channel in channels:
         detectedq.append(channel)
         continue
 
+    # If no coherence or spectrogram peak detected
     notdetected.append(channel)
 
 print(detectedc)
