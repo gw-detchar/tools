@@ -124,7 +124,7 @@ def mkSegment(gst, get, utc_date, txt=True) :
     # K1-GRD_LOCKED is 300 <= GRDLSC <= 1000. Later unlocked is subtracted.
     #sv['K1-GRD_LOCKED'] = channeldataGRDLSC <= 1000 
     sv['K1-GRD_LOCKED'] = channeldataGRDLSC >= 100 
-    sv['K1-GRD_EARTHQUAKE'] = channeldataGRDEQ == 1000
+    sv['K1-GRD_PEM_EARTHQUAKE'] = channeldataGRDEQ == 1000
 
     dqflag = {}
     for key in keys:
@@ -215,7 +215,7 @@ if utc_date != end_time:
 
         tmp.write(SEGMENT_DIR +key+'/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.xml',overwrite=True)   
         with open(SEGMENT_DIR +key+'/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.txt', mode='w') as f:
-        for seg in tmp.active :
-            f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
+            for seg in tmp.active :
+                f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
         os.remove(filepath_xml[key])
         os.remove(filepath_txt[key])
