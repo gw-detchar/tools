@@ -39,7 +39,7 @@ else:
     SEGMENT_DIR = "/home/detchar/Segments/"
     
 
-test = True
+test = False
 if test:
     if getpass.getuser() == "controls":
         SEGMENT_DIR = "/users/DET/tools/Segments/Script/tmp/"
@@ -124,28 +124,28 @@ def mkSegment(gst, get, utc_date, txt=True) :
                     pass
             else:
                 mergedevents=vstack([mergedevents, events])
-
-        if first:
-            continue
         
         for snr in snrs[key]:
             Triggered = DataQualityFlag(name = "K1:"+key, known=[(gst,get)],active=[], label = "Glitch", description = "Glitch veto segment K1:"+key+ " >= SNR"+str(snr))
             #Triggered.ifo = "K1"
 
-            fevents = mergedevents.filter(('snr', mylib.Islargerequal, snr))
-            durations = fevents.get_column('duration')
-            start_times = fevents.get_column('start_time')
-            for start_time, duration in zip(start_times, durations):
-                tmpstart = int(start_time)
-                #tmpend = start_time + duration
-                tmpend = int(start_time + 1)
-                tmpsegment = Segment(tmpstart,tmpend)
+            if not first:
 
-                tmpTriggered = DataQualityFlag(known=[(gst,get)],active=[(tmpstart,tmpend)])
-                Triggered |= tmpTriggered
+
+                fevents = mergedevents.filter(('snr', mylib.Islargerequal, snr))
+                durations = fevents.get_column('duration')
+                start_times = fevents.get_column('start_time')
+                for start_time, duration in zip(start_times, durations):
+                    tmpstart = int(start_time)
+                    #tmpend = start_time + duration
+                    tmpend = int(start_time + 1)
+                    tmpsegment = Segment(tmpstart,tmpend)
+
+                    tmpTriggered = DataQualityFlag(known=[(gst,get)],active=[(tmpstart,tmpend)])
+                    Triggered |= tmpTriggered
                         
-                #dqflag['K1-GRD_SCIENCE_MODE'].description = "Observation mode. K1:GRD-IFO_STATE_N == 1000"
-                #dqflag['K1-GRD_LOCKED'].name = "K1:GRD-LSC_LOCK_STATE_N >= 300 & K1:GRD-LSC_LOCK_STATE_N <= 1000"
+                    #dqflag['K1-GRD_SCIENCE_MODE'].description = "Observation mode. K1:GRD-IFO_STATE_N == 1000"
+                    #dqflag['K1-GRD_LOCKED'].name = "K1:GRD-LSC_LOCK_STATE_N >= 300 & K1:GRD-LSC_LOCK_STATE_N <= 1000"
 
             # write down 15 min segments. 
             if txt:
