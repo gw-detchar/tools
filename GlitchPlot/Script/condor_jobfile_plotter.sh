@@ -646,7 +646,7 @@ do
 	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t ${chlist[0]}_Timeseries --nolegend --dpi 50"
 	    echo "Queue"
 
-	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t ${chlist[0]}_Timeseries --nolegend --dpi 50 -b --blow ${minf} --bhigh ${maxf}"
+	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t ${chlist[0]}_Timeseries --nolegend --dpi 50 --blow ${maxf} --bhigh ${minf}"
 	    echo "Queue"
 	} >> job_${nametime}.sdf
 
