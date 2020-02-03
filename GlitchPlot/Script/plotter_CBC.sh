@@ -40,4 +40,4 @@ done
 
 echo $outfile
 
-./condor_jobfile_plotter.sh $outfile
+./condor_jobfile_CBC.sh $outfile
