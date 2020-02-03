@@ -192,8 +192,7 @@ print('\n--- Total {0}h {1}m ---'.format( int((time.time()-start_time)/3600), in
 # whole day file should be produced at the end of the day.
 end_time = (datetime.now() + timedelta(hours=-9) + timedelta(minutes=-15)).strftime("%Y-%m-%d")
 
-#if utc_date != end_time:
-if False:
+if utc_date != end_time:
     print("date changed.")
     for key in keys:
         for snr in snrs[key]:
