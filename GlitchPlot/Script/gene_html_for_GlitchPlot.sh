@@ -415,6 +415,9 @@ You can see the result in <a href=\"https://docs.google.com/spreadsheets/d/1JxC3
             echo "<h3 class=\"h3_a\">Suggested channels (1) ( ${ch_glitch} ) at GPS=${gps_glitch} ${SPACE} JST=${JST_glitch}</h3>" >> $output_each
             suggestion_file=$i/suggestion1.txt
             while read ch_suggest; do
+		if [ "${ch_glitch}" = "${ch_suggest}" ]; then
+		    continue
+		fi
 		echo "<br>
 <p>${ch_suggest}</p>
 <br>" >> ${output_each}
@@ -431,6 +434,9 @@ You can see the result in <a href=\"https://docs.google.com/spreadsheets/d/1JxC3
             echo "<h3 class=\"h3_a\">Suggested channels (2) ( ${ch_glitch} ) at GPS=${gps_glitch} ${SPACE} JST=${JST_glitch}</h3>" >> $output_each
             suggestion_file=$i/suggestion2.txt
             while read ch_suggest; do
+		if [ "${ch_glitch}" = "${ch_suggest}" ]; then
+		    continue
+		fi
 		echo "<br>
 <p>${ch_suggest}</p>
 <br>" >> ${output_each}
@@ -447,6 +453,9 @@ You can see the result in <a href=\"https://docs.google.com/spreadsheets/d/1JxC3
             echo "<h3 class=\"h3_a\">Not suggested channels ( ${ch_glitch} ) at GPS=${gps_glitch} ${SPACE} JST=${JST_glitch}</h3>" >> $output_each
             suggestion_file=$i/notsuggestion.txt
             while read ch_suggest; do
+		if [ "${ch_glitch}" = "${ch_suggest}" ]; then
+		    continue
+		fi
 		echo "<br>
 <p>${ch_suggest}</p>
 <br>" >> ${output_each}
