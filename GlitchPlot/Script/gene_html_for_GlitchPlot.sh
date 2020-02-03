@@ -415,7 +415,11 @@ You can see the result in <a href=\"https://docs.google.com/spreadsheets/d/1JxC3
             echo "<h3 class=\"h3_a\">Suggested channels (1) ( ${ch_glitch} ) at GPS=${gps_glitch} ${SPACE} JST=${JST_glitch}</h3>" >> $output_each
             suggestion_file=$i/suggestion1.txt
             while read ch_suggest; do
-                for i_GlitchPlot in `find ${i}/*.png -type f | grep "${ch_suggest}" | grep -v "coherence"| sort`
+		echo "<br>
+<p>${ch_suggest}</p>
+<br>" >> ${output_each}
+                #for i_GlitchPlot in `find ${i}/*.png -type f | grep "${ch_suggest}" | grep -v "coherence"| sort`
+		for i_GlitchPlot in `find ${i}/*.png -type f | grep "${ch_suggest}" | sort`
                 do
                     echo "<a href=\"../../../${i_GlitchPlot}\" target=\"_self\"><img src=\"../../../${i_GlitchPlot}\" alt=\"${i_GlitchPlot}\" title=\"${i_GlitchPlot}\" /></a>" >> ${output_each}
                 done
@@ -427,7 +431,11 @@ You can see the result in <a href=\"https://docs.google.com/spreadsheets/d/1JxC3
             echo "<h3 class=\"h3_a\">Suggested channels (2) ( ${ch_glitch} ) at GPS=${gps_glitch} ${SPACE} JST=${JST_glitch}</h3>" >> $output_each
             suggestion_file=$i/suggestion2.txt
             while read ch_suggest; do
-                for i_GlitchPlot in `find ${i}/*.png -type f | grep "${ch_suggest}.png" | grep -v "coherence"| sort`
+		echo "<br>
+<p>${ch_suggest}</p>
+<br>" >> ${output_each}
+                #for i_GlitchPlot in `find ${i}/*.png -type f | grep "${ch_suggest}.png" | grep -v "coherence"| sort`
+		for i_GlitchPlot in `find ${i}/*.png -type f | grep "${ch_suggest}" | sort`
                 do
                     echo "<a href=\"../../../${i_GlitchPlot}\" target=\"_self\"><img src=\"../../../${i_GlitchPlot}\" alt=\"${i_GlitchPlot}\" title=\"${i_GlitchPlot}\" /></a>" >> ${output_each}
                 done
@@ -439,7 +447,12 @@ You can see the result in <a href=\"https://docs.google.com/spreadsheets/d/1JxC3
             echo "<h3 class=\"h3_a\">Not suggested channels ( ${ch_glitch} ) at GPS=${gps_glitch} ${SPACE} JST=${JST_glitch}</h3>" >> $output_each
             suggestion_file=$i/notsuggestion.txt
             while read ch_suggest; do
-                for i_GlitchPlot in `find ${i}/*.png -type f | grep "${ch_suggest}.png" | grep -v "coherence"| sort`
+		echo "<br>
+<p>${ch_suggest}</p>
+<br>" >> ${output_each}
+
+                #for i_GlitchPlot in `find ${i}/*.png -type f | grep "${ch_suggest}.png" | grep -v "coherence"| sort`
+		for i_GlitchPlot in `find ${i}/*.png -type f | grep "${ch_suggest}" | sort`
                 do
                     echo "<a href=\"../../../${i_GlitchPlot}\" target=\"_self\"><img src=\"../../../${i_GlitchPlot}\" alt=\"${i_GlitchPlot}\" title=\"${i_GlitchPlot}\" /></a>" >> ${output_each}
                 done
@@ -456,6 +469,16 @@ You can see the result in <a href=\"https://docs.google.com/spreadsheets/d/1JxC3
                 echo "<a href=\"../../../${i_GlitchPlot}\" target=\"_self\"><img src=\"../../../${i_GlitchPlot}\" alt=\"${i_GlitchPlot}\" title=\"${i_GlitchPlot}\" /></a>" >> ${output_each}
             done
 
+	    
+            ID=coherence
+            echo "<div id="${ID}"></div>" >> $output_each
+            echo "<br>
+	    <h3 class=\"h3_a\">Coherence of ${ch_glitch} at GPS=${gps_glitch} ${SPACE} JST=${JST_glitch}</h3>" >> $output_each
+            for i_GlitchPlot in `find ${i}/*coherence*.png -type f | sort`
+            do
+                echo "<a href=\"../../../${i_GlitchPlot}\" target=\"_self\"><img src=\"../../../${i_GlitchPlot}\" alt=\"${i_GlitchPlot}\" title=\"${i_GlitchPlot}\" /></a>" >> ${output_each}
+            done
+    
         }
 
         # coherenceのグラフは共通なので、ここに置く
