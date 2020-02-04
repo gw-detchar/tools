@@ -89,7 +89,7 @@ for key in keys:
     if "PEM_SEIS" in key:
         snrs[key] = [20]
 
-utc_date = (datetime.now() + timedelta(hours=-9,minutes=-15)).strftime("%Y-%m-%d")
+utc_date = (datetime.now() + timedelta(hours=-9,minutes=-30)).strftime("%Y-%m-%d")
 year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
 filepath_txt = {}
 filepath_xml = {}
@@ -159,7 +159,7 @@ def mkSegment(gst, get, utc_date, txt=True) :
                 Triggered = Triggered + tmp
 
             Triggered.write(filepath_xml[key+str(snr)],overwrite=True)
-
+            #print(Triggered)
 #------------------------------------------------------------
 
 # Set time every 15 min. 
