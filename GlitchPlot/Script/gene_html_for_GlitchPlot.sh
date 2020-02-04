@@ -8,17 +8,23 @@ if [ "$gpstime" = "" ]; then
 fi
 
 gpsbeg=$gpstime
+JST=`tconvert -l -f %Y%m%d ${gpstime}`
 
 subgroups="GlitchPlot"
 subgroup="GlitchPlot"
-dir_bKAGRA_summary_html=$HOME/bKAGRA_summary/html
-dir_bKAGRA_summary=$HOME/bKAGRA_summary
+
+#dir_bKAGRA_summary_html=$HOME/bKAGRA_summary/html
+#dir_bKAGRA_summary=$HOME/bKAGRA_summary
+dir_bKAGRA_summary_html=$HOME/bKAGRA_summary/${JST}/html
+dir_bKAGRA_summary=$HOME/bKAGRA_summary/${JST}
+
+mkdir -p $dir_bKAGRA_summary_html
 
 cd $dir_bKAGRA_summary
 echo $dir_bKAGRA_summary
 pwd
 
-JST=`tconvert -l -f %Y%m%d ${gpstime}`
+
 
 output=${dir_bKAGRA_summary_html}/${JST}_${subgroup}.html
 
