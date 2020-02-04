@@ -93,7 +93,7 @@ while allchannels:
     e = allchannels.pop()
     if e not in ignore:
         channels.append(e)
-print(channels)
+channels.append(refchannel)
 
 data = TimeSeriesDict.read(sources,channels,format='gwf.lalframe',start=float(gpsstart),end=float(gpsend))
 
@@ -122,7 +122,7 @@ detectedc = []
 detectedq = []
 notdetected = []
 # Skip channels affected by DARM
-if channel in ignore:
+for channel in ignore:
     notdetected.append(channel)
 
 ref = data[refchannel]
@@ -180,9 +180,14 @@ for channel in channels:
         continue
 
     comQ = dataQ[channel]
-
+    tmp=comQ.rms()
+    
+    if tmp.value[0] == 0.0:
+        notdetected.append(channel)
+        continue
+    
     qgram = comQ.q_gram(qrange=(qmin,qmax),snrthresh=5.5)
-
+    
     qgram = qgram.filter(('time', mylib.between,  (float(gpsstartT)-1.,float(gpsendT))))
 
     if len(qgram) > 0: 
@@ -203,4 +208,5 @@ with open(outdir+"/notsuggestion.txt", mode='w') as f:
 
 print(outdir+"suggestion1.txt")
 print(outdir+"suggestion2.txt")
+print(outdir+"notsuggestion.txt")
 print('Successfully finished !')
