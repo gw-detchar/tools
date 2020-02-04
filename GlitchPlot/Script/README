@@ -6,7 +6,7 @@ from GraceDB information (only GPS time information is available):
 
 2. Send to your PC and check it in locally.
    scp /home/detchar/bKAGRA_summary/${yyyymmdd} $prefferd_path_in_your_PC
-
+   open html/${yyyymmdd}_GlitchPlot.html by browser.
 2. Equivalently check on Kashiwa server
 firefox /home/detchar/bKAGRA_summary/${yyyymmdd}/html/${yyyymmdd}_GlitchPlot.html
 
