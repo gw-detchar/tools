@@ -83,7 +83,9 @@ period = {}
 # Before O3 start, JST 2020/1/8 ~ 2020/2/18 17:00:00
 period['K1-DET_CONFIG_COMMISSIONING'] = (1262500000,1266048018)
 # during O3, JST 2020/2/18 17:00:00 ~ 2020/5/1 9:00:00
-period['K1-DET_CONFIG_O3_V1'] = (1266048018, 1272326418)
+#period['K1-DET_CONFIG_O3_V1'] = (1266048018, 1272326418)
+# during O3, JST 2020/2/25 17:00:00 ~ 2020/5/1 9:00:00
+period['K1-DET_CONFIG_O3_V1'] = (1266652818, 1272326418)
 
 utc_date = (datetime.now() + timedelta(hours=-9,minutes=-15)).strftime("%Y-%m-%d")
 year = (datetime.now() + timedelta(hours=-9)).strftime("%Y")
