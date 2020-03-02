@@ -159,10 +159,11 @@ tmpactive=Triggered.active
 safety=1
 
 #locked=mylib.GetDQFlag(tfile-safety, tfile+omicron_interval+safety, config="IMC",min_len=safety*3,kamioka=True)
-nightly=mylib.GetDQFlag(tfile-safety*2, tfile+omicron_interval+safety*2, config="quiet",min_len=safety*3,kamioka=True)
+#nightly=mylib.GetDQFlag(tfile-safety*2, tfile+omicron_interval+safety*2, config="quiet",min_len=safety*3,kamioka=True)
 
-locked=mylib.GetDQFlag(tfile-safety*2, tfile+omicron_interval+safety*2, config="IFO",min_len=safety*3,kamioka=True)
-locked = locked & nightly
+#locked=mylib.GetDQFlag(tfile-safety*2, tfile+omicron_interval+safety*2, config="IFO",min_len=safety*3,kamioka=True)
+locked=mylib.GetDQFlag(tfile-safety*2, tfile+omicron_interval+safety*2, config="Observation",min_len=safety*3,kamioka=True)
+#locked = locked & nightly
 locked_contract=locked.copy()
 locked=locked.active
 locked_contract.active=locked_contract.active.shift(-0.5)
