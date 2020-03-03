@@ -119,21 +119,26 @@ def mkSegment(gst, get, utc_date, txt=True) :
 
     sv={}
     sv['K1-GRD_SCIENCE_MODE'] = channeldataGRDLSC == 1000 
-    #sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC < 300 
-    sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC < 100 
-    # K1-GRD_LOCKED is 300 <= GRDLSC <= 1000. Later unlocked is subtracted.
-    #sv['K1-GRD_LOCKED'] = channeldataGRDLSC <= 1000 
+
+    # Unlocked will be defined by inverse of locked segments.
+    #sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC < 100
+    
     sv['K1-GRD_LOCKED'] = channeldataGRDLSC >= 100 
     sv['K1-GRD_PEM_EARTHQUAKE'] = channeldataGRDEQ == 1000
 
     dqflag = {}
     for key in keys:
+        if key == 'K1-GRD_UNLOCKED':
+            continue
         dqflag[key] = sv[key].to_dqflag(round=True)
 
     # To omit fraction. round=True option is inclusive in default.         
     dqflag['K1-GRD_SCIENCE_MODE'].active = dqflag['K1-GRD_SCIENCE_MODE'].active.contract(1.0)
     dqflag['K1-GRD_LOCKED'].active = dqflag['K1-GRD_LOCKED'].active.contract(1.0)
 
+    dqflag['K1-GRD_UNLOCKED'] = ~dqflag['K1-GRD_LOCKED']
+    dqflag['K1-GRD_UNLOCKED'].name = "K1:GRD-IFO_STATE_N < 100"
+    
     dqflag['K1-GRD_SCIENCE_MODE'].description = "Observation mode. K1:GRD-IFO_STATE_N == 1000"
     dqflag['K1-GRD_UNLOCKED'].description = "Interferometer is not locked. K1:GRD-IFO_STATE_N < 100"
     dqflag['K1-GRD_LOCKED'].description = "Interferometer is locked. K1:GRD-IFO_STATE_N >= 100"
