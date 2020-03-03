@@ -19,9 +19,11 @@ namespectrogram="whitening_spectrogram"
 namecoherencegram="coherencegram"
 nameqtransform="qtransform"
 namelock="locksegments"
+namesuggestion="suggestion"
 
 eventtype="CBC"
-channel="K1:CAL-CS_PROC_C00_STRAIN_DBL_DQ"
+#channel="K1:CAL-CS_PROC_C00_STRAIN_DBL_DQ"
+channel="K1:CAL-CS_PROC_DARM_DISPLACEMENT_DQ"
 
 #cat $1 | while read gpstime channel min_duration max_duration bandwidth maxSNR frequency_snr max_amp frequency_amp eventtype triggertype eventnumber
 cat $1 | while read gpstime rho reduced_chi_square detection_statistics
@@ -52,7 +54,10 @@ do
     # fft length = larger one of [min_duration] or [max_duration/10]
     # stride = multiple of fft length, 
 
+    frequency_snr=100
     fft=0.125
+
+    fmin=10
 
     stride=0.125
     span=5
@@ -136,17 +141,6 @@ do
     # Set the output directory.
 #    condir="/users/.ckozakai/KashiwaAnalysis/analysis/code/gwpy/trigger/plotter"
 
-    if "${kamioka}"; then
-	condir="/users/DET/Result/GlitchPlot"
-    elif "${detchar}"; then
-        condir="/home/detchar/bKAGRA_summary/html/GlitchPlot"
-    else
-	condir="/home/chihiro.kozakai/public_html/KAGRA/GlitchPlot"
-    fi
-
-    if [ "$condir" = "" ]; then
-	condir=$PWD
-    fi
 
     if "${kamioka}"; then
 	[ -e /usr/bin/gpstime ] && cmd_gps=/usr/bin/gpstime || cmd_gps=/home/controls/bin/gpstime
@@ -156,6 +150,19 @@ do
     else
 	date=`tconvert -l -f %Y%m%d ${gpstime}`
     fi
+
+    if "${kamioka}"; then
+	condir="/users/DET/Result/GlitchPlot"
+    elif "${detchar}"; then
+        condir="/home/detchar/bKAGRA_summary/"${date}"/GlitchPlot"
+    else
+	condir="/home/chihiro.kozakai/public_html/KAGRA/GlitchPlot"
+    fi
+
+    if [ "$condir" = "" ]; then
+	condir=$PWD
+    fi
+
 
     outdir="$condir/$date/${index}/"
   
@@ -171,12 +178,46 @@ do
 	echo $gpstime $channel 0.125 0.125 8 $detection_statistics 100 $detection_statistics 100  CBC kagalin 0
     } > $outdir/parameter.txt
 
-    logdir="$PWD/log/$date/"
-    if [ ! -e $logdir ]; then
-	mkdir -p $logdir
-    fi
 
     # make main script.
+
+    # suggestion
+
+    runsuggestion="$PWD/run_${namesuggestion}.sh"
+
+    # Write a file for condor submission.     
+
+        {
+        echo "PWD = $Fp(SUBMIT_FILE)"
+        echo "transfer_input_files = rm_if_empty.sh"
+        echo '+PostCmd = "rm_if_empty.sh"'
+        echo '+PostArguments = "_condor_stderr _condor_stdout $(PWD)/$(Output) $(PWD)/$(Error) $(PWD)/$(Log)"'
+        echo "Executable = ${runsuggestion}"
+        echo "Universe   = vanilla"
+        echo "Notification = never"
+        # if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.                                                                               
+        echo "request_memory = 10 GB"
+        echo "Getenv  = True            # the environment variables will be copied."
+        echo ""
+        echo "should_transfer_files = YES"
+        echo "when_to_transfer_output = ON_EXIT"
+        echo ""
+        echo "Output       = log/$date/\$(Cluster).\$(Process).out"
+        echo "Error       = log/$date/\$(Cluster).\$(Process).err"
+        echo ""
+    } > job_${namesuggestion}.sdf
+
+    {
+        # Please try                                                                                                  
+        #  $ python batch_locksegments.py -h                                                                          
+        # for option detail.                                                                                          
+
+        echo "Arguments = -s $gpsstart2 -e $gpsend2 -st $gpsstart3 -et $gpsend3 -sq $qgpsstart -eq $qgpsend -r $channel  -o ${outdir} -ft $frequency_snr -f $fft  "
+        echo "Queue"
+    } >> job_${namesuggestion}.sdf
+
+    echo job_${namesuggestion}.sdf
+    condor_submit job_${namesuggestion}.sdf
 
     # for time series.
 
@@ -497,7 +538,9 @@ do
 	    #  $ python batch_timeseries.py -h
 	    # for option detail.
 	    
-	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t ${chlist[0]}_Timeseries --nolegend --dpi 50 -w -b"
+	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t ${chlist[0]}_Timeseries --nolegend --dpi 50 -w "
+	    echo "Queue"
+	    echo "Arguments = -c ${chlist[@]} -s $gpsstart -e $gpsend -o ${outdir} -i $channel ${optiontime} -t ${chlist[0]}_Timeseries --nolegend --dpi 50 -w --bhigh 40 --blow 1000"
 	    echo "Queue"
 	} >> job_${nametime}.sdf
 

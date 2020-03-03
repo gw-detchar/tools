@@ -280,10 +280,6 @@ do
 	echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_snr $max_amp $frequency_amp  $eventtype $triggertype $eventnumber $peakQ $peakQ_amp $minf $maxf 
     } > $outdir/parameter.txt
 
-    logdir="$PWD/log/$date/"
-    if [ ! -e $logdir ]; then
-	mkdir -p $logdir
-    fi
 
     # make main script.
 
@@ -302,7 +298,7 @@ do
 	echo "Universe   = vanilla"
 	echo "Notification = never"
 	# if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.
-	echo "request_memory = 1 GB"
+	echo "request_memory = 10 GB"
 	echo "Getenv  = True            # the environment variables will be copied."
 	echo ""
 	echo "should_transfer_files = YES"
