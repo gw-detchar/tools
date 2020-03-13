@@ -6,7 +6,9 @@ infile="burst/EVENTS_"$var".txt"
 first=true
 outfile="burst/"$var"_parameter.txt"
 
-#curl $url > $infile
+echo $url
+
+curl $url > $infile
 
 rm -rf $outfile
 touch $outfile

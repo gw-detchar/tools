@@ -13,15 +13,15 @@ endtime=`tconvert $enddate 23:59:59`
 echo $starttime
 echo $endtime
 
-#./plotter_burst_3detectors.sh ${starttime}_${endtime}_HVK
-#./plotter_burst_3detectors.sh ${starttime}_${endtime}_LHK
-#./plotter_burst_3detectors.sh ${starttime}_${endtime}_LVK
+./plotter_burst_3detectors.sh ${starttime}_${endtime}_HVK
+./plotter_burst_3detectors.sh ${starttime}_${endtime}_LHK
+./plotter_burst_3detectors.sh ${starttime}_${endtime}_LVK
 
-#./plotter_burst_4detectors.sh ${starttime}_${endtime}_LHVK
+./plotter_burst_4detectors.sh ${starttime}_${endtime}_LHVK
 
 while :
 do
-    #sleep 60
+    sleep 60
     echo "check condor."
     tmp=`condor_q | grep chihiro`
     if [ "${tmp}" = "" ]; then
@@ -30,8 +30,6 @@ do
         break;
     fi
 done
-
-#cat mail.txt | sendmail -i -t
 
 {
     echo "From: ckozakai <ckozakai@icrr.u-tokyo.ac.jp>"
