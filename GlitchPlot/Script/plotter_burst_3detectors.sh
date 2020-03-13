@@ -1,8 +1,8 @@
 #!/bin/bash
 
 var=$1
-url="http://157.82.231.182/~ctsweb/IO1_MAR_03_"$var"/M1.R_rMRA_i0cc00_i0rho0_freq16_2048/data/EVENTS.txt"
-infile="burst/EVENTS_"$var"_20200226_20200302.txt"
+url="http://157.82.231.182/~ctsweb/IO1_"$var"/M1.R_rMRA_i0cc00_i0rho0_freq16_2048/data/EVENTS.txt"
+infile="burst/EVENTS_"$var".txt"
 first=true
 outfile=parameter.txt
 

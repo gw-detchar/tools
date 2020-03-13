@@ -276,6 +276,12 @@ do
 	mkdir -p $outdir
     fi
 
+    logdir="$PWD/log/$date/"
+    if [ ! -e $logdir ]; then
+	mkdir -p $logdir
+    fi
+
+
     {
 	echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_snr $max_amp $frequency_amp  $eventtype $triggertype $eventnumber $peakQ $peakQ_amp $minf $maxf 
     } > $outdir/parameter.txt
@@ -321,9 +327,6 @@ do
     echo job_${namesuggestion}.sdf
     condor_submit job_${namesuggestion}.sdf
 
-    if [ $channel = "K1:CAL-CS_PROC_C00_STRAIN_DBL_DQ" ]; then
-	continue
-    fi
 
     # for time series.
 

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 var=$1
-url="http://157.82.231.182/~ctsweb/IO1_MAR_03_"$var"/M1.R_rMRA_i0cc00_i0rho0_freq16_2048/data/EVENTS.txt"
-infile="burst/EVENTS_"$var"_20200226_20200302.txt"
+url="http://157.82.231.182/~ctsweb/IO1_"$var"/M1.R_rMRA_i0cc00_i0rho0_freq16_2048/data/EVENTS.txt"
+infile="burst/EVENTS_"$var".txt"
 first=true
 outfile=parameter.txt
 
@@ -16,13 +16,13 @@ count=0
 # ER2
 #cat $infile | while read Index   Det     SNR             hrss            S_t                     C_t             C_f             BW              duration
 # HVK 3 detector
-cat $infile | while read passed dump rho cc01 cc2 cc3 camp tshift tsshift lh pf ed C_f BW duration npixel fres cwb tH tV tK SNRH SNRV SNRK hrssH hrssV hrssK phi theta psi
+#cat $infile | while read passed dump rho cc01 cc2 cc3 camp tshift tsshift lh pf ed C_f BW duration npixel fres cwb tH tV tK SNRH SNRV SNRK hrssH hrssV hrssK phi theta psi
 # ER3 3 detector
 #cat $infile | while read passed dump rho cc01 cc2 cc3 camp tshift tsshift lh pf ed C_f BW duration npixel fres cwb tH tV tK SNRH SNRV SNRK hrssH hrssV hrssK phi theta psi
 # ER3 3 detector
 #cat $infile | while read passed dump rho cc01 cc2 cc3 camp tshift tsshift lh pf ed C_f BW duration npixel fres cwb tH tV tK SNRH SNRV SNRK hrssH hrssV hrssK phi theta psi
 #ER3 4 detector
-#cat $infile | while read passed dump rho cc01 cc2 cc3 camp tshift tsshift lh pf ed C_f BW duration npixel fres cwb tL tH tV tK SNRL SNRH SNRV SNRK hrssL hrssH hrssV hrssK phi theta psi
+cat $infile | while read passed dump rho cc01 cc2 cc3 camp tshift tsshift lh pf ed C_f BW duration npixel fres cwb tL tH tV tK SNRL SNRH SNRV SNRK hrssL hrssH hrssV hrssK phi theta psi
 do
     #if "$first"; then
 	#first=false
