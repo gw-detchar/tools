@@ -4,7 +4,7 @@ var=$1
 url="http://157.82.231.182/~ctsweb/IO1_"$var"/M1.R_rMRA_i0cc00_i0rho0_freq16_2048/data/EVENTS.txt"
 infile="burst/EVENTS_"$var".txt"
 first=true
-outfile=parameter.txt
+outfile="burst/"$var"_parameter.txt"
 
 #curl $url > $infile
 
@@ -71,21 +71,29 @@ do
     echo SNRK is $SNRK
     echo orderSNRK is $orderSNRK
 
-    if [ "$(echo "$orderSNRK >= -2" | bc)" -eq 1 ]; then
-	echo SNRK is $SNRK
+    if [ "$tshift" = "0" ]; then
+	#echo ok
     {
 	echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_SNR $max_amp $frequency_amp $eventtype $triggertype $Index $peakQ $peakQ_amp $minf $maxf
 	
     } >> $outfile
     fi
 
-    if [ ${tmp[0]} != "0.0" ] && [  "$orderSNRK" = "+00" ]; then
-	echo ok
-    {
-	echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_SNR $max_amp $frequency_amp $eventtype $triggertype $Index $peakQ $peakQ_amp $minf $maxf
+    #if [ "$(echo "$orderSNRK >= -2" | bc)" -eq 1 ]; then
+	#echo SNRK is $SNRK
+    #{
+	#echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_SNR $max_amp $frequency_amp $eventtype $triggertype $Index $peakQ $peakQ_amp $minf $maxf
 	
-    } >> $outfile
-    fi
+    #} >> $outfile
+    #fi
+
+    #if [ ${tmp[0]} != "0.0" ] && [  "$orderSNRK" = "+00" ]; then
+	#echo ok
+    #{
+	#echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_SNR $max_amp $frequency_amp $eventtype $triggertype $Index $peakQ $peakQ_amp $minf $maxf
+	
+    #} >> $outfile
+    #fi
 
 done
 
