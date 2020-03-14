@@ -13,11 +13,11 @@ endtime=`tconvert $enddate 23:59:59`
 echo $starttime
 echo $endtime
 
-./plotter_burst_3detectors.sh ${starttime}_${endtime}_HVK
-./plotter_burst_3detectors.sh ${starttime}_${endtime}_LHK
-./plotter_burst_3detectors.sh ${starttime}_${endtime}_LVK
+/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/plotter_burst_3detectors.sh ${starttime}_${endtime}_HVK
+/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/plotter_burst_3detectors.sh ${starttime}_${endtime}_LHK
+/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/plotter_burst_3detectors.sh ${starttime}_${endtime}_LVK
 
-./plotter_burst_4detectors.sh ${starttime}_${endtime}_LHVK
+/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/plotter_burst_4detectors.sh ${starttime}_${endtime}_LHVK
 
 while :
 do
