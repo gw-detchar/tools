@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PATH=$PATH:/opt/intel/compilers_and_libraries_2017.1.132/linux/bin/intel64:/opt/intel/compilers_and_libraries_2017.1.132/linux/mpi/intel64/bin:/opt/intel/debugger_2017/gdb/intel64_mic/bin:/usr/lib64/qt-3.3/bin:/home/chihiro.kozakai/perl5/bin:/usr/lib64/ccache:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/chihiro.kozakai/.local/bin:/home/chihiro.kozakai/bin
+
 # Assume it runs Thursday midnight
 
 gpstime
