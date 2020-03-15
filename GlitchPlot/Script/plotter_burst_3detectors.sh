@@ -2,9 +2,9 @@
 
 var=$1
 url="http://157.82.231.182/~ctsweb/IO1_"$var"/M1.R_rMRA_i0cc00_i0rho0_freq16_2048/data/EVENTS.txt"
-infile="burst/EVENTS_"$var".txt"
+infile="/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/burst/EVENTS_"$var".txt"
 first=true
-outfile="burst/"$var"_parameter.txt"
+outfile="/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/burst/"$var"_parameter.txt"
 
 echo $url
 curl $url > $infile
@@ -100,4 +100,4 @@ done
 
 echo $outfile
 
-./condor_jobfile_plotter.sh $outfile
+/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/condor_jobfile_plotter.sh $outfile

@@ -31,6 +31,7 @@ do
 	gpstime
         break;
     fi
+
 done
 
 {
