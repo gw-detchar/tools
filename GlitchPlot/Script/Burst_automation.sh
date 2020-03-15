@@ -25,13 +25,13 @@ while :
 do
     sleep 60
     echo "check condor."
-    tmp=`condor_q | grep chihiro`
+    tmp=`condor_q chihiro.kozakai | grep chihiro`
+    echo $tmp
     if [ "${tmp}" = "" ]; then
         echo "condor finished."
 	gpstime
         break;
     fi
-
 done
 
 {
