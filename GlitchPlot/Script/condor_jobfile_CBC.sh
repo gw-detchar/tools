@@ -172,6 +172,9 @@ do
     if [ ! -e $outdir ]; then
 	mkdir -p $outdir
     fi
+    if [ ! -e $PWD/log/$date ]; then
+	mkdir -p $PWD/log/$date
+    fi
 
     {
 	#echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_snr $max_amp $frequency_amp  $eventtype $triggertype $eventnumber

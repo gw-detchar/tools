@@ -6,4 +6,4 @@
 
 echo qtransform
 echo $@
-python /home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples/batch_qtransform.py $@
+time python /home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples/batch_qtransform.py $@

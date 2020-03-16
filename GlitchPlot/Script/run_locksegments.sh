@@ -6,4 +6,4 @@
 
 echo locksegments
 echo $@
-python /home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples/batch_locksegments.py $@
+time python /home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples/batch_locksegments.py $@
