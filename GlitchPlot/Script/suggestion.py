@@ -130,6 +130,8 @@ refT = dataT[refchannel]
 
 for channel in channels:
 
+    if channel == refchannel:
+        continue
     fft = originalfft
     ol = originalol
     lowSRflag=False
@@ -185,7 +187,13 @@ for channel in channels:
     if tmp.value[0] == 0.0:
         notdetected.append(channel)
         continue
-    
+
+    if comQ.value[0] == comQ.value[1]:
+        notdetected.append(channel)
+        continue
+
+
+
     qgram = comQ.q_gram(qrange=(qmin,qmax),snrthresh=5.5)
     
     qgram = qgram.filter(('time', mylib.between,  (float(gpsstartT)-1.,float(gpsendT))))
