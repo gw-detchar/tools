@@ -6,4 +6,4 @@
 
 echo suggestion
 echo $@
-time python /home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/suggestion.py $@
+python /home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/suggestion.py $@
