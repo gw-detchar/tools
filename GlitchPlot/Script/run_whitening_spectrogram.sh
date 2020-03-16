@@ -6,4 +6,4 @@
 
 echo whitening_spectrogram
 echo $@
-time python /home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples/batch_whitening_spectrogram.py $@
+python /home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples/batch_whitening_spectrogram.py $@

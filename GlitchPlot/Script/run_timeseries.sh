@@ -6,4 +6,4 @@
 
 echo timeseries
 echo $@
-time python /home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples/batch_timeseries.py $@
+python /home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples/batch_timeseries.py $@
