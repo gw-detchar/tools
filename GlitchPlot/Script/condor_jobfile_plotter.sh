@@ -225,7 +225,7 @@ do
     # IFO lock
     lchannel="K1:GRD-IFO_STATE_N"  #guardian channel
     lnumber=1000  #number of the required state
-    llabel='IFO'  #y-axis label for the bar plot.
+    llabel='Observation'  #y-axis label for the bar plot.
 
     # ALSDARM lock
     #lchannel="K1:GRD-LSC_LOCK_STATE_N"  #guardian channel
