@@ -38,8 +38,10 @@ do
     channels=$channel".dat"
     ./chlist_plotter.sh $channels $channel
 
+
     # For timeseries, gps time start from 2s before glitch and end at 2s after glitch.
 
+    triggerduration=1
     # For spectrum, spectogram, and coherencegram,
     # fftlength is defined based on bandwidth of the trigger event.
     # For spectrum, fft length = 1/bandwidth, rounded to integer.
@@ -502,7 +504,7 @@ do
 	#  $ python batch_locksegments.py -h
 	# for option detail.
 	
-	echo "Arguments = -s $gpsstart -e $gpsend -o ${outdir} -i $channel -t $gpstime -d $max_duration "
+	echo "Arguments = -s $gpsstart -e $gpsend -o ${outdir} -i $channel -t $gpstime -d $triggerduration "
 	echo "Queue"
     } >> job_${namelock}.sdf
 	
