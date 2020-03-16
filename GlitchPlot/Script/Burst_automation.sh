@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PATH=$PATH:/opt/intel/compilers_and_libraries_2017.1.132/linux/bin/intel64:/opt/intel/compilers_and_libraries_2017.1.132/linux/mpi/intel64/bin:/opt/intel/debugger_2017/gdb/intel64_mic/bin:/usr/lib64/qt-3.3/bin:/home/chihiro.kozakai/perl5/bin:/usr/lib64/ccache:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/chihiro.kozakai/.local/bin:/home/chihiro.kozakai/bin
+
 # Assume it runs Thursday midnight
 
 gpstime
@@ -13,17 +15,18 @@ endtime=`tconvert $enddate 23:59:59`
 echo $starttime
 echo $endtime
 
-./plotter_burst_3detectors.sh ${starttime}_${endtime}_HVK
-./plotter_burst_3detectors.sh ${starttime}_${endtime}_LHK
-./plotter_burst_3detectors.sh ${starttime}_${endtime}_LVK
+/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/plotter_burst_3detectors.sh ${starttime}_${endtime}_HVK
+/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/plotter_burst_3detectors.sh ${starttime}_${endtime}_LHK
+/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/plotter_burst_3detectors.sh ${starttime}_${endtime}_LVK
 
-./plotter_burst_4detectors.sh ${starttime}_${endtime}_LHVK
+/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/plotter_burst_4detectors.sh ${starttime}_${endtime}_LHVK
 
 while :
 do
     sleep 60
     echo "check condor."
-    tmp=`condor_q | grep chihiro`
+    tmp=`condor_q chihiro.kozakai | grep chihiro`
+    echo $tmp
     if [ "${tmp}" = "" ]; then
         echo "condor finished."
 	gpstime
