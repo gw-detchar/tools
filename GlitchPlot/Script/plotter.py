@@ -23,14 +23,22 @@ parser.add_argument('-o','--output',help='output text filename.',default='result
 #parser.add_argument('-i','--inputfile',help='input trigger filename.',default='/home/controls/triggers/K1/LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON/12440/K1-LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON-1244013258-60.xml.gz')
 parser.add_argument('-i','--inputfile',help='input trigger filename.',default='/home/controls/triggers/K1/LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON/12440/K1-LSC_CARM_SERVO_MIXER_DAQ_OUT_DQ_OMICRON-1244004678-60.xml.gz')
 parser.add_argument('-f','--force',help='Flag to run without daytime skip.',action='store_true')
+parser.add_argument('-k','--kashiwa',help='Flag to run on Kashiwa server.',action='store_false')
 
 args = parser.parse_args()
 output = args.output
 inputfile = args.inputfile
 force = args.force
+kamioka = args.kashiwa
 
 # Define parameters
-omicron_interval = 60.
+
+# get the time of the input file.
+
+tmp=inputfile.rsplit("-",2)
+tfile=int(tmp[1])
+tmp2=tmp[2]
+omicron_interval=tmp2.split(".")[0]
 
 #triggertype
 triggertype="Omicron"
@@ -61,10 +69,6 @@ snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":15,
            "CAL-CS_PROC_MICH_DISPLACEMENT_DQ":100,
            "CAL-CS_PROC_SRCL_DISPLACEMENT_DQ":100,
            "CAL-CS_PROC_C00_STRAIN_DBL_DQ":100}
-
-# get the time of the input file.
-tmp=inputfile.rsplit("-",2)
-tfile=int(tmp[1])
 
 # Open omicron file
 
@@ -162,7 +166,7 @@ safety=1
 #nightly=mylib.GetDQFlag(tfile-safety*2, tfile+omicron_interval+safety*2, config="quiet",min_len=safety*3,kamioka=True)
 
 #locked=mylib.GetDQFlag(tfile-safety*2, tfile+omicron_interval+safety*2, config="IFO",min_len=safety*3,kamioka=True)
-locked=mylib.GetDQFlag(tfile-safety*2, tfile+omicron_interval+safety*2, config="Observation",min_len=safety*3,kamioka=True)
+locked=mylib.GetDQFlag(tfile-safety*2, tfile+omicron_interval+safety*2, config="Observation",min_len=safety*3,kamioka=kamioka)
 #locked = locked & nightly
 locked_contract=locked.copy()
 locked=locked.active
