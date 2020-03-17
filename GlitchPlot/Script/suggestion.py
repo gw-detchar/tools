@@ -209,10 +209,13 @@ print(detectedc)
 print(detectedq)
 with open(outdir+"/suggestion1.txt", mode='w') as f:
     f.write('\n'.join(detectedc))
+    f.write('\n')
 with open(outdir+"/suggestion2.txt", mode='w') as f:
     f.write('\n'.join(detectedq))
+    f.write('\n')
 with open(outdir+"/notsuggestion.txt", mode='w') as f:
     f.write('\n'.join(notdetected))
+    f.write('\n')
 
 print(outdir+"suggestion1.txt")
 print(outdir+"suggestion2.txt")
