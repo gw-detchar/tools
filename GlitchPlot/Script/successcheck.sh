@@ -1,6 +1,6 @@
 #!/bin/bash
 
-date=20190828
+date=20200316
 
 #if "${kamioka}"; then
 #    Kozapy="/users/DET/tools/GlitchPlot/Script/Kozapy/samples"
@@ -8,7 +8,7 @@ date=20190828
 Kozapy="/home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples"
 #fi
 
-list=( `find log/${date}/13208*.out `)
+list=( `find log/${date}/*.out `)
 #list=( `find log/20190713/10220*.out  ` )
 #list=( `find log/20190608/out_45660* -newermt "2019-06-29 08:45:00"` )
 
@@ -34,12 +34,11 @@ pylock="$Kozapy/batch_locksegment.py"
     echo "Notification = never"
     # if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.                                                                             
     echo "request_memory = 1 GB"
-    echo "Getenv  = True            # the environment variables will be copied."
+    echo "Getenv  = True"
     echo ""
     echo "should_transfer_files = YES"
     echo "when_to_transfer_output = ON_EXIT"
     echo ""
-    echo "Log          = log/$date/log_lock.txt"
     echo "Output       = log/$date/\$(Cluster).\$(Process).out"
     echo "Error       = log/$date/\$(Cluster).\$(Process).err"
     echo ""
@@ -58,7 +57,7 @@ pytime="$Kozapy/batch_timeseries.py"
     echo "Notification = never"
     # if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.                                                                             
     echo "request_memory = 1 GB"
-    echo "Getenv  = True            # the environment variables will be copied."
+    echo "Getenv  = True "
     echo ""
     echo "should_transfer_files = YES"
     echo "when_to_transfer_output = ON_EXIT"
@@ -81,7 +80,7 @@ pyspectrum="$Kozapy/batch_spectrum.py"
     echo "Notification = never"
     # if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.                                                                             
     echo "request_memory = 1 GB"
-    echo "Getenv  = True            # the environment variables will be copied."
+    echo "Getenv  = True  "
     echo ""
     echo "should_transfer_files = YES"
     echo "when_to_transfer_output = ON_EXIT"
@@ -104,7 +103,7 @@ pyspectrogram="$Kozapy/batch_whitening_spectrogram.py"
     echo "Notification = never"
     # if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.                                                                             
     echo "request_memory = 1 GB"
-    echo "Getenv  = True            # the environment variables will be copied."
+    echo "Getenv  = True"
     echo ""
     echo "should_transfer_files = YES"
     echo "when_to_transfer_output = ON_EXIT"
@@ -127,7 +126,7 @@ pycoherence="$Kozapy/batch_coherencegram.py"
     echo "Notification = never"
     # if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.                                                                             
     echo "request_memory = 1 GB"
-    echo "Getenv  = True            # the environment variables will be copied."
+    echo "Getenv  = True"
     echo ""
     echo "should_transfer_files = YES"
     echo "when_to_transfer_output = ON_EXIT"
@@ -150,7 +149,7 @@ pyqtrans="$Kozapy/batch_qtransform.py"
     echo "Notification = never"
     # if needed, use following line to set the necessary amount of the memory for a job. In Kashiwa, each node has total memory 256 GB, 2 CPU, 28 cores.                                                                             
     echo "request_memory = 16 GB"
-    echo "Getenv  = True            # the environment variables will be copied."
+    echo "Getenv  = True"
     echo ""
     echo "should_transfer_files = YES"
     echo "when_to_transfer_output = ON_EXIT"
@@ -191,12 +190,12 @@ for log in ${list[@]}; do
 #    elif [ "`echo $argument | grep K1:LSC-POP `" ]; then
 #	echo 3
 #	continue
-    elif [ "`echo $argument | grep glitch_1244010447.5_K1:AOS-TMSX_IR_PD_OUT_DQ `" ]; then
-	continue
-    elif [ "`echo $argument | grep glitch_1244012928.0_K1:IMC-MCL_SERVO_OUT_DQ `" ]; then
-	continue
-    elif [ "`echo $argument | grep 1244018491.201172113  `" ]; then
-	argument=`echo $argument | sed s/491.201172113/491.20117/g`
+#    elif [ "`echo $argument | grep glitch_1244010447.5_K1:AOS-TMSX_IR_PD_OUT_DQ `" ]; then
+#	continue
+#    elif [ "`echo $argument | grep glitch_1244012928.0_K1:IMC-MCL_SERVO_OUT_DQ `" ]; then
+#	continue
+#    elif [ "`echo $argument | grep 1244018491.201172113  `" ]; then
+#	argument=`echo $argument | sed s/491.201172113/491.20117/g`
 
 #    elif [ "`echo $argument | grep REFL_PDA1_DC_OUT_DQ `" ]; then
 #	argument=`echo $argument | sed s/REFL_PDA1_DC_OUT_DQ/REFL_PDA1_DC_IN1_DQ/g`
@@ -214,9 +213,9 @@ for log in ${list[@]}; do
     checkword=$(tail -n 1 $log)
     output=$(tail -n 2 $log | head -n 1)
 
-    if [ "`echo $output | grep _124706 `" ]; then
-	continue
-    fi
+#    if [ "`echo $output | grep _124706 `" ]; then
+#	continue
+#    fi
     # set output sdf file.
 #    if [ "`echo $argument | grep series `" ]; then
     if [ "$plottype" = "timeseries" ]; then
@@ -248,22 +247,22 @@ for log in ${list[@]}; do
 
     #echo $tmpsdf
 
-    outls=`ls -s ${output}`
-    badls="0 ${output}"
+    #outls=`ls -s ${output}`
+    #badls="0 ${output}"
 
 
-    if test "$outls" = "$badls" ;then
-	echo $output " is broken !"
+    #if test "$outls" = "$badls" ;then
+#	echo $output " is broken !"
 	#echo $log
 
-	{
-	    echo "# $log"
-	    echo "Arguments = $argument "
-            echo "Queue"
+#	{
+#	    echo "# $log"
+#	    echo "Arguments = $argument "
+ #           echo "Queue"
 	    
-	} >> $tmpsdf
+#	} >> $tmpsdf
 
-    elif test "$ok" = "$checkword" ;then
+    if test "$ok" = "$checkword" ;then
 	if [ -e ${output} ];then
 	    :
 	    echo $log " successfully finished."
@@ -296,9 +295,15 @@ for log in ${list[@]}; do
 
 done 
 
-condor_submit $outsdftime
-condor_submit $outsdfspectrum
-condor_submit $outsdfspectrogram
-condor_submit $outsdfcoherence
-condor_submit $outsdfqtrans
-condor_submit $outsdflock
+#condor_submit $outsdftime
+#condor_submit $outsdfspectrum
+#condor_submit $outsdfspectrogram
+#condor_submit $outsdfcoherence
+#condor_submit $outsdfqtrans
+#condor_submit $outsdflock
+echo  $outsdftime
+echo  $outsdfspectrum
+echo  $outsdfspectrogram
+echo  $outsdfcoherence
+echo  $outsdfqtrans
+echo  $outsdflock
