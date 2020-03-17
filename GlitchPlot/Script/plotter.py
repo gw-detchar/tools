@@ -38,7 +38,7 @@ kamioka = args.kashiwa
 tmp=inputfile.rsplit("-",2)
 tfile=int(tmp[1])
 tmp2=tmp[2]
-omicron_interval=tmp2.split(".")[0]
+omicron_interval=int(tmp2.split(".")[0])
 
 #triggertype
 triggertype="Omicron"
