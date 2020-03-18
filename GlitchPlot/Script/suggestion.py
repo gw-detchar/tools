@@ -164,7 +164,7 @@ for channel in channels:
         # Make coherence for trigger time
         
         comT = dataT[channel]
-        
+
         cohtrigger = refT.coherence(comT,fftlength=fft,overlap=ol)
         
         # Get nearest frequency bin index of the glitch

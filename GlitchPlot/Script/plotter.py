@@ -247,6 +247,9 @@ for segment in tmpactive:
 
     #initialize
     max_duration = tmpend-tmpstart
+    # Adjust to multiple of 1/16384
+    max_duration = int(max_duration*16384+0.5)/16384.
+
     min_duration=100
     
     durations = tmpevents.get_column('duration')
