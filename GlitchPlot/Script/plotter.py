@@ -283,24 +283,25 @@ for segment in tmpactive:
     snrs = tmpevents.get_column('snr')
     frequencys = tmpevents.get_column('peak_frequency')
     durations = tmpevents.get_column('duration')
+    bandwidths = tmpevents.get_column('bandwidth')
     
-    for snr,frequency,duration in zip(snrs,frequencys,durations):
+    for snr,frequency,bandwidth in zip(snrs,frequencys,bandwidths):
         if max_snr < snr:
             max_snr = snr
             peakfrequency=frequency
-            peakQ=2.*math.pi*frequency*duration
+            peakQ=frequency*bandwidth
     #Amplitude, frequency
 
     #initialize
     max_amp = 0
     amplitudes = tmpevents.get_column('amplitude')
 
-    for amplitude,frequency,duration in zip(amplitudes,frequencys,durations):
+    for amplitude,frequency,bandwidth in zip(amplitudes,frequencys,bandwidths):
         if max_amp < amplitude:
             max_amp = amplitude
             peakfrequency_amp=frequency
-            peakduration_amp=duration
-            peakQ_amp=2.*math.pi*frequency*duration
+            peakbandwidth_amp=bandwidth
+            peakQ_amp=2.*math.pi*frequency*bandwidth
 
     # Get frequency range of the event
     # initialize
