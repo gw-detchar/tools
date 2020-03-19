@@ -64,7 +64,8 @@ snrdict = {"LSC-CARM_SERVO_MIXER_DAQ_OUT_DQ":15,
            "LSC-AS_PDA1_RF17_Q_ERR_DQ":25,
            "CAL-CS_PROC_IMC_FREQUENCY_DQ":21,
            "CAL-CS_PROC_XARM_FREQUENCY_DQ":21,
-           "CAL-CS_PROC_DARM_DISPLACEMENT_DQ":100,
+           #"CAL-CS_PROC_DARM_DISPLACEMENT_DQ":100,
+           "CAL-CS_PROC_DARM_DISPLACEMENT_DQ":200,
            #"CAL-CS_PROC_DARM_DISPLACEMENT_DQ":20,
            "CAL-CS_PROC_MICH_DISPLACEMENT_DQ":100,
            "CAL-CS_PROC_SRCL_DISPLACEMENT_DQ":100,
@@ -149,10 +150,26 @@ for peak_time,peak_time_ns,peak_frequency,snr,duration,start,startns in zip(peak
 
     # Added to the segments of this file.
     Triggered |= tmpTriggered
-    
-    
-    
+        
 # Get active segments. 
+tmp=Triggered.active
+
+# Interpolate short gap between segments.
+shortestgap = 1  # sec
+i=0
+intTriggered = DataQualityFlag(known=[(0,omicron_interval)],active=[])
+while i < len(tmp)-1:
+    tmpstart1=tmp[i].start
+    tmpend1=tmp[i].end
+    tmpstart2=tmp[i+1].start
+    tmpend2=tmp[i+1].end
+    if tmpstart2-tmpend1 < shortestgap:
+        tmpTriggered = DataQualityFlag(known=[(0,omicron_interval)],active=[(tmpstart1,tmpend2)])
+        intTriggered |= tmpTriggered
+
+    i+=1
+
+Triggered |= intTriggered
 tmpactive=Triggered.active
 
 # Get trigger channel. Assumed that 1 omicron file contains only 1 channel.

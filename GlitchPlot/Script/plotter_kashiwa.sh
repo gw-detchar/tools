@@ -27,8 +27,8 @@ channels=("CAL_CS_PROC_DARM_DISPLACEMENT_DQ")
 list=()
 
 for channel in ${channels[@]};do
-#list+=( `find /home/detchar/triggers/K1/${channel}_OMICRON/126*/` )
-list+=( `find /home/detchar/triggers/K1/${channel}_OMICRON/1266*/` )
+list+=( `find /home/detchar/triggers/K1/${channel}_OMICRON/126*/` )
+
 
 for file in ${list[@]};do
     
