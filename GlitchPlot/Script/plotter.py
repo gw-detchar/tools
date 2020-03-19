@@ -289,7 +289,7 @@ for segment in tmpactive:
         if max_snr < snr:
             max_snr = snr
             peakfrequency=frequency
-            peakQ=frequency*bandwidth
+            peakQ=frequency/bandwidth
     #Amplitude, frequency
 
     #initialize

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-date=20200226
+date=20200301
 
 #if "${kamioka}"; then
 #    Kozapy="/users/DET/tools/GlitchPlot/Script/Kozapy/samples"
