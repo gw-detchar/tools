@@ -138,15 +138,15 @@ for channel in channels:
 
     com = data[channel]
 
-    if fft < 2*ref.dt.value:
-        fft=2*ref.dt.value
+    if fft < 2.*ref.dt.value:
+        fft=2.*ref.dt.value
         ol=fft/2.  #  overlap in FFTs.                                                                                 
         print("Given fft/stride was bad against the sampling rate. Automatically set to:")
         print("fft="+str(fft))
         print("ol="+str(ol))
 
-    if fft < 2*com.dt.value:
-        fft=2*com.dt.value
+    if fft < 2.*com.dt.value:
+        fft=2.*com.dt.value
         ol=fft/2.  #  overlap in FFTs.
         lowSRflag=True
         print("Given fft/stride was bad against the sampling rate. Automatically set to:")
@@ -157,7 +157,7 @@ for channel in channels:
     duration=float(gpsendT)-float(gpsstartT)
 
     # Coherence check is done if enough average can be taken.
-    if duration > fft*2:
+    if duration > fft*4.:
 
         cohbefore = ref.coherence(com,fftlength=fft,overlap=ol)
         
@@ -165,6 +165,9 @@ for channel in channels:
         
         comT = dataT[channel]
 
+        print(refT)
+        print(comT)
+        print(fft)
         cohtrigger = refT.coherence(comT,fftlength=fft,overlap=ol)
         
         # Get nearest frequency bin index of the glitch
