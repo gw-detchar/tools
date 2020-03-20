@@ -58,7 +58,7 @@ do
     sleep 60
     echo "check condor."
     condor_q                                                                       
-    tmp=`condor_q | grep detchar`
+    tmp=`condor_q detchar | grep detchar`
     if [ "${tmp}" = "" ]; then
         echo "condor finished."
         break;
