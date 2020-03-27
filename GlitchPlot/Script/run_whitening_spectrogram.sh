@@ -6,4 +6,9 @@
 
 echo whitening_spectrogram
 echo $@
-python /home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples/batch_whitening_spectrogram.py $@
+
+if [ $USER == "controls" ]; then
+    python /users/DET/tools/GlitchPlot/Script/Kozapy/samples/batch_whitening_spectrogram.py $@
+else
+    python /home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples/batch_whitening_spectrogram.py $@
+fi

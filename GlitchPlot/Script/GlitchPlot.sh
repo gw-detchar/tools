@@ -10,8 +10,20 @@
 # Use the last quarter hour.
 #
 
-cd /home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/
+if [ $USER == "controls" ]; then
+    kamioka=true
+else
+    kamioka=false
+fi
 
+if "${kamioka}"; then
+    workdir=/users/DET/tools/GlitchPlot/Script
+else
+    workdir=/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/
+fi
+
+cd $workdir
+    
 INTERVAL=15
 
 #let mm=`date +"%M"`/${INTERVAL}*${INTERVAL}
@@ -46,8 +58,12 @@ today=`date +%Y%m%d`
 yesterday=`date --date '1 day ago' +%Y%m%d`
 echo $today
 echo $yesterday
-list+=( `find /home/chihiro.kozakai/public_html/KAGRA/GlitchPlot/parameter/$today/* -newermt "$jst_start" -and ! -newermt "$jst_end"` `find /home/chihiro.kozakai/public_html/KAGRA/GlitchPlot/parameter/$yesterday/* -newermt "$jst_start" -and ! -newermt "$jst_end"`  )
 
+if "${kamioka}"; then
+    list+=( `find /users/DET/Result/GlitchPlot/parameter/$today/* -newermt "$jst_start" -and ! -newermt "$jst_end"` `find /users/DET/Result/GlitchPlot/parameter/$yesterday/* -newermt "$jst_start" -and ! -newermt "$jst_end"`  )
+else
+    list+=( `find /home/chihiro.kozakai/public_html/KAGRA/GlitchPlot/parameter/$today/* -newermt "$jst_start" -and ! -newermt "$jst_end"` `find /home/chihiro.kozakai/public_html/KAGRA/GlitchPlot/parameter/$yesterday/* -newermt "$jst_start" -and ! -newermt "$jst_end"`  )
+fi
 
 for file in ${list[@]};do
     
@@ -59,7 +75,8 @@ for file in ${list[@]};do
     
     echo "----------plot job throwing----------"
     # from the plot parameter, throw condor job to make basic plots.
-    ./condor_jobfile_plotter.sh $file
+    #./condor_jobfile_plotter.sh $file
+    $workdir/condor_jobfile_plotter.sh $file
     
 done
 

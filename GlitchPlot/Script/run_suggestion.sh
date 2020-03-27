@@ -6,4 +6,9 @@
 
 echo suggestion
 echo $@
-python /home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/suggestion.py $@
+
+if [ $USER == "controls" ]; then
+    python /users/DET/tools/GlitchPlot/Script/suggestion.py $@
+else
+    python /home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/suggestion.py $@
+fi
