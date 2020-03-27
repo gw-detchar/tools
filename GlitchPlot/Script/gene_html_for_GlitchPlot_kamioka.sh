@@ -8,7 +8,11 @@ if [ "$gpstime" = "" ]; then
 fi
 
 gpsbeg=$gpstime
-JST=`tconvert -l -f %Y%m%d ${gpstime}`
+#JST=`tconvert -l -f %Y%m%d ${gpstime}`
+[ -e /usr/bin/gpstime ] && cmd_gps=/usr/bin/gpstime || cmd_gps=/home/controls/bin/gpstime
+date=`${cmd_gps} ${gpstime}| head -1`
+set ${date}
+JST=`echo ${2}| sed -e 's/-//g'`
 
 subgroups="GlitchPlot"
 subgroup="GlitchPlot"
