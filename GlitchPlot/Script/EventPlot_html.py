@@ -41,12 +41,13 @@ def WriteHeader(fname, place=''):
             <meta name="author" content="Chihiro Kozakai">\n\
             <title>KAGRA EventPlot</title>\n\
             <link rel=\"stylesheet\" type=\"text/css\" href=\"'+place+'style.css\">\n\
+            <link rel="shortcut icon" href='+place+'GlitchPlot_minilogo.png>\n\
         </head>\n\
         \n\
         <body>\n\
             <a href=\"https://www.icrr.u-tokyo.ac.jp/~yuzu/bKAGRA_summary/html/list_of_date.html\">\n\
                 <div class=\"img_header\">\n\
-                <img src=\"https://www.icrr.u-tokyo.ac.jp/~yuzu/bKAGRA_summary/fig/header_kagra.gif\" alt="Link to top page">\n\
+                <img src='+place+'GlitchPlot_logo.png alt="Link to top page" width=700>\n\
                 </div>\n\
             </a>\n\
             <br>\n\
@@ -56,8 +57,9 @@ def WriteHeader(fname, place=''):
             &ensp;\n\
             <a href=\"http://gwwiki.icrr.u-tokyo.ac.jp/JGWwiki/KAGRA/Subgroups/DET/GlitchPlot\" target=\"_blank\" title=\"GlitchPlot wiki\" >GlitchPlot wiki</a>\n\
             <br>\n\
+            <br>\n\
 '
-
+#
         f.write(string)
 
         
@@ -173,7 +175,7 @@ for i in range(len(datelist)):
             # Get event information.
             
             info=event.split('_',2)
-            categorydict={"glitch":"Glitch","lockloss":"Lockloss","CBC":"CBC","Burst":"Burst"}
+            categorydict={"glitch":"Glitch","lockloss":"Lock loss","CBC":"CBC","Burst":"Burst"}
             category = categorydict[info[0]]
             gpstime = info[1]
             mainchannel = info[2]
