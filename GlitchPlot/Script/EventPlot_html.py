@@ -26,9 +26,10 @@ ind = args.inputdir
 
 # Functions
 
-def WriteHeader(fname):
+def WriteHeader(fname, place=''):
     '''
     Write down header and logo/links in the top of the page.
+    place is relative place to the ind.
     '''
     
     with open(fname,mode='w') as f:
@@ -39,7 +40,7 @@ def WriteHeader(fname):
             <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n\
             <meta name="author" content="Chihiro Kozakai">\n\
             <title>KAGRA EventPlot</title>\n\
-            <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n\
+            <link rel=\"stylesheet\" type=\"text/css\" href=\"'+place+'style.css\">\n\
         </head>\n\
         \n\
         <body>\n\
@@ -67,7 +68,10 @@ def WriteFooter(fname):
     
     with open(fname,mode='a') as f:
         string='\
-        <br><hr><br>If you have any problem, any comment or any request about this page, please contact <a href="mailto:ckozakai@icrr.u-tokyo.ac.jp">C. Kozakai</a>.\n\
+        <p style="clear: left;">\n\
+        <br><hr><br>\n\
+        If you have any problem, any comment or any request about this page, please contact <a href="mailto:ckozakai@icrr.u-tokyo.ac.jp">C. Kozakai</a>.\n\
+        </p>\n\
     </body>\n\
 </html>\n\
 '
@@ -126,7 +130,7 @@ for i in range(len(datelist)):
         os.makedirs(ind+date+"/html")
 
     fdaily = ind+date+"/html/index.html"
-    WriteHeader(fdaily)
+    WriteHeader(fdaily,place="../../")
 
     # Link to other days
 
@@ -135,17 +139,23 @@ for i in range(len(datelist)):
         string='\
 <span style=\"font-size:16pt;\">\n'
 
+        # if there is previous date
         if i != 0:
             prevdate = datelist[i-1]
             string+='<a href=../../'+prevdate+'/html/index.html target=\"_self\"><< Previous day('+prevdate+')</a> &ensp;&ensp;\n'
-
+        else:
+            string+='No previous result &ensp;&ensp;\n'
         string+='<a href=../../index.html >List of Date(all)</a> &ensp;&ensp;\n\
 <a href=../../'+latestdate+'/html/index.html target=\"_self\">Latest</a> &ensp;&ensp;\n'
 
+        # if there is next date
         if i != len(datelist)-1:
             nextdate = datelist[i+1] 
-            string+='<a href=../../'+nextdate+'/html/index.html target=\"_self\"><< Next day('+nextdate+')</a> &ensp;&ensp;\n'
+            string+='<a href=../../'+nextdate+'/html/index.html target=\"_self\"> Next day('+nextdate+') >></a> &ensp;&ensp;\n'
+        else:
+            string+='No next result &ensp;&ensp;\n'
 
+        string+='</span>\n'
         f.write(string)
         
     eventlist = [os.path.basename(p.rstrip(os.sep)) for p in glob.glob(ind+date+"/events/*/")]
@@ -160,11 +170,36 @@ for i in range(len(datelist)):
  
        
         for event in eventlist:
+            # Get event information.
+            
+            info=event.split('_',2)
+            categorydict={"glitch":"Glitch","lockloss":"Lockloss","CBC":"CBC","Burst":"Burst"}
+            category = categorydict[info[0]]
+            gpstime = info[1]
+            mainchannel = info[2]
+                        
+            mainfig=glob.glob(ind+date+"/events/"+event+"/"+mainchannel+"_qtransform*")
+            if len(mainfig) != 0:
+                linkfig = mainfig[0].replace(ind+date,"..")
+#                string='\
+#            <a href='+event+'.html>\n\
+#                <img src='+linkfig+' alt="Link to event page" width=300>\n\
+#            </a>\n'
+                string='\
+                <div class="imagebox">\n\
+            <a href='+event+'.html>\n\
+                    <p class="image"><img src='+linkfig+' alt="Link to event page" width=400></p>\n\
+                    <p class="caption">'+category+'<br>'+gpstime+'</p>\n\
+            </a>\n\
+                </div>\n'
+                f.write(string)
 
-            string='\
-            <br>\n\
+            else:
+                linkfig = ""
+                string='\
             <a href='+event+'.html>'+event+'</a>\n'
-            f.write(string)
+
+                f.write(string)
 
             #####################################################################
             # Make event pages.
@@ -174,7 +209,7 @@ for i in range(len(datelist)):
 
             fevent = ind+date+"/html/"+event+".html"
 
-            WriteHeader(fevent)
+            WriteHeader(fevent,place="../../")
 
             with open(fevent,mode='a') as fe:
                 string='\
