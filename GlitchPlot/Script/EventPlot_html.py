@@ -149,7 +149,6 @@ for i in range(len(datelist)):
         categorywords = {"CBC":"CBC","Burst":"Burst","glitch":"Glitch","lockloss":"Lock loss"}
         fparameter = glob.glob(ind+date+"/events/"+event+"/parameter.txt")[0]
 
-
         with open(fparameter,mode='r') as fp:
             parameters = fp.read().split()
             gpstime = float(parameters[0])
@@ -177,22 +176,21 @@ for i in range(len(datelist)):
 
         eventdir = ind+date+"/events/"+event+"/"
 
-
-        fevent = ind+date+"/html/"+event+".html"
-
-        fframe = ind+date+"/html/"+event+"_frame.html"
+        fframe = ind+date+"/html/"+event+".html"
         with open(fframe,mode='w') as ff:
             string='\
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">\n\
 <html>\n\
 <head>\n\
-<title>title</title>\n\
+<title>KAGRA GlitchPlot</title>\n\
+<link rel=\"stylesheet\" type=\"text/css\" href=\"../../style.css\">\n\
+<link rel="shortcut icon" href=../../GlitchPlot_minilogo.png>\n\
 </head>\n\
 \n\
 <frameset cols="*,500">\n\
 \n\
-<frame src='+event+'.html name="frame2" title="right">\n\
-<frame src='+event+'.html name="frame1" title="left">\n\
+<frame src='+event+'_plots.html name="frame1" title="left">\n\
+<frame src='+event+'_form.html name="frame2" title="right">\n\
 \n\
 <noframes>\n\
 <body>\n\
@@ -205,15 +203,29 @@ for i in range(len(datelist)):
 </html>\n'
             ff.write(string)
         
-        WriteHeader(fevent,place="../../")
 
-        with open(fevent,mode='a') as fe:
+        fform = ind+date+"/html/"+event+"_form.html"
+        #WriteHeader(fform,place="../../")
+
+        with open(fform,mode='w') as ff:
+
+#<a href=\"javascript:history.back()\" target="_top">Back to trigger list</a> &ensp;&ensp;\n\
+#<a href=../../index.html target="_top">List of Date(all)</a> &ensp;&ensp;\n\
+#<br><br>\n\
+#<hr>\n\
             string='\
-<a href=\"javascript:history.back()\">Back to trigger list</a> &ensp;&ensp;\n\
-<a href=../../index.html >List of Date(all)</a> &ensp;&ensp;\n\
-<br><br>\n\
-<hr>\n\
-<span style="font-size:25pt; color:#00ff00;">GlitchPlot needs your help to classify the glitch origin.</span>\n\
+<!DOCTYPE HTML PUBLIC >\n\
+    <html>\n\
+        <head>\n\
+            <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n\
+            <meta name="author" content="Chihiro Kozakai">\n\
+            <title>KAGRA EventPlot</title>\n\
+            <link rel=\"stylesheet\" type=\"text/css\" href=\"../../style.css\">\n\
+            <link rel="shortcut icon" href=../../GlitchPlot_minilogo.png>\n\
+        </head>\n\
+        \n\
+        <body>\n\
+<span style="font-size:18pt; color:royalblue;">GlitchPlot needs your help to classify the glitch origin.</span>\n\
 <br>\n\
 <br>\n\
 \
@@ -318,7 +330,7 @@ Location :\n\
 <input type="submit" value="Submit"/>\n\
 </form>\n\
 \n\
-<span style="font-size:25pt; color:#00ff00;">Thank you in advance, we really appreciate your help.\n\
+<span style="font-size:18pt; color:royalblue;">Thank you in advance, we really appreciate your help.\n\
 </br>\n\
 \n\
 You can see the result in <a href="https://docs.google.com/spreadsheets/d/1JxC3QL6jF3xmA0MnWtWO_dUgNOF_i5enD_j4yUK1X7s/edit?usp=sharing" target="_blank" title="GlitchPlot Catalog" >GlitchPlot Catalog</a>.\n\
@@ -327,13 +339,8 @@ You can see the result in <a href="https://docs.google.com/spreadsheets/d/1JxC3Q
 <br>\n\
 <br>\n\
 '
-            fe.write(string)
-            string='\
-<p>\n\
-test.\n\
-</p>'
-            fe.write(string)
-        WriteFooter(fevent)
+            ff.write(string)
+        WriteFooter(fform)
 
 
     #####################################################################
