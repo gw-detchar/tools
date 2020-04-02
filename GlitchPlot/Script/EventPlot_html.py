@@ -176,9 +176,35 @@ for i in range(len(datelist)):
         #####################################################################
 
         eventdir = ind+date+"/events/"+event+"/"
-        
+
+
         fevent = ind+date+"/html/"+event+".html"
 
+        fframe = ind+date+"/html/"+event+"_frame.html"
+        with open(fframe,mode='w') as ff:
+            string='\
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">\n\
+<html>\n\
+<head>\n\
+<title>title</title>\n\
+</head>\n\
+\n\
+<frameset cols="*,500">\n\
+\n\
+<frame src='+event+'.html name="frame2" title="right">\n\
+<frame src='+event+'.html name="frame1" title="left">\n\
+\n\
+<noframes>\n\
+<body>\n\
+<p>content</p>\n\
+</body>\n\
+</noframes>\n\
+\n\
+</frameset>\n\
+\n\
+</html>\n'
+            ff.write(string)
+        
         WriteHeader(fevent,place="../../")
 
         with open(fevent,mode='a') as fe:
@@ -287,7 +313,7 @@ Location :\n\
 \n\
 4. Add any suspects about the origin, comment, request, or fan letter to developpers.\n\
 <br>\n\
-<textarea name="comment" rows="6" cols="80" placeholder="comment or fan letter"></textarea>\n\
+<textarea name="comment" rows="6" cols="50" placeholder="comment or fan letter"></textarea>\n\
 <br><br>\n\
 <input type="submit" value="Submit"/>\n\
 </form>\n\
