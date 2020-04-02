@@ -45,7 +45,7 @@ def WriteHeader(fname, place=''):
         </head>\n\
         \n\
         <body>\n\
-            <a href=\"https://www.icrr.u-tokyo.ac.jp/~yuzu/bKAGRA_summary/html/list_of_date.html\">\n\
+            <a href='+place+'index.html>\n\
                 <div class=\"img_header\">\n\
                 <img src='+place+'GlitchPlot_logo.png alt="Link to top page" width=700>\n\
                 </div>\n\
@@ -130,95 +130,59 @@ for i in range(len(datelist)):
     date = datelist[i]
     if not os.path.isdir(ind+date+"/html"):
         os.makedirs(ind+date+"/html")
-
-    fdaily = ind+date+"/html/index.html"
-    WriteHeader(fdaily,place="../../")
-
-    # Link to other days
-
-    with open(fdaily,mode='a') as f:
-
-        string='\
-<span style=\"font-size:16pt;\">\n'
-
-        # if there is previous date
-        if i != 0:
-            prevdate = datelist[i-1]
-            string+='<a href=../../'+prevdate+'/html/index.html target=\"_self\"><< Previous day('+prevdate+')</a> &ensp;&ensp;\n'
-        else:
-            string+='No previous result &ensp;&ensp;\n'
-        string+='<a href=../../index.html >List of Date(all)</a> &ensp;&ensp;\n\
-<a href=../../'+latestdate+'/html/index.html target=\"_self\">Latest</a> &ensp;&ensp;\n'
-
-        # if there is next date
-        if i != len(datelist)-1:
-            nextdate = datelist[i+1] 
-            string+='<a href=../../'+nextdate+'/html/index.html target=\"_self\"> Next day('+nextdate+') >></a> &ensp;&ensp;\n'
-        else:
-            string+='No next result &ensp;&ensp;\n'
-
-        string+='</span>\n'
-        f.write(string)
         
-        eventlist = [os.path.basename(p.rstrip(os.sep)) for p in glob.glob(ind+date+"/events/*/")]
-        eventlist.sort()
+    eventlist = [os.path.basename(p.rstrip(os.sep)) for p in glob.glob(ind+date+"/events/*/")]
+    eventlist.sort()
+
+    gpstimedict = {}
+    JSTglitchdict = {}   # To be modified
+    snrdict = {}
+    frequencydict = {}
+    durationdict = {}
+    pipelinedict = {}
+    mainchanneldict = {}
+    categorydict = {}
     
-        string='\
-            <p>\n\
-            Please choose interested event.\n\
-            </p>\n'
-        f.write(string)
- 
-       
-        for event in eventlist:
-            # Get event information.
+    for event in eventlist:
+        # Get event information.
             
-            categorydict = {"CBC":"CBC","Burst":"Burst","glitch":"Glitch","lockloss":"Lock loss"}
-            fparameter = glob.glob(ind+date+"/events/"+event+"/parameter.txt")[0]
-            with open(fparameter,mode='r') as fp:
-                parameters = fp.read().split()
-                print(parameters)
-                gpstime = parameters[0]
-                JSTglitch = parameters[0]   # To be modified
-                snr = parameters[5]
-                frequency = parameters[6]
-                duration = parameters[3]
-                pipeline = parameters[10]
-                mainchannel = parameters[1]
-                category = categorydict[parameters[9]]
+        categorywords = {"CBC":"CBC","Burst":"Burst","glitch":"Glitch","lockloss":"Lock loss"}
+        fparameter = glob.glob(ind+date+"/events/"+event+"/parameter.txt")[0]
 
-            # Get main channel q-transform plot for link.
-            mainfig=glob.glob(ind+date+"/events/"+event+"/"+mainchannel+"_qtransform*")
-            if len(mainfig) != 0:
-                linkfig = mainfig[0].replace(ind+date,"..")
-                string='\
-                <div class="imagebox">\n\
-            <a href='+event+'.html>\n\
-                    <p class="image"><img src='+linkfig+' alt="Link to event page" width=400></p>\n\
-                    <p class="caption">'+category+'<br>'+gpstime+'</p>\n\
-            </a>\n\
-                </div>\n'
-                f.write(string)
 
-            else:
-                linkfig = ""
-                string='\
-            <a href='+event+'.html>'+event+'</a>\n'
+        with open(fparameter,mode='r') as fp:
+            parameters = fp.read().split()
+            gpstime = float(parameters[0])
+            JSTglitch = parameters[0]   # To be modified
+            snr = parameters[5]
+            frequency = parameters[6]
+            duration = parameters[3]
+            pipeline = parameters[10]
+            mainchannel = parameters[1]
+            category = categorywords[parameters[9]]
 
-                f.write(string)
+            gpstimedict[event]=gpstime
+            JSTglitchdict[event]=JSTglitch
+            snrdict[event]=snr
+            frequencydict[event]=frequency
+            durationdict[event]=duration
+            pipelinedict[event]=pipeline
+            mainchanneldict[event]=mainchannel
+            categorydict[event]=category
 
-            #####################################################################
-            # Make event pages.
-            #####################################################################
 
-            eventdir = ind+date+"/events/"+event+"/"
+        #####################################################################
+        # Make event pages.
+        #####################################################################
 
-            fevent = ind+date+"/html/"+event+".html"
+        eventdir = ind+date+"/events/"+event+"/"
+        
+        fevent = ind+date+"/html/"+event+".html"
 
-            WriteHeader(fevent,place="../../")
+        WriteHeader(fevent,place="../../")
 
-            with open(fevent,mode='a') as fe:
-                string='\
+        with open(fevent,mode='a') as fe:
+            string='\
 <a href=\"javascript:history.back()\">Back to trigger list</a> &ensp;&ensp;\n\
 <a href=../../index.html >List of Date(all)</a> &ensp;&ensp;\n\
 <br><br>\n\
@@ -229,7 +193,7 @@ for i in range(len(datelist)):
 \
 <form id="form" method="get" action="https://script.google.com/macros/s/AKfycbx0aGq4Lgknln9psGopJm6UPW-zXkNt4LOsus8x6W2UcD2mV1Y/exec" accept-charset="UTF-8" target="_blank">\n\
 <input type="hidden" name="channelname" value="'+mainchannel+'">\n\
-<input type="hidden" name="gpsglitch" value="'+gpstime+'">\n\
+<input type="hidden" name="gpsglitch" value="'+str(gpstime)+'">\n\
 <input type="hidden" name="JSTglitch" value="'+JSTglitch+'">\n\
 <input type="hidden" name="web" value="https://gwdet.icrr.u-tokyo.ac.jp/~controls/GlitchPlot/'+date+'/html/'+event+'.html">\n\
 <input type="hidden" name="snr"       value="'+snr+'">\n\
@@ -337,13 +301,79 @@ You can see the result in <a href="https://docs.google.com/spreadsheets/d/1JxC3Q
 <br>\n\
 <br>\n\
 '
-                fe.write(string)
-                string='\
+            fe.write(string)
+            string='\
 <p>\n\
 test.\n\
 </p>'
-                fe.write(string)
-            WriteFooter(fevent)
+            fe.write(string)
+        WriteFooter(fevent)
+
+
+    #####################################################################
+    # Make eventlist for each day.
+    #####################################################################
+
+    fdaily = ind+date+"/html/index.html"
+
+    WriteHeader(fdaily,place="../../")
+
+    # Link to other days
+
+    with open(fdaily,mode='a') as f:
+
+        string='\
+<span style=\"font-size:16pt;\">\n'
+
+        # if there is previous date
+        if i != 0:
+            prevdate = datelist[i-1]
+            string+='<a href=../../'+prevdate+'/html/index.html target=\"_self\"><< Previous day('+prevdate+')</a> &ensp;&ensp;\n'
+        else:
+            string+='No previous result &ensp;&ensp;\n'
+        string+='<a href=../../index.html >List of Date(all)</a> &ensp;&ensp;\n\
+<a href=../../'+latestdate+'/html/index.html target=\"_self\">Latest</a> &ensp;&ensp;\n'
+
+        # if there is next date
+        if i != len(datelist)-1:
+            nextdate = datelist[i+1] 
+            string+='<a href=../../'+nextdate+'/html/index.html target=\"_self\"> Next day('+nextdate+') >></a> &ensp;&ensp;\n'
+        else:
+            string+='No next result &ensp;&ensp;\n'
+
+        string+='</span>\n'
+        f.write(string)
+
+        string='\
+<hr><br>\n\
+<span style="font-size:25pt; color:#000000;"> Glitch list on '+date+' JST</span><br>\n\
+            <p>\n\
+            Please choose interested event.\n\
+            </p>\n'
+        f.write(string)
+
+        tmplist=sorted(gpstimedict.items(), key=lambda x:x[1])
+
+        for tmp in tmplist:
+            # Get main channel q-transform plot for link
+            event=tmp[0]
+
+            mainfig=glob.glob(ind+date+"/events/"+event+"/"+mainchanneldict[event]+"_qtransform*")
+            if len(mainfig) != 0:
+                linkfig = mainfig[0].replace(ind+date,"..")
+                string='\
+                <div class="imagebox">\n\
+            <a href='+event+'.html>\n\
+                    <p class="image"><img src='+linkfig+' alt="Link to event page" width=400></p>\n\
+                    <p class="caption">'+categorydict[event]+'<br>'+str(gpstimedict[event])+'</p>\n\
+            </a>\n\
+                </div>\n'
+
+            else:
+                string='\
+            <a href='+event+'.html>'+event+'</a>\n'
+
+            f.write(string)
 
         
     WriteFooter(fdaily)
