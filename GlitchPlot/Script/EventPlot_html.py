@@ -160,10 +160,9 @@ for i in range(len(datelist)):
         string+='</span>\n'
         f.write(string)
         
-    eventlist = [os.path.basename(p.rstrip(os.sep)) for p in glob.glob(ind+date+"/events/*/")]
+        eventlist = [os.path.basename(p.rstrip(os.sep)) for p in glob.glob(ind+date+"/events/*/")]
+        eventlist.sort()
     
-    with open(fdaily,mode='a') as f:
-
         string='\
             <p>\n\
             Please choose interested event.\n\
@@ -174,19 +173,24 @@ for i in range(len(datelist)):
         for event in eventlist:
             # Get event information.
             
-            info=event.split('_',2)
-            categorydict={"glitch":"Glitch","lockloss":"Lock loss","CBC":"CBC","Burst":"Burst"}
-            category = categorydict[info[0]]
-            gpstime = info[1]
-            mainchannel = info[2]
-                        
+            categorydict = {"CBC":"CBC","Burst":"Burst","glitch":"Glitch","lockloss":"Lock loss"}
+            fparameter = glob.glob(ind+date+"/events/"+event+"/parameter.txt")[0]
+            with open(fparameter,mode='r') as fp:
+                parameters = fp.read().split()
+                print(parameters)
+                gpstime = parameters[0]
+                JSTglitch = parameters[0]   # To be modified
+                snr = parameters[5]
+                frequency = parameters[6]
+                duration = parameters[3]
+                pipeline = parameters[10]
+                mainchannel = parameters[1]
+                category = categorydict[parameters[9]]
+
+            # Get main channel q-transform plot for link.
             mainfig=glob.glob(ind+date+"/events/"+event+"/"+mainchannel+"_qtransform*")
             if len(mainfig) != 0:
                 linkfig = mainfig[0].replace(ind+date,"..")
-#                string='\
-#            <a href='+event+'.html>\n\
-#                <img src='+linkfig+' alt="Link to event page" width=300>\n\
-#            </a>\n'
                 string='\
                 <div class="imagebox">\n\
             <a href='+event+'.html>\n\
@@ -214,6 +218,126 @@ for i in range(len(datelist)):
             WriteHeader(fevent,place="../../")
 
             with open(fevent,mode='a') as fe:
+                string='\
+<a href=\"javascript:history.back()\">Back to trigger list</a> &ensp;&ensp;\n\
+<a href=../../index.html >List of Date(all)</a> &ensp;&ensp;\n\
+<br><br>\n\
+<hr>\n\
+<span style="font-size:25pt; color:#00ff00;">GlitchPlot needs your help to classify the glitch origin.</span>\n\
+<br>\n\
+<br>\n\
+\
+<form id="form" method="get" action="https://script.google.com/macros/s/AKfycbx0aGq4Lgknln9psGopJm6UPW-zXkNt4LOsus8x6W2UcD2mV1Y/exec" accept-charset="UTF-8" target="_blank">\n\
+<input type="hidden" name="channelname" value="'+mainchannel+'">\n\
+<input type="hidden" name="gpsglitch" value="'+gpstime+'">\n\
+<input type="hidden" name="JSTglitch" value="'+JSTglitch+'">\n\
+<input type="hidden" name="web" value="https://gwdet.icrr.u-tokyo.ac.jp/~controls/GlitchPlot/'+date+'/html/'+event+'.html">\n\
+<input type="hidden" name="snr"       value="'+snr+'">\n\
+<input type="hidden" name="frequency" value="'+frequency+'">\n\
+<input type="hidden" name="duration" value="'+duration+'">\n\
+<input type="hidden" name="pipeline" value="'+pipeline+'">\n\
+\n\
+1. Fill your name\n\
+<br>\n\
+\n\
+\n\
+<input type="text" name="yourname" placeholder="Your name">\n\
+<br><br>\n\
+\n\
+2. Are you familiar with the latest KAGRA?\n\
+<br>\n\
+\n\
+\n\
+\n\
+<input type="radio" name="team" value="Onsite" checked>Yes (On-site researcher)\n\
+\n\
+\n\
+<input type="radio" name="team" value="Offsite">No (Off-site researcher)\n\
+<br><br>\n\
+\n\
+3-1. Suspect the glitch origin.\n\
+<br>\n\
+<select name="kindglitch">\n\
+<option value="None">No idea</option>\n\
+<option value="Accoustic">Environment (accoustic)</option>\n\
+<option value="Magnetic">Environment (magnetic)</option>\n\
+<option value="Seismic activity">Environment (seismic, earthquake)</option>\n\
+<option value="Human activity">Environment (Human activity in mine)</option>\n\
+<option value="Typhoon">Environment (typhoon)</option>\n\
+<option value="Hardware injection">Hardware injection</option>\n\
+<option value="Software injection">Software injection</option>\n\
+<option value="Real time system">Related to real time system</option>\n\
+<option value="Laser">Related to laser(PSL, IMC)</option>\n\
+<option value="Unknown">Unknown noise (write your opinion in comment)</option>\n\
+<option value="GravitationalWave">Gravitational wave !!</option>\n\
+<option value="Other">other (If no suitable option, select other and write comments)</option>\n\
+</select>\n\
+\n\
+<br>\n\
+<br>\n\
+\n\
+3-2. If you want, you can specify the sensor and location where the glitch was found.\n\
+<br>\n\
+\n\
+Sensor :\n\
+<select name="glitchsensor">\n\
+<option value="None">No idea</option>\n\
+<option value="Accelerometer">Accelerometer</option>\n\
+<option value="Seismometer">Seismometer</option>\n\
+<option value="Microphone">Microphone</option>\n\
+<option value="Magnetometer">Magnetometer</option>\n\
+<option value="Oplev">Oplev</option>\n\
+<option value="VIS related">VIS related</option>\n\
+<option value="Control system">Control System</option>\n\
+<option value="Other">other (You can write comments below)</option>\n\
+</select>\n\
+\n\
+\n\
+\n\
+Location :\n\
+<select name="glitchlocation">\n\
+<option value="None">No idea</option>\n\
+<option value="PSL">PSL</option>\n\
+<option value="IMC">IMC</option>\n\
+<option value="SR2">SR2</option>\n\
+<option value="SR3">SR3</option>\n\
+<option value="POP">POP</option>\n\
+<option value="POS">POS</option>\n\
+<option value="IMMT1">IMMT1</option>\n\
+<option value="IMMT2">IMMT2</option>\n\
+<option value="OMMT1">OMMT1</option>\n\
+<option value="OMMT2">OMMT2</option>\n\
+<option value="OMC">OMC</option>\n\
+<option value="Center">Center</option>\n\
+<option value="IX">IX</option>\n\
+<option value="EX">EX</option>\n\
+<option value="IY">IY</option>\n\
+<option value="EY">EY</option>\n\
+<option value="all">all</option>\n\
+<option value="Control system">Control System</option>\n\
+<option value="Out of mine">Out of mine</option>\n\
+<option value="Other">other (You can write comments below)</option>\n\
+</select>\n\
+\n\
+<br><br>\n\
+\n\
+4. Add any suspects about the origin, comment, request, or fan letter to developpers.\n\
+<br>\n\
+<textarea name="comment" rows="6" cols="80" placeholder="comment or fan letter"></textarea>\n\
+<br><br>\n\
+<input type="submit" value="Submit"/>\n\
+</form>\n\
+\n\
+<span style="font-size:25pt; color:#00ff00;">Thank you in advance, we really appreciate your help.\n\
+</br>\n\
+\n\
+You can see the result in <a href="https://docs.google.com/spreadsheets/d/1JxC3QL6jF3xmA0MnWtWO_dUgNOF_i5enD_j4yUK1X7s/edit?usp=sharing" target="_blank" title="GlitchPlot Catalog" >GlitchPlot Catalog</a>.\n\
+\n\
+</span>\n\
+<br>\n\
+<br>\n\
+'
+                fe.write(string)
                 string='\
 <p>\n\
 test.\n\
