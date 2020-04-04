@@ -45,7 +45,7 @@ def WriteHeader(fname, place=''):
         </head>\n\
         \n\
         <body>\n\
-            <a href='+place+'index.html>\n\
+            <a href='+place+'index.html target=_top>\n\
                 <div class=\"img_header\">\n\
                 <img src='+place+'GlitchPlot_logo.png alt="Link to top page" width=700>\n\
                 </div>\n\
@@ -333,7 +333,7 @@ You can see the result in <a href="https://docs.google.com/spreadsheets/d/1JxC3Q
 </span>\n\
 <br>\n\
 <br>\n\
-<h3 class=h3_a>'+mainchannel+' \n\
+<h3 class=h3_form>'+mainchannel+' \n\
 at GPS='+str(gpstime)+' &ensp; \n\
 JST='+str(JSTglitch)+'</h3>'
 
@@ -345,6 +345,9 @@ JST='+str(JSTglitch)+'</h3>'
         with open(fplots, mode='a') as fp:
 
             string='\
+<a href=\"javascript:history.back()\" target="_top">Back to trigger list</a> &ensp;&ensp;\n\
+<a href=../../index.html target="_top">List of Date(all)</a> &ensp;&ensp;\n\
+<br><br>\n\
 <h3 class=h3_a>Triggered by '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
             fp.write(string)
             
@@ -369,8 +372,6 @@ JST='+str(JSTglitch)+'</h3>'
                     ff.write(string)
 
 
-
-
             fsname=glob.glob(ind+date+"/events/"+event+"/suggestion1.txt")
             if len(fsname) > 0:
 
@@ -386,11 +387,11 @@ JST='+str(JSTglitch)+'</h3>'
                     string = '\
 <br><p>'+channel+'</p><br>'
                     fp.write(string)
-                    figs=glob.glob(ind+date+"/events/"+event+"/"+channel+"*")
+                    figs=glob.glob(ind+date+"/events/"+event+"/*"+channel+"*")
                     for fig in figs:
                         linkfig = fig.replace(ind+date,"..")
                         string = '\
-<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title=linkfig width=430></a>'
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>'
                         fp.write(string)
 
                 string='\
@@ -406,11 +407,11 @@ JST='+str(JSTglitch)+'</h3>'
                     string = '\
 <br><p>'+channel+'</p><br>'
                     fp.write(string)
-                    figs=glob.glob(ind+date+"/events/"+event+"/"+channel+"*")
+                    figs=glob.glob(ind+date+"/events/"+event+"/*"+channel+"*")
                     for fig in figs:
                         linkfig = fig.replace(ind+date,"..")
                         string = '\
-<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title=linkfig width=430></a>'
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>'
                         fp.write(string)
                 
                 string='\
@@ -426,19 +427,29 @@ JST='+str(JSTglitch)+'</h3>'
                     string = '\
 <br><p>'+channel+'</p><br>'
                     fp.write(string)
-                    figs=glob.glob(ind+date+"/events/"+event+"/"+channel+"*")
+                    figs=glob.glob(ind+date+"/events/"+event+"/*"+channel+"*")
                     for fig in figs:
                         linkfig = fig.replace(ind+date,"..")
                         string = '\
-<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title=linkfig width=430></a>'
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>'
                         fp.write(string)
                 
             else:
                 figs=glob.glob(ind+date+"/events/"+event+"/*.png")
                 for fig in figs:
+                    if "coherence" in fig:
+                        continue
+
                     linkfig = fig.replace(ind+date,"..")
                     string = '\
-<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title=linkfig width=430></a>'
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>'
+                    fp.write(string)
+                
+                figs=glob.glob(ind+date+"/events/"+event+"/*coherence*.png")
+                for fig in figs:
+                    linkfig = fig.replace(ind+date,"..")
+                    string = '\
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>'
                     fp.write(string)
                 
 
