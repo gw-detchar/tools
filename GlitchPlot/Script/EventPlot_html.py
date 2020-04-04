@@ -187,7 +187,7 @@ for i in range(len(datelist)):
 <link rel="shortcut icon" href=../../GlitchPlot_minilogo.png>\n\
 </head>\n\
 \n\
-<frameset cols="*,500">\n\
+<frameset cols="*,450">\n\
 \n\
 <frame src='+event+'_plots.html name="frame1" title="left">\n\
 <frame src='+event+'_form.html name="frame2" title="right">\n\
@@ -205,14 +205,9 @@ for i in range(len(datelist)):
         
 
         fform = ind+date+"/html/"+event+"_form.html"
-        #WriteHeader(fform,place="../../")
 
         with open(fform,mode='w') as ff:
 
-#<a href=\"javascript:history.back()\" target="_top">Back to trigger list</a> &ensp;&ensp;\n\
-#<a href=../../index.html target="_top">List of Date(all)</a> &ensp;&ensp;\n\
-#<br><br>\n\
-#<hr>\n\
             string='\
 <!DOCTYPE HTML PUBLIC >\n\
     <html>\n\
@@ -338,11 +333,118 @@ You can see the result in <a href="https://docs.google.com/spreadsheets/d/1JxC3Q
 </span>\n\
 <br>\n\
 <br>\n\
-'
+<h3 class=h3_a>'+mainchannel+' \n\
+at GPS='+str(gpstime)+' &ensp; \n\
+JST='+str(JSTglitch)+'</h3>'
+
             ff.write(string)
+
+        fplots = ind+date+"/html/"+event+"_plots.html"
+        WriteHeader(fplots, place="../../")
+
+        with open(fplots, mode='a') as fp:
+
+            string='\
+<h3 class=h3_a>Triggered by '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
+            fp.write(string)
+            
+            lockfig=glob.glob(ind+date+"/events/"+event+"/*lockedsegments*")
+            if len(lockfig) != 0:
+                linkfig = lockfig[0].replace(ind+date,"..")
+                string = '\
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title=locked width=430></a><br>'
+                fp.write(string)
+                with open(fform, mode='a') as ff:                
+                    ff.write(string)
+
+            mainfigs=glob.glob(ind+date+"/events/"+event+"/"+mainchannel+"*")
+            for fig in mainfigs:
+                if "coherence" in fig:
+                    continue
+                linkfig = fig.replace(ind+date,"..")
+                string = '\
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title=locked width=430></a>'
+                fp.write(string)
+                with open(fform, mode='a') as ff:                
+                    ff.write(string)
+
+
+
+
+            fsname=glob.glob(ind+date+"/events/"+event+"/suggestion1.txt")
+            if len(fsname) > 0:
+
+                string='\
+<h3 class=h3_a>Suggested channnel (1): '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
+                fp.write(string)
+
+                f1 = open(fsname[0])
+                suggestion1 = f1.read().split()
+                f1.close()
+
+                for channel in suggestion1:
+                    string = '\
+<br><p>'+channel+'</p><br>'
+                    fp.write(string)
+                    figs=glob.glob(ind+date+"/events/"+event+"/"+channel+"*")
+                    for fig in figs:
+                        linkfig = fig.replace(ind+date,"..")
+                        string = '\
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title=linkfig width=430></a>'
+                        fp.write(string)
+
+                string='\
+<h3 class=h3_a>Suggested channnel (2): '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
+                fp.write(string)
+
+                fsname=glob.glob(ind+date+"/events/"+event+"/suggestion2.txt")
+                f2 = open(fsname[0])
+                suggestion2 = f2.read().split()
+                f2.close()
+
+                for channel in suggestion2:
+                    string = '\
+<br><p>'+channel+'</p><br>'
+                    fp.write(string)
+                    figs=glob.glob(ind+date+"/events/"+event+"/"+channel+"*")
+                    for fig in figs:
+                        linkfig = fig.replace(ind+date,"..")
+                        string = '\
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title=linkfig width=430></a>'
+                        fp.write(string)
+                
+                string='\
+<h3 class=h3_a>Other auxiliary channnel: '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
+                fp.write(string)
+
+                fsname=glob.glob(ind+date+"/events/"+event+"/notsuggestion.txt")
+                f3 = open(fsname[0])
+                notsuggestion = f3.read().split()
+                f3.close()
+
+                for channel in notsuggestion:
+                    string = '\
+<br><p>'+channel+'</p><br>'
+                    fp.write(string)
+                    figs=glob.glob(ind+date+"/events/"+event+"/"+channel+"*")
+                    for fig in figs:
+                        linkfig = fig.replace(ind+date,"..")
+                        string = '\
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title=linkfig width=430></a>'
+                        fp.write(string)
+                
+            else:
+                figs=glob.glob(ind+date+"/events/"+event+"/*.png")
+                for fig in figs:
+                    linkfig = fig.replace(ind+date,"..")
+                    string = '\
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title=linkfig width=430></a>'
+                    fp.write(string)
+                
+
         WriteFooter(fform)
-
-
+        WriteFooter(fplots)
+        
     #####################################################################
     # Make eventlist for each day.
     #####################################################################
