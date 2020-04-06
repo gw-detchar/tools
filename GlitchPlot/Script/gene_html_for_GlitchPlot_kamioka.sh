@@ -57,7 +57,7 @@ function gene_header(){
   <head>                                                                                     
     <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">                  
        <title>Summary page of KAGRA comissioning</title>                                     
-       <link rel=\"stylesheet\" type=\"text/css\" href=\"/mnt/GlitchPlot/style.css\">                    
+       <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">                    
   </head>                                                                                    
   <body>                                                                                     
                                                                                              
