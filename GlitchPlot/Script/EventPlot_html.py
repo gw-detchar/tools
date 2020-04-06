@@ -128,9 +128,13 @@ WriteFooter(ftop)
 latestdate=datelist[len(datelist)-1]
 for i in range(len(datelist)):
     date = datelist[i]
+
     if not os.path.isdir(ind+date+"/html"):
         os.makedirs(ind+date+"/html")
-        
+
+    fdaily = ind+date+"/html/index.html"
+    linkday = fdaily.replace(ind+date,"..")
+    
     eventlist = [os.path.basename(p.rstrip(os.sep)) for p in glob.glob(ind+date+"/events/*/")]
     eventlist.sort()
 
@@ -145,7 +149,7 @@ for i in range(len(datelist)):
     
     for event in eventlist:
         # Get event information.
-            
+        
         categorywords = {"CBC":"CBC","Burst":"Burst","glitch":"Glitch","lockloss":"Lock loss"}
         fparameter = glob.glob(ind+date+"/events/"+event+"/parameter.txt")[0]
 
@@ -207,7 +211,7 @@ for i in range(len(datelist)):
         fform = ind+date+"/html/"+event+"_form.html"
 
         with open(fform,mode='w') as ff:
-
+#<span style="font-size:18pt; color:royalblue;"><b>Thank you very much for contributing glitch cassification !\n\
             string='\
 <!DOCTYPE HTML PUBLIC >\n\
     <html>\n\
@@ -220,7 +224,12 @@ for i in range(len(datelist)):
         </head>\n\
         \n\
         <body>\n\
-<span style="font-size:18pt; color:royalblue;">GlitchPlot needs your help to classify the glitch origin.</span>\n\
+<h3 class=h3_form>Thank you very much for contributing glitch cassification !</h3>\n\
+</br>\n\
+\n\
+<a href="https://docs.google.com/spreadsheets/d/1JxC3QL6jF3xmA0MnWtWO_dUgNOF_i5enD_j4yUK1X7s/edit?usp=sharing" target="_blank" title="GlitchPlot Catalog" >GlitchPlot Catalog</a>\n\
+\n\
+</span>\n\
 <br>\n\
 <br>\n\
 \
@@ -276,7 +285,7 @@ for i in range(len(datelist)):
 3-2. If you want, you can specify the sensor and location where the glitch was found.\n\
 <br>\n\
 \n\
-Sensor :\n\
+&emsp;Sensor :\n\
 <select name="glitchsensor">\n\
 <option value="None">No idea</option>\n\
 <option value="Accelerometer">Accelerometer</option>\n\
@@ -289,9 +298,9 @@ Sensor :\n\
 <option value="Other">other (You can write comments below)</option>\n\
 </select>\n\
 \n\
+<br>\n\
 \n\
-\n\
-Location :\n\
+&emsp;Location :\n\
 <select name="glitchlocation">\n\
 <option value="None">No idea</option>\n\
 <option value="PSL">PSL</option>\n\
@@ -324,18 +333,8 @@ Location :\n\
 <br><br>\n\
 <input type="submit" value="Submit"/>\n\
 </form>\n\
-\n\
-<span style="font-size:18pt; color:royalblue;">Thank you in advance, we really appreciate your help.\n\
-</br>\n\
-\n\
-You can see the result in <a href="https://docs.google.com/spreadsheets/d/1JxC3QL6jF3xmA0MnWtWO_dUgNOF_i5enD_j4yUK1X7s/edit?usp=sharing" target="_blank" title="GlitchPlot Catalog" >GlitchPlot Catalog</a>.\n\
-\n\
-</span>\n\
-<br>\n\
-<br>\n\
-<h3 class=h3_form>'+mainchannel+' \n\
-at GPS='+str(gpstime)+' &ensp; \n\
-JST='+str(JSTglitch)+'</h3>'
+<h3 class=h3_form> Trigger channel plots</h3>\n\
+'
 
             ff.write(string)
 
@@ -345,7 +344,7 @@ JST='+str(JSTglitch)+'</h3>'
         with open(fplots, mode='a') as fp:
 
             string='\
-<a href=\"javascript:history.back()\" target="_top">Back to trigger list</a> &ensp;&ensp;\n\
+<a href='+linkday+' target=_top>Back to trigger list</a> &ensp;&ensp;\n\
 <a href=../../index.html target="_top">List of Date(all)</a> &ensp;&ensp;\n\
 <br><br>\n\
 <h3 class=h3_a>Triggered by '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
@@ -459,8 +458,6 @@ JST='+str(JSTglitch)+'</h3>'
     #####################################################################
     # Make eventlist for each day.
     #####################################################################
-
-    fdaily = ind+date+"/html/index.html"
 
     WriteHeader(fdaily,place="../../")
 
