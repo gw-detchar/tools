@@ -30,8 +30,8 @@ parser = argparse.ArgumentParser(description='Make coherencegram.')
 parser.add_argument('-o','--outdir',help='output directory.',default='/tmp')
 parser.add_argument('-r','--refchannel',help='main reference channel.',required=True)
 #parser.add_argument('-c','--channel',help='compared channel.',default='K1:PEM-SEIS_IXV_GND_UD_IN1_DQ')#required=True)
-parser.add_argument('-s','--gpsstartbefore',help='GPS starting time for before trigger.',required=True)
-parser.add_argument('-e','--gpsendbefore',help='GPS ending time for before trigger.',required=True)
+parser.add_argument('-s','--gpsstartbefore',help='GPS starting time for before trigger.')
+parser.add_argument('-e','--gpsendbefore',help='GPS ending time for before trigger.')
 parser.add_argument('-st','--gpsstarttrigger',help='GPS starting time for during trigger.',required=True)
 parser.add_argument('-et','--gpsendtrigger',help='GPS ending time for during trigger.',required=True)
 parser.add_argument('-sq','--gpsstartqgram',help='GPS starting time for GlitchPlot.',required=True)
@@ -40,10 +40,13 @@ parser.add_argument('-f','--fftlength',help='FFT length.',type=float,default=1.)
 parser.add_argument('-ft','--frequency',help='Frequency of the trigger.',type=float,default=100)
 parser.add_argument('-k','--kamioka',help='Flag to run on Kamioka server.',action='store_true')
 parser.add_argument('-q','--q',help='Q range.',default=-1,type=float )
+parser.add_argument('--Qonly',help='Flag to skip coherence check.',action='store_true')
+
 # define variables                                                                                                 
 args = parser.parse_args()
 
 kamioka = args.kamioka
+Qonly = args.Qonly
 
 outdir=args.outdir
 
@@ -72,13 +75,6 @@ if args.q > 0:
     qmin = args.q
     qmax = args.q
 
-# Make coherence before trigger
-# Get data from frame files                                                                                        
-if kamioka:
-    sources = mylib.GetFilelist_Kamioka(gpsstart,gpsend)
-else:
-    sources = mylib.GetFilelist(gpsstart,gpsend)
-
 f = open('/home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/'+refchannel+".dat")
 allchannels = f.read().split()
 f.close()
@@ -95,7 +91,14 @@ while allchannels:
         channels.append(e)
 channels.append(refchannel)
 
-data = TimeSeriesDict.read(sources,channels,format='gwf.lalframe',start=float(gpsstart),end=float(gpsend))
+# Get data from frame files                                                                                 
+if not Qonly:       
+    if kamioka:
+        sources = mylib.GetFilelist_Kamioka(gpsstart,gpsend)
+    else:
+        sources = mylib.GetFilelist(gpsstart,gpsend)
+
+    data = TimeSeriesDict.read(sources,channels,format='gwf.lalframe',start=float(gpsstart),end=float(gpsend))
 
 if kamioka:
     sources = mylib.GetFilelist_Kamioka(gpsstartT,gpsendT)
@@ -125,66 +128,68 @@ notdetected = []
 for channel in ignore:
     notdetected.append(channel)
 
-ref = data[refchannel]
+if not Qonly:
+    ref = data[refchannel]
 refT = dataT[refchannel]
 
 for channel in channels:
 
     if channel == refchannel:
         continue
-    fft = originalfft
-    ol = originalol
-    lowSRflag=False
 
-    com = data[channel]
+    if not Qonly:
+        fft = originalfft
+        ol = originalol
+        lowSRflag=False
 
-    if fft < 2.*ref.dt.value:
-        fft=2.*ref.dt.value
-        ol=fft/2.  #  overlap in FFTs.                                                                                 
-        print("Given fft/stride was bad against the sampling rate. Automatically set to:")
-        print("fft="+str(fft))
-        print("ol="+str(ol))
-
-    if fft < 2.*com.dt.value:
-        fft=2.*com.dt.value
-        ol=fft/2.  #  overlap in FFTs.
-        lowSRflag=True
-        print("Given fft/stride was bad against the sampling rate. Automatically set to:")
-        print("fft="+str(fft))
-        print("ol="+str(ol))
-
-    # length of trigger
-    duration=float(gpsendT)-float(gpsstartT)
-
-    # Coherence check is done if enough average can be taken.
-    if duration > fft*4.:
-
-        cohbefore = ref.coherence(com,fftlength=fft,overlap=ol)
+        com = data[channel]
         
-        # Make coherence for trigger time
-        
-        comT = dataT[channel]
+        if fft < 2.*ref.dt.value:
+            fft=2.*ref.dt.value
+            ol=fft/2.  #  overlap in FFTs.                                                                                 
+            print("Given fft/stride was bad against the sampling rate. Automatically set to:")
+            print("fft="+str(fft))
+            print("ol="+str(ol))
 
-        print(refT)
-        print(comT)
-        print(fft)
-        cohtrigger = refT.coherence(comT,fftlength=fft,overlap=ol)
+        if fft < 2.*com.dt.value:
+            fft=2.*com.dt.value
+            ol=fft/2.  #  overlap in FFTs.
+            lowSRflag=True
+            print("Given fft/stride was bad against the sampling rate. Automatically set to:")
+            print("fft="+str(fft))
+            print("ol="+str(ol))
+
+        # length of trigger
+        duration=float(gpsendT)-float(gpsstartT)
+
+        # Coherence check is done if enough average can be taken.
+        if duration > fft*4.:
+
+            cohbefore = ref.coherence(com,fftlength=fft,overlap=ol)
         
-        # Get nearest frequency bin index of the glitch
-        diff=np.abs(np.asarray(cohbefore.frequencies)-frequency).argmin()
+            # Make coherence for trigger time
         
-        if cohbefore.value[diff] < 0.2 and cohtrigger.value[diff] > 0.5:
-            detectedc.append(channel)
-            continue
+            comT = dataT[channel]
+
+            cohtrigger = refT.coherence(comT,fftlength=fft,overlap=ol)
+        
+            # Get nearest frequency bin index of the glitch
+            diff=np.abs(np.asarray(cohbefore.frequencies)-frequency).argmin()
+        
+            if cohbefore.value[diff] < 0.2 and cohtrigger.value[diff] > 0.5:
+                detectedc.append(channel)
+                continue
 
     # Using Qtransform
 
     # if sampling rate is 16 Hz, skipped.
-    if 0.05 < com.dt.value:
+
+    comQ = dataQ[channel]
+
+    if 0.05 < comQ.dt.value:
         notdetected.append(channel)
         continue
 
-    comQ = dataQ[channel]
     tmp=comQ.rms()
     
     if tmp.value[0] == 0.0:
@@ -194,8 +199,6 @@ for channel in channels:
     if comQ.value[0] == comQ.value[1]:
         notdetected.append(channel)
         continue
-
-
 
     qgram = comQ.q_gram(qrange=(qmin,qmax),snrthresh=5.5)
     
@@ -220,7 +223,7 @@ with open(outdir+"/notsuggestion.txt", mode='w') as f:
     f.write('\n'.join(notdetected))
     f.write('\n')
 
-print(outdir+"suggestion1.txt")
-print(outdir+"suggestion2.txt")
-print(outdir+"notsuggestion.txt")
+print(outdir+"/suggestion1.txt")
+print(outdir+"/suggestion2.txt")
+print(outdir+"/notsuggestion.txt")
 print('Successfully finished !')
