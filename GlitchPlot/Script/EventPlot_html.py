@@ -107,6 +107,7 @@ datelist.sort()
 with open(ftop,mode='a') as f:
 
     string='\
+            <h3 class=h3_form>Welcome to KAGRA GlitchPlot ! </h3>\n\
             <p>\n\
             Please choose the date in JST.\n\
             </p>\n'
@@ -369,10 +370,18 @@ for i in range(len(datelist)):
                 fp.write(string)
                 with open(fform, mode='a') as ff:                
                     ff.write(string)
+                    
 
-
+            # link to suggestion.txt
             fsname=glob.glob(ind+date+"/events/"+event+"/suggestion1.txt")
+
+                
             if len(fsname) > 0:
+                linktxt = fsname[0].replace(ind+date,"..")
+                with open(fform, mode='a') as ff:
+                    string = '\
+<br><a href='+linktxt+' target="_self">Suggestion (1) channel list</a>\n'
+                    ff.write(string)
 
                 string='\
 <h3 class=h3_a>Suggested channnel (1): '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
@@ -398,6 +407,12 @@ for i in range(len(datelist)):
                 fp.write(string)
 
                 fsname=glob.glob(ind+date+"/events/"+event+"/suggestion2.txt")
+                linktxt = fsname[0].replace(ind+date,"..")
+                with open(fform, mode='a') as ff:
+                    string = '\
+<br><a href='+linktxt+' target="_self">Suggestion (2) channel list</a>\n'
+                    ff.write(string)
+
                 f2 = open(fsname[0])
                 suggestion2 = f2.read().split()
                 f2.close()
@@ -418,6 +433,12 @@ for i in range(len(datelist)):
                 fp.write(string)
 
                 fsname=glob.glob(ind+date+"/events/"+event+"/notsuggestion.txt")
+                linktxt = fsname[0].replace(ind+date,"..")
+                with open(fform, mode='a') as ff:
+                    string = '\
+<br><a href='+linktxt+' target="_self">Other auxiliary channel list</a>\n'
+                    ff.write(string)
+
                 f3 = open(fsname[0])
                 notsuggestion = f3.read().split()
                 f3.close()
@@ -450,7 +471,8 @@ for i in range(len(datelist)):
                     string = '\
 <a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>'
                     fp.write(string)
-                
+
+
 
         WriteFooter(fform)
         WriteFooter(fplots)
