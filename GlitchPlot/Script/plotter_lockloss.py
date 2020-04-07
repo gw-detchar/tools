@@ -212,7 +212,7 @@ for i in range(0,nmax):
 
     # time for plots with time axis
     tstart = tLL - 10
-    tend = tLL + 1
+    tend = tLL + 2
 
     # time for spectrum
     sstart = tLL - 42
