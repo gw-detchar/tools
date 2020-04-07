@@ -6,4 +6,9 @@
 
 echo spectrum
 echo $@
-python /home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples/batch_spectrum.py $@
+
+if [ $USER == "controls" ]; then
+    python /users/DET/tools/GlitchPlot/Script/Kozapy/samples/batch_spectrum.py $@
+else
+    python /home/chihiro.kozakai/detchar/analysis/code/gwpy/Kozapy/samples/batch_spectrum.py $@
+fi

@@ -188,7 +188,8 @@ do
     #data="second"
     data="full"
 
-    if [ `hostname` == "k1sum1" ]; then
+    #if [ `hostname` == "k1sum1" ]; then
+    if [ $USER == "controls" ]; then
 	kamioka=true
     else
 	kamioka=false
@@ -249,7 +250,8 @@ do
 #    condir="/users/.ckozakai/KashiwaAnalysis/analysis/code/gwpy/trigger/plotter"
 
     if "${kamioka}"; then
-	condir="/users/DET/Result/GlitchPlot"
+	#condir="/users/DET/Result/GlitchPlot"
+	condir="/mnt/GlitchPlot"
     elif "${detchar}"; then
 	condir="/home/detchar/bKAGRA_summary/html/GlitchPlot"
     else
@@ -269,7 +271,11 @@ do
 	date=`tconvert -l -f %Y%m%d ${gpstime}`
     fi
 
-    outdir="$condir/$date/${index}/"
+    if "${kamioka}"; then
+	outdir="$condir/$date/GlitchPlot/$date/${index}/"
+    else
+	outdir="$condir/$date/${index}/"
+    fi
     
     # Confirm the existance of output directory.
 
