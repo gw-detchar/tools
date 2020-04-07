@@ -152,19 +152,40 @@ for i in range(len(datelist)):
         # Get event information.
         
         categorywords = {"CBC":"CBC","Burst":"Burst","glitch":"Glitch","lockloss":"Lock loss"}
-        fparameter = glob.glob(ind+date+"/events/"+event+"/parameter.txt")[0]
-
-        with open(fparameter,mode='r') as fp:
-            parameters = fp.read().split()
-            gpstime = float(parameters[0])
-            JSTglitch = parameters[0]   # To be modified
-            snr = parameters[5]
-            frequency = parameters[6]
-            duration = parameters[3]
-            pipeline = parameters[10]
-            mainchannel = parameters[1]
-            category = categorywords[parameters[9]]
-
+        #fparameter = glob.glob(ind+date+"/events/"+event+"/parameter.txt")[0]
+        fparameters = glob.glob(ind+date+"/events/"+event+"/parameter.txt")
+        if len(fparameters) > 0:
+            fparameter = fparameters[0]
+            with open(fparameter,mode='r') as fp:
+                parameters = fp.read().split()
+                gpstime = float(parameters[0])
+                JSTglitch = parameters[0]   # To be modified
+                snr = parameters[5]
+                frequency = parameters[6]
+                duration = parameters[3]
+                pipeline = parameters[10]
+                mainchannel = parameters[1]
+                category = categorywords[parameters[9]]
+                
+                gpstimedict[event]=gpstime
+                JSTglitchdict[event]=JSTglitch
+                snrdict[event]=snr
+                frequencydict[event]=frequency
+                durationdict[event]=duration
+                pipelinedict[event]=pipeline
+                mainchanneldict[event]=mainchannel
+                categorydict[event]=category
+        else:
+            parameters = event.split("_",2) 
+            gpstime = float(parameters[1])
+            JSTglitch = parameters[1]   # To be modified
+            snr = "-1"
+            frequency = "-1"
+            duration = "-1"
+            pipeline = "Unknown"
+            mainchannel = parameters[2]
+            category = categorywords[parameters[0]]
+            
             gpstimedict[event]=gpstime
             JSTglitchdict[event]=JSTglitch
             snrdict[event]=snr
@@ -173,8 +194,7 @@ for i in range(len(datelist)):
             pipelinedict[event]=pipeline
             mainchanneldict[event]=mainchannel
             categorydict[event]=category
-
-
+            
         #####################################################################
         # Make event pages.
         #####################################################################
@@ -244,14 +264,14 @@ for i in range(len(datelist)):
 <input type="hidden" name="duration" value="'+duration+'">\n\
 <input type="hidden" name="pipeline" value="'+pipeline+'">\n\
 \n\
-1. Fill your name\n\
+<b>1. Fill your name</b>\n\
 <br>\n\
 \n\
 \n\
 <input type="text" name="yourname" placeholder="Your name">\n\
 <br><br>\n\
 \n\
-2. Are you familiar with the latest KAGRA?\n\
+<b>2. Are you familiar with the latest KAGRA?</b>\n\
 <br>\n\
 \n\
 \n\
@@ -262,7 +282,7 @@ for i in range(len(datelist)):
 <input type="radio" name="team" value="Offsite">No (Off-site researcher)\n\
 <br><br>\n\
 \n\
-3-1. Suspect the glitch origin.\n\
+<b>3-1. Suspect the glitch origin.</b>\n\
 <br>\n\
 <select name="kindglitch">\n\
 <option value="None">No idea</option>\n\
@@ -283,7 +303,7 @@ for i in range(len(datelist)):
 <br>\n\
 <br>\n\
 \n\
-3-2. If you want, you can specify the sensor and location where the glitch was found.\n\
+<b>3-2. If you want, you can specify the sensor and location where the glitch was found.</b>\n\
 <br>\n\
 \n\
 &emsp;Sensor :\n\
@@ -328,7 +348,7 @@ for i in range(len(datelist)):
 \n\
 <br><br>\n\
 \n\
-4. Add any suspects about the origin, comment, request, or fan letter to developpers.\n\
+<b>4. Add any suspects about the origin, comment, request, or fan letter to developpers.</b>\n\
 <br>\n\
 <textarea name="comment" rows="6" cols="50" placeholder="comment or fan letter"></textarea>\n\
 <br><br>\n\
@@ -384,7 +404,7 @@ for i in range(len(datelist)):
                     ff.write(string)
 
                 string='\
-<h3 class=h3_a>Suggested channnel (1): '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
+<h3 class=h3_a>Suggested channel (1): '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
                 fp.write(string)
 
                 f1 = open(fsname[0])
@@ -403,7 +423,7 @@ for i in range(len(datelist)):
                         fp.write(string)
 
                 string='\
-<h3 class=h3_a>Suggested channnel (2): '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
+<h3 class=h3_a>Suggested channel (2): '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
                 fp.write(string)
 
                 fsname=glob.glob(ind+date+"/events/"+event+"/suggestion2.txt")
@@ -429,7 +449,7 @@ for i in range(len(datelist)):
                         fp.write(string)
                 
                 string='\
-<h3 class=h3_a>Other auxiliary channnel: '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
+<h3 class=h3_a>Other auxiliary channel: '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
                 fp.write(string)
 
                 fsname=glob.glob(ind+date+"/events/"+event+"/notsuggestion.txt")
