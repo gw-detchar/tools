@@ -224,6 +224,11 @@ for i in range(0,nmax):
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
 
+    fparameter = outdir+"parameter.txt"
+    with open(fparameter,mode="w") as f:
+        string='\
+'+str(tLL)+' '+mainchannel+' -1 -1 -1 -1 -1 -1 -1 lockloss lockloss -1 -1 -1 -1 -1 \n'
+        f.write(string)
     # Make condor submission files
     
     # Suggestion
