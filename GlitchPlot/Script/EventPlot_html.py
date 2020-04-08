@@ -1,18 +1,18 @@
 '''
-This script generates HTMLs for EventPlot.
+This script generates HTMLs for GlitchPlot.
 '''
 
 import os
 import glob
-
+import subprocess
 #  argument processing
 import argparse
 
 parser = argparse.ArgumentParser(description='Make coherencegram.')
-parser.add_argument('-d','--date',help='Date to be proccessd. eg. 20200320 ',default='20200320')
-parser.add_argument('-i','--inputdir',help='Input directory.',default='/Users/kozakai/Documents/KAGRA/DetChar/Kashiwa/20200320/GlitchPlot/')
+#parser.add_argument('-d','--date',help='Date to be proccessd. eg. 20200320 ',default='20200320')
+#parser.add_argument('-i','--inputdir',help='Input directory.',default='/Users/kozakai/Documents/KAGRA/DetChar/Kashiwa/20200320/GlitchPlot/')
 #parser.add_argument('-o','--outputdir',help='Output directory.',default='/Users/kozakai/Documents/KAGRA/DetChar/Kashiwa/20200320/')
-#parser.add_argument('-i','--inputdir',help='Input directory.',default='/mnt/GlitchPlot/')
+parser.add_argument('-i','--inputdir',help='Input directory.',default='/mnt/GlitchPlot/')
 #parser.add_argument('-o','--outputdir',help='Output directory.',default='/mnt/GlitchPlot/')
 
 
@@ -20,7 +20,7 @@ parser.add_argument('-i','--inputdir',help='Input directory.',default='/Users/ko
 # define variables
 args = parser.parse_args()
 
-date = args.date
+#date = args.date
 ind = args.inputdir
 #outd = args.outputdir
 
@@ -39,7 +39,7 @@ def WriteHeader(fname, place=''):
         <head>\n\
             <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n\
             <meta name="author" content="Chihiro Kozakai">\n\
-            <title>KAGRA EventPlot</title>\n\
+            <title>KAGRA GlitchPlot</title>\n\
             <link rel=\"stylesheet\" type=\"text/css\" href=\"'+place+'style.css\">\n\
             <link rel="shortcut icon" href='+place+'GlitchPlot_minilogo.png>\n\
         </head>\n\
@@ -101,7 +101,7 @@ WriteHeader(ftop)
 
 # Make link for event list of each day
 
-datelist = [os.path.basename(p.rstrip(os.sep)) for p in glob.glob(ind+"/*/")]
+datelist = [os.path.basename(p.rstrip(os.sep)) for p in glob.glob(ind+"/20*/")]
 datelist.sort()
 
 with open(ftop,mode='a') as f:
@@ -159,7 +159,9 @@ for i in range(len(datelist)):
             with open(fparameter,mode='r') as fp:
                 parameters = fp.read().split()
                 gpstime = float(parameters[0])
-                JSTglitch = parameters[0]   # To be modified
+                cmd = "gpstime "+str(gpstime)
+                info = subprocess.check_output(cmd.split())
+                JSTglitch = info.split()[1] + " " + info.split()[2]
                 snr = parameters[5]
                 frequency = parameters[6]
                 duration = parameters[3]
@@ -178,7 +180,9 @@ for i in range(len(datelist)):
         else:
             parameters = event.split("_",2) 
             gpstime = float(parameters[1])
-            JSTglitch = parameters[1]   # To be modified
+            cmd = "gpstime "+str(gpstime)
+            info = subprocess.check_output(cmd.split())
+            JSTglitch = info.split()[1] + " " + info.split()[2]
             snr = "-1"
             frequency = "-1"
             duration = "-1"
@@ -239,7 +243,7 @@ for i in range(len(datelist)):
         <head>\n\
             <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n\
             <meta name="author" content="Chihiro Kozakai">\n\
-            <title>KAGRA EventPlot</title>\n\
+            <title>KAGRA GlitchPlot</title>\n\
             <link rel=\"stylesheet\" type=\"text/css\" href=\"../../style.css\">\n\
             <link rel="shortcut icon" href=../../GlitchPlot_minilogo.png>\n\
         </head>\n\
@@ -550,7 +554,7 @@ for i in range(len(datelist)):
                 <div class="imagebox">\n\
             <a href='+event+'.html>\n\
                     <p class="image"><img src='+linkfig+' alt="Link to event page" width=400></p>\n\
-                    <p class="caption">'+categorydict[event]+'<br>'+str(gpstimedict[event])+'</p>\n\
+                    <p class="caption">'+categorydict[event]+'<br>'+str(JSTglitchdict[event])+'</p>\n\
             </a>\n\
                 </div>\n'
 
