@@ -80,6 +80,8 @@ for file in ${list[@]};do
     
 done
 
+$workdir/makelink.sh $today
+$workdir/makelink.sh $yesterday
 #condor_release chihiro.kozakai
 
 #Job re-submission
