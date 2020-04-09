@@ -250,7 +250,7 @@ Queue\n'
     with open(timesdf,mode="a") as f:
         for channel in allchannels:
             string = '\
-Arguments = -s '+str(tstart)+' -e '+str(tend)+' --llabel '+llabel+' -d full -o '+outdir+' -c '+channel+' -i '+mainchannel+' --nolegend --dpi 50\n\
+Arguments = -s '+str(tstart)+' -e '+str(tend)+' --llabel '+llabel+' -d full -o '+outdir+' -c '+channel+' -t '+channel+'_Timeseries -i '+mainchannel+' --nolegend --dpi 50\n\
 Queue\n'
             f.write(string)
 
