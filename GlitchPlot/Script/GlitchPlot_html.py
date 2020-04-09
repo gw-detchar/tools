@@ -39,6 +39,8 @@ def WriteHeader(fname, place=''):
         <head>\n\
             <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n\
             <meta name="author" content="Chihiro Kozakai">\n\
+            <meta http-eqiv="Pragma" content="no-cache">\n\
+            <meta http-eqiv="Cache-Control" content="no-cache">\n\
             <title>KAGRA GlitchPlot</title>\n\
             <link rel=\"stylesheet\" type=\"text/css\" href=\"'+place+'style.css\">\n\
             <link rel="shortcut icon" href='+place+'GlitchPlot_minilogo.png>\n\
@@ -468,6 +470,8 @@ for i in range(len(datelist)):
                 f3.close()
 
                 for channel in notsuggestion:
+                    if channel == mainchannel:
+                        continue
                     string = '\
 <br><p>'+channel+'</p><br>'
                     fp.write(string)
