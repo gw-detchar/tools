@@ -5,6 +5,9 @@ This script generates HTMLs for GlitchPlot.
 import os
 import glob
 import subprocess
+import matplotlib
+matplotlib.use('Agg')  # this line is required for the batch job before importing other matplotlib modules.  
+
 #  argument processing
 import argparse
 
@@ -153,7 +156,7 @@ for i in range(len(datelist)):
     for event in eventlist:
         # Get event information.
         
-        categorywords = {"CBC":"CBC","Burst":"Burst","glitch":"Glitch","lockloss":"Lock loss"}
+        categorywords = {"":"All","CBC":"CBC","Burst":"Burst","glitch":"Glitch","lockloss":"Lock loss"}
         #fparameter = glob.glob(ind+date+"/events/"+event+"/parameter.txt")[0]
         fparameters = glob.glob(ind+date+"/events/"+event+"/parameter.txt")
         if len(fparameters) > 0:
@@ -254,7 +257,7 @@ for i in range(len(datelist)):
 <h3 class=h3_form>Thank you very much for contributing glitch cassification !</h3>\n\
 </br>\n\
 \n\
-<a href="https://docs.google.com/spreadsheets/d/1JxC3QL6jF3xmA0MnWtWO_dUgNOF_i5enD_j4yUK1X7s/edit?usp=sharing" target="_blank" title="GlitchPlot Catalog" >GlitchPlot Catalog</a>\n\
+Your reports go here: <a href="https://docs.google.com/spreadsheets/d/1JxC3QL6jF3xmA0MnWtWO_dUgNOF_i5enD_j4yUK1X7s/edit?usp=sharing" target="_blank" title="GlitchPlot Catalog" >GlitchPlot Catalog</a>\n\
 \n\
 </span>\n\
 <br>\n\
@@ -509,52 +512,61 @@ for i in range(len(datelist)):
     # Make eventlist for each day.
     #####################################################################
 
-    WriteHeader(fdaily,place="../../")
+    #categorywords = {"CBC":"CBC","Burst":"Burst","glitch":"Glitch","lockloss":"Lock loss"}
 
-    # Link to other days
+    for category in categorywords.keys(): 
+        fdaily = ind+date+"/html/"+category+"index.html"
 
-    with open(fdaily,mode='a') as f:
+        WriteHeader(fdaily,place="../../")
 
-        string='\
+        # Link to other days
+
+        with open(fdaily,mode='a') as f:
+
+            string='\
 <span style=\"font-size:16pt;\">\n'
 
-        # if there is previous date
-        if i != 0:
-            prevdate = datelist[i-1]
-            string+='<a href=../../'+prevdate+'/html/index.html target=\"_self\"><< Previous day('+prevdate+')</a> &ensp;&ensp;\n'
-        else:
-            string+='No previous result &ensp;&ensp;\n'
-        string+='<a href=../../index.html >List of Date(all)</a> &ensp;&ensp;\n\
+            # if there is previous date
+            if i != 0:
+                prevdate = datelist[i-1]
+                string+='<a href=../../'+prevdate+'/html/index.html target=\"_self\"><< Previous day('+prevdate+')</a> &ensp;&ensp;\n'
+            else:
+                string+='No previous result &ensp;&ensp;\n'
+            string+='<a href=../../index.html >List of Date(all)</a> &ensp;&ensp;\n\
 <a href=../../'+latestdate+'/html/index.html target=\"_self\">Latest</a> &ensp;&ensp;\n'
 
-        # if there is next date
-        if i != len(datelist)-1:
-            nextdate = datelist[i+1] 
-            string+='<a href=../../'+nextdate+'/html/index.html target=\"_self\"> Next day('+nextdate+') >></a> &ensp;&ensp;\n'
-        else:
-            string+='No next result &ensp;&ensp;\n'
+            # if there is next date
+            if i != len(datelist)-1:
+                nextdate = datelist[i+1] 
+                string+='<a href=../../'+nextdate+'/html/index.html target=\"_self\"> Next day('+nextdate+') >></a> &ensp;&ensp;\n'
+            else:
+                string+='No next result &ensp;&ensp;\n'
 
-        string+='</span>\n'
-        f.write(string)
+            string+='</span>\n'
+            f.write(string)
 
-        string='\
+            string='\
 <hr><br>\n\
-<span style="font-size:25pt; color:#000000;"> Glitch list on '+date+' JST</span><br>\n\
+<span style="font-size:25pt; color:#000000;"> Event list on '+date+' JST:  '+categorywords[category]+' events</span><br>\n\
+<h4>Category filter:  <a href=index.html>All</a> <a href=glitchindex.html>Glitch</a> <a href=locklossindex.html>Lock loss</a> <a href=CBCindex.html>CBC</a> <a href=Burstindex.html>Burst</a>  </h4>\n\
             <p>\n\
             Please choose interested event.\n\
             </p>\n'
-        f.write(string)
+            f.write(string)
 
-        tmplist=sorted(gpstimedict.items(), key=lambda x:x[1])
+            tmplist=sorted(gpstimedict.items(), key=lambda x:x[1])
 
-        for tmp in tmplist:
-            # Get main channel q-transform plot for link
-            event=tmp[0]
+            for tmp in tmplist:
+                # Get main channel q-transform plot for link
+                event=tmp[0]
 
-            mainfig=glob.glob(ind+date+"/events/"+event+"/"+mainchanneldict[event]+"_qtransform*")
-            if len(mainfig) != 0:
-                linkfig = mainfig[0].replace(ind+date,"..")
-                string='\
+                if category in event:
+
+                
+                    mainfig=glob.glob(ind+date+"/events/"+event+"/"+mainchanneldict[event]+"_qtransform*")
+                    if len(mainfig) != 0:
+                        linkfig = mainfig[0].replace(ind+date,"..")
+                        string='\
                 <div class="imagebox">\n\
             <a href='+event+'.html>\n\
                     <p class="image"><img src='+linkfig+' alt="Link to event page" width=400></p>\n\
@@ -562,11 +574,11 @@ for i in range(len(datelist)):
             </a>\n\
                 </div>\n'
 
-            else:
-                string='\
+                    else:
+                        string='\
             <a href='+event+'.html>'+event+'</a>\n'
 
-            f.write(string)
+                    f.write(string)
 
         
-    WriteFooter(fdaily)
+        WriteFooter(fdaily)
