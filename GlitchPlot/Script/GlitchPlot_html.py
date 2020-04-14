@@ -11,7 +11,7 @@ matplotlib.use('Agg')  # this line is required for the batch job before importin
 #  argument processing
 import argparse
 
-parser = argparse.ArgumentParser(description='Make coherencegram.')
+parser = argparse.ArgumentParser(description='Make html for GlitchPlot.')
 #parser.add_argument('-d','--date',help='Date to be proccessd. eg. 20200320 ',default='20200320')
 #parser.add_argument('-i','--inputdir',help='Input directory.',default='/Users/kozakai/Documents/KAGRA/DetChar/Kashiwa/20200320/GlitchPlot/')
 #parser.add_argument('-o','--outputdir',help='Output directory.',default='/Users/kozakai/Documents/KAGRA/DetChar/Kashiwa/20200320/')
@@ -67,17 +67,19 @@ def WriteHeader(fname, place=''):
 #
         f.write(string)
 
-        
+now = str(datetime.datetime.now())        
 def WriteFooter(fname):
     '''
     Write down hooter and contact information at the bottom of the page.
     '''
-    
+
     with open(fname,mode='a') as f:
         string='\
         <p style="clear: left;">\n\
         <br><hr><br>\n\
         If you have any problem, any comment or any request about this page, please contact <a href="mailto:ckozakai@icrr.u-tokyo.ac.jp">C. Kozakai</a>.\n\
+        <br>\n\
+        Updated at JST '+now+'.\n\
         </p>\n\
     </body>\n\
 </html>\n\
