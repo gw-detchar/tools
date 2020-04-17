@@ -4,6 +4,7 @@ This script generates HTMLs for GlitchPlot.
 
 import os
 import glob
+import datetime
 import subprocess
 import matplotlib
 matplotlib.use('Agg')  # this line is required for the batch job before importing other matplotlib modules.  
@@ -13,9 +14,9 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Make html for GlitchPlot.')
 #parser.add_argument('-d','--date',help='Date to be proccessd. eg. 20200320 ',default='20200320')
-#parser.add_argument('-i','--inputdir',help='Input directory.',default='/Users/kozakai/Documents/KAGRA/DetChar/Kashiwa/20200320/GlitchPlot/')
+parser.add_argument('-i','--inputdir',help='Input directory.',default='/Users/kozakai/Documents/KAGRA/DetChar/Kashiwa/20200320/GlitchPlot/')
 #parser.add_argument('-o','--outputdir',help='Output directory.',default='/Users/kozakai/Documents/KAGRA/DetChar/Kashiwa/20200320/')
-parser.add_argument('-i','--inputdir',help='Input directory.',default='/mnt/GlitchPlot/')
+#parser.add_argument('-i','--inputdir',help='Input directory.',default='/mnt/GlitchPlot/')
 #parser.add_argument('-o','--outputdir',help='Output directory.',default='/mnt/GlitchPlot/')
 
 
@@ -168,6 +169,7 @@ for i in range(len(datelist)):
                 gpstime = float(parameters[0])
                 cmd = "gpstime "+str(gpstime)
                 info = subprocess.check_output(cmd.split())
+                #info="info0 info1 info2" # dummy for environment wuthout gpstime command
                 JSTglitch = info.split()[1] + " " + info.split()[2]
                 snr = parameters[5]
                 frequency = parameters[6]
@@ -189,6 +191,7 @@ for i in range(len(datelist)):
             gpstime = float(parameters[1])
             cmd = "gpstime "+str(gpstime)
             info = subprocess.check_output(cmd.split())
+            #info="info0 info1 info2" # dummy for environment wuthout gpstime command
             JSTglitch = info.split()[1] + " " + info.split()[2]
             snr = "-1"
             frequency = "-1"
@@ -531,16 +534,16 @@ Your reports go here: <a href="https://docs.google.com/spreadsheets/d/1JxC3QL6jF
             # if there is previous date
             if i != 0:
                 prevdate = datelist[i-1]
-                string+='<a href=../../'+prevdate+'/html/index.html target=\"_self\"><< Previous day('+prevdate+')</a> &ensp;&ensp;\n'
+                string+='<a href=../../'+prevdate+'/html/'+category+'index.html target=\"_self\"><< Previous day('+prevdate+')</a> &ensp;&ensp;\n'
             else:
                 string+='No previous result &ensp;&ensp;\n'
             string+='<a href=../../index.html >List of Date(all)</a> &ensp;&ensp;\n\
-<a href=../../'+latestdate+'/html/index.html target=\"_self\">Latest</a> &ensp;&ensp;\n'
+<a href=../../'+latestdate+'/html/'+category+'index.html target=\"_self\">Latest</a> &ensp;&ensp;\n'
 
             # if there is next date
             if i != len(datelist)-1:
                 nextdate = datelist[i+1] 
-                string+='<a href=../../'+nextdate+'/html/index.html target=\"_self\"> Next day('+nextdate+') >></a> &ensp;&ensp;\n'
+                string+='<a href=../../'+nextdate+'/html/'+category+'index.html target=\"_self\"> Next day('+nextdate+') >></a> &ensp;&ensp;\n'
             else:
                 string+='No next result &ensp;&ensp;\n'
 
