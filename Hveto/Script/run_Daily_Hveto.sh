@@ -48,7 +48,7 @@ NOMEGA=5
 EXEC=hveto
 INIFILE=/users/DET/tools/Hveto/etc/k1-hveto-daily-o3.ini
 OUTPUTDIR=/home/controls/public_html/hveto/day/${DIRNAME_DATE}
-#SEGMENTFILE=/users/DET/Segments/K1-GRD_SCIENCE_MODE/2020/K1-GRD_SCIENCE_MODE_SEGMENT_UTC_${DATE}.xml
-SEGMENTFILE=/users/DET/Segments/K1-GRD_LOCKED/2020/K1-GRD_LOCKED_SEGMENT_UTC_${DATE}.xml
+SEGMENTFILE=/users/DET/Segments/K1-GRD_SCIENCE_MODE/2020/K1-GRD_SCIENCE_MODE_SEGMENT_UTC_${DATE}.xml
+#SEGMENTFILE=/users/DET/Segments/K1-GRD_LOCKED/2020/K1-GRD_LOCKED_SEGMENT_UTC_${DATE}.xml
 OUTPUTLOG=/home/controls/public_html/hveto/logs/daily_hveto-${DIRNAME_DATE}.log
 ${EXEC} ${GPSSTART} ${GPSEND} --ifo ${IFO} --config-file ${INIFILE} --output-directory ${OUTPUTDIR} --analysis-segments ${SEGMENTFILE} --nproc ${NPROCESS} --omega-scans ${NOMEGA} &> ${OUTPUTLOG}
