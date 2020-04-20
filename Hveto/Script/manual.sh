@@ -37,7 +37,8 @@ echo $SEGMENTFILE
 
 IFO='K1'
 #INIFILE=/users/DET/tools/Hveto/etc/manual.ini
-INIFILE=/users/DET/tools/Hveto/etc/burst.ini
+#INIFILE=/users/DET/tools/Hveto/etc/burst.ini
+INIFILE=/users/DET/tools/Hveto/etc/burst_O3.ini
 DIRNAME_DATE=$3
 OUTPUTDIR=/home/controls/public_html/hveto/manual/${DIRNAME_DATE}_burst
 

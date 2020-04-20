@@ -46,7 +46,8 @@ print(t)
 
 t.rename_column('central frequency','peak_frequency')
 t.rename_column('hrss for J1 detector','amplitude')
-#t.rename_column('sSNR for J1 detector','snr')
+if noise:
+    t.rename_column('sSNR for J1 detector','snr')
 t.rename_column('likelihood','confidence')
 t.rename_column('time shift','param_one_value')
 #t.rename_column('time for J1 detector','peak_time')
@@ -59,7 +60,8 @@ peaktimedata = [ int(i)  for i in time.data]
 #peak_time = Column(name='peak_time',data=[ int(i)  for i in time.data])
 peak_time = Column(name='peak_time',data=peaktimedata)
 peak_time_ns = Column(name='peak_time_ns',data=[ int((i - int(i))*1e9)  for i in time.data])
-snr = Column(name='snr',data=[ 10 for i in time.data])
+if not noise:
+    snr = Column(name='snr',data=[ 10 for i in time.data])
 
 t.remove_column('time for J1 detector')
 t.remove_column('sSNR for J1 detector')
@@ -73,20 +75,32 @@ print(t)
 
 #t.write(outfile, format = 'ligolw', tablename = 'sngl_burst', overwrite = True)
 
-if noise:
-    t.write(outfile, format = 'ligolw', tablename = 'sngl_burst', overwrite = True)
+#time=peaktimedata[0]
+#duration=peaktimedata[-1]-time
+time=1270975552
+duration=1270975800-1270975552
+
+outfile = "/home/controls/triggers/K1/BURST_DUMMY_OMICRON/"+str(int(float(time)))[0:5]+"/K1-BURST_DUMMY_OMICRON-" + str(time)+ "-"+str(duration)+".xml.gz"
+if not os.path.exists("/home/controls/triggers/K1/BURST_DUMMY_OMICRON/"+str(int(float(time)))[0:5]):
+    os.makedirs("/home/controls/triggers/K1/BURST_DUMMY_OMICRON/"+str(int(float(time)))[0:5])
+                
+t.write(outfile, format = 'ligolw', tablename = 'sngl_burst', overwrite = True)
+
+#if noise:
     
-else:
+    #t.write(outfile, format = 'ligolw', tablename = 'sngl_burst', overwrite = True)
+    
+#else:
     # Want to modify for multiple events to be filed one by one.
-    with open("events.txt", mode='w') as f:
-        for i in range(0, len(t)):
-            print(i)
-            print(t[i])
-            time=peaktimedata[i]-30
-            if not os.path.exists("/home/controls/triggers/K1/BURST_DUMMY_OMICRON/"+str(int(float(time)))[0:5]):
-                os.makedirs("/home/controls/triggers/K1/BURST_DUMMY_OMICRON/"+str(int(float(time)))[0:5])
-            outfile = "/home/controls/triggers/K1/BURST_DUMMY_OMICRON/"+str(int(float(time)))[0:5]+"/K1-BURST_DUMMY_OMICRON-" + str(time)+ "-60.xml.gz"
+    #with open("events.txt", mode='w') as f:
+        #for i in range(0, len(t)):
+            #print(i)
+            #print(t[i])
+            #time=peaktimedata[i]-30
+            #if not os.path.exists("/home/controls/triggers/K1/BURST_DUMMY_OMICRON/"+str(int(float(time)))[0:5]):
+                #os.makedirs("/home/controls/triggers/K1/BURST_DUMMY_OMICRON/"+str(int(float(time)))[0:5])
+            #outfile = "/home/controls/triggers/K1/BURST_DUMMY_OMICRON/"+str(int(float(time)))[0:5]+"/K1-BURST_DUMMY_OMICRON-" + str(time)+ "-60.xml.gz"
 
-            t.write(outfile, format = 'ligolw', tablename = 'sngl_burst', overwrite = True)
+            #t.write(outfile, format = 'ligolw', tablename = 'sngl_burst', overwrite = True)
 
-            f.write(str(peaktimedata[i])+'\n')
+            #f.write(str(peaktimedata[i])+'\n')
