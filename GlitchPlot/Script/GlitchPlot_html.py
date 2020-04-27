@@ -16,7 +16,8 @@ parser = argparse.ArgumentParser(description='Make html for GlitchPlot.')
 #parser.add_argument('-d','--date',help='Date to be proccessd. eg. 20200320 ',default='20200320')
 #parser.add_argument('-i','--inputdir',help='Input directory.',default='/Users/kozakai/Documents/KAGRA/DetChar/Kashiwa/20200320/GlitchPlot/')
 #parser.add_argument('-o','--outputdir',help='Output directory.',default='/Users/kozakai/Documents/KAGRA/DetChar/Kashiwa/20200320/')
-parser.add_argument('-i','--inputdir',help='Input directory.',default='/mnt/GlitchPlot/')
+#parser.add_argument('-i','--inputdir',help='Input directory.',default='/mnt/GlitchPlot/')
+parser.add_argument('-i','--inputdir',help='Input directory.',default='/home/chihiro.kozakai/public_html/KAGRA/test/GlitchPlot/')
 #parser.add_argument('-o','--outputdir',help='Output directory.',default='/mnt/GlitchPlot/')
 
 
@@ -133,6 +134,8 @@ WriteFooter(ftop)
 # Make eventlist for each day.
 #####################################################################
 
+categorywords = {"":"All","CBC":"CBC","Burst":"Burst","glitch":"Glitch","lockloss":"Lock loss"}
+
 #for date in datelist:
 latestdate=datelist[len(datelist)-1]
 for i in range(len(datelist)):
@@ -159,7 +162,7 @@ for i in range(len(datelist)):
     for event in eventlist:
         # Get event information.
         
-        categorywords = {"":"All","CBC":"CBC","Burst":"Burst","glitch":"Glitch","lockloss":"Lock loss"}
+
         #fparameter = glob.glob(ind+date+"/events/"+event+"/parameter.txt")[0]
         fparameters = glob.glob(ind+date+"/events/"+event+"/parameter.txt")
         if len(fparameters) > 0:
@@ -418,7 +421,7 @@ Your reports go here: <a href="https://docs.google.com/spreadsheets/d/1JxC3QL6jF
                     ff.write(string)
 
                 string='\
-<h3 class=h3_a>Suggested channel (1): '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
+<h3 class=h3_a>Suggested channel (1): '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>\n'
                 fp.write(string)
 
                 f1 = open(fsname[0])
@@ -433,11 +436,12 @@ Your reports go here: <a href="https://docs.google.com/spreadsheets/d/1JxC3QL6jF
                     for fig in figs:
                         linkfig = fig.replace(ind+date,"..")
                         string = '\
-<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>'
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>\n'
                         fp.write(string)
 
+                # Suggestion 2
                 string='\
-<h3 class=h3_a>Suggested channel (2): '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
+<h3 class=h3_a>Suggested channel (2): '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>\n'
                 fp.write(string)
 
                 fsname=glob.glob(ind+date+"/events/"+event+"/suggestion2.txt")
@@ -459,11 +463,40 @@ Your reports go here: <a href="https://docs.google.com/spreadsheets/d/1JxC3QL6jF
                     for fig in figs:
                         linkfig = fig.replace(ind+date,"..")
                         string = '\
-<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>'
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>\n'
                         fp.write(string)
-                
+
+                # DARM affected
                 string='\
-<h3 class=h3_a>Other auxiliary channel: '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>'
+<h3 class=h3_a>Channels affected by DARM DoF: '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>\n'
+                fp.write(string)
+
+                fsname=glob.glob(ind+date+"/events/"+event+"/DARMaffected.dat")
+                if len(fsname) > 0:
+                    linktxt = fsname[0].replace(ind+date,"..")
+                    with open(fform, mode='a') as ff:
+                        string = '\
+<br><a href='+linktxt+' target="_self">DARM affected channel list</a>\n'
+                        ff.write(string)
+
+                    f4 = open(fsname[0])
+                    affected = f4.read().split()
+                    f4.close()
+                    
+                    for channel in affected:
+                        string = '\
+<br><p>'+channel+'</p><br>'
+                        fp.write(string)
+                        figs=glob.glob(ind+date+"/events/"+event+"/*"+channel+"*")
+                        for fig in figs:
+                            linkfig = fig.replace(ind+date,"..")
+                            string = '\
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>\n'
+                            fp.write(string)
+
+                # Not suggestion
+                string='\
+<h3 class=h3_a>Other auxiliary channel: '+mainchannel+' at GPS='+str(gpstime)+' &ensp; JST='+str(JSTglitch)+'</h3>\n'
                 fp.write(string)
 
                 fsname=glob.glob(ind+date+"/events/"+event+"/notsuggestion.txt")
@@ -487,7 +520,7 @@ Your reports go here: <a href="https://docs.google.com/spreadsheets/d/1JxC3QL6jF
                     for fig in figs:
                         linkfig = fig.replace(ind+date,"..")
                         string = '\
-<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>'
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>\n'
                         fp.write(string)
                 
             else:
@@ -498,14 +531,14 @@ Your reports go here: <a href="https://docs.google.com/spreadsheets/d/1JxC3QL6jF
 
                     linkfig = fig.replace(ind+date,"..")
                     string = '\
-<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>'
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>\n'
                     fp.write(string)
                 
                 figs=glob.glob(ind+date+"/events/"+event+"/*coherence*.png")
                 for fig in figs:
                     linkfig = fig.replace(ind+date,"..")
                     string = '\
-<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>'
+<a href='+linkfig+' target="_self"><img src='+linkfig+' alt='+linkfig+' title='+linkfig+' width=430></a>\n'
                     fp.write(string)
 
 

@@ -293,6 +293,7 @@ do
 	echo $gpstime $channel $min_duration $max_duration $bandwidth $maxSNR $frequency_snr $max_amp $frequency_amp  $eventtype $triggertype $eventnumber $peakQ $peakQ_amp $minf $maxf 
     } > $outdir/parameter.txt
 
+    cp /home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/DARMaffected.dat $outdir/DARMaffected.dat
 
     # make main script.
 

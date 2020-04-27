@@ -188,6 +188,7 @@ do
 	echo $gpstime $channel 0.125 0.125 8 $detection_statistics 100 $detection_statistics 100  CBC kagalin 0
     } > $outdir/parameter.txt
 
+    cp /home/chihiro.kozakai/detchar/KamiokaTool/tools/GlitchPlot/Script/DARMaffected.dat $outdir/DARMaffected.dat
 
     # make main script.
 
