@@ -116,9 +116,9 @@ def mkSegment(gst, get, utc_date, txt=True) :
     #print('Reading {0} timeseries data...'.format(date))
     # add 1sec margin for locked segments contract.
     channeldata = TimeSeriesDict.read(cache, channels, start=gst-1, end=get+1, format='gwf.lalframe', gap='pad')
-    channeldataGRDLSC = channeldata[chGRDLSC]
-    channeldataGRDEQ = channeldata[chGRDEQ]
-
+    #channeldataGRDLSC = channeldata[chGRDLSC]
+    #channeldataGRDEQ = channeldata[chGRDEQ]
+    channeldataGRDLOCK = channeldata[chGRDLOCK]
     #------------------------------------------------------------
     #print('Checking PMC Locking status for K1...')
 
