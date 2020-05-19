@@ -8,6 +8,6 @@ rsync -a --no-o --copy-links -e "ssh -i ~/.ssh/id_rsa_detchar" chihiro.kozakai@m
 echo html generation.
 python /users/DET/tools/GlitchPlot/Script/GlitchPlot_html.py
 
-ls /mnt/GlitchPlot/20*/html
+#ls /mnt/GlitchPlot/20*/html
 
 echo finish.

@@ -20,6 +20,8 @@ from glue.lal import Cache
 
 import getpass
 import glob
+
+import argparse
 #------------------------------------------------------------
 
 start_time = time.time()
@@ -156,10 +158,12 @@ def mkSegment(gst, get, utc_date) :
     segment8.write(file_path8)
 #------------------------------------------------------------
 
-
-utc_date = (datetime.now() + timedelta(days=-1)).strftime("%Y-%m-%d")
+parser = argparse.ArgumentParser()
+parser.add_argument('-d', '--date', default=(datetime.now() + timedelta(days=-1)).strftime("%Y-%m-%d"))
+args = parser.parse_args()
+#utc_date = (datetime.now() + timedelta(days=-1)).strftime("%Y-%m-%d")
+utc_date = args.date
 start_utc_time = utc_date + ' 09:00:00'
-
 cmd = 'gpstime ' + start_utc_time + ' | awk \'NR == 3 {print $2}\''
 start_gps_time = int (float(subprocess.check_output(cmd, shell = True)) )
 end_gps_time = int(start_gps_time) + 86400

@@ -16,8 +16,8 @@ parser = argparse.ArgumentParser(description='Make html for GlitchPlot.')
 #parser.add_argument('-d','--date',help='Date to be proccessd. eg. 20200320 ',default='20200320')
 #parser.add_argument('-i','--inputdir',help='Input directory.',default='/Users/kozakai/Documents/KAGRA/DetChar/Kashiwa/20200320/GlitchPlot/')
 #parser.add_argument('-o','--outputdir',help='Output directory.',default='/Users/kozakai/Documents/KAGRA/DetChar/Kashiwa/20200320/')
-#parser.add_argument('-i','--inputdir',help='Input directory.',default='/mnt/GlitchPlot/')
-parser.add_argument('-i','--inputdir',help='Input directory.',default='/home/chihiro.kozakai/public_html/KAGRA/test/GlitchPlot/')
+parser.add_argument('-i','--inputdir',help='Input directory.',default='/mnt/GlitchPlot/') # For Kamioka
+#parser.add_argument('-i','--inputdir',help='Input directory.',default='/home/chihiro.kozakai/public_html/KAGRA/test/GlitchPlot/') # For Kashiwa
 #parser.add_argument('-o','--outputdir',help='Output directory.',default='/mnt/GlitchPlot/')
 
 
