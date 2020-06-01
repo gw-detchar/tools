@@ -17,7 +17,7 @@ gpsend = locked.known[0][1]
 #omicron = DataQualityFlag(name="Omicron",known = [(gpsstart,gpsend)])
 
 channels = []
-with open("/users/DET/tools/Omicron/Parameter/O3rerun_512.txt") as f:
+with open("/users/DET/tools/Omicron/Parameter/O3rerun_2048.txt") as f:
     lines = f.readlines()
     for line in lines:
         if "DATA CHANNELS " in line:
@@ -49,8 +49,9 @@ for channel in channels:
     failed = DataQualityFlag(name="Failed",known = [(gpsstart,gpsend)])
 
     #with open("/users/DET/tools/Omicron/Script/log200428.dat") as f:  # for 4/14-20
-    #with open("/users/DET/tools/Omicron/Script/log200519_4096.dat") as f:  # for 4/14-20
-    with open("/users/DET/tools/Omicron/Script/log200519_256-1024.dat") as f:  # for 4/14-20
+    #with open("/users/DET/tools/Omicron/Script/log200519_4096.dat") as f:  # for 4/15
+    #with open("/users/DET/tools/Omicron/Script/log200519_256-1024.dat") as f:  # for 4/15
+    with open("/users/DET/tools/Omicron/Script/log200521_2048.dat") as f:  # for 4/15
     #with open("/users/DET/tools/Omicron/Script/log200504.dat") as f:  # for 4/7-12
         lines = f.readlines()
         for line in lines:
@@ -75,12 +76,12 @@ for channel in channels:
     print("Unknown segments")
     print(unknown)
 
-    with open("unknownSegments0519_512_"+channel+".txt", mode='w') as f:
+    with open("unknownSegments0519_2048_"+channel+".txt", mode='w') as f:
         for seg in unknown.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-    with open("failedSegments0519_512_"+channel+".txt", mode='w') as f:
+    with open("failedSegments0519_2048_"+channel+".txt", mode='w') as f:
         for seg in failed.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-    with open("succeededSegments0519_512_"+channel+".txt", mode='w') as f:
+    with open("succeededSegments0519_2048_"+channel+".txt", mode='w') as f:
         for seg in omicron.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
