@@ -60,6 +60,10 @@ OVERLAP=`printf "${STR_PARAM}" | grep "PARAMETER TIMING " | awk '{print $4}'`
 #let GPS_END=`__get_periodic_gps_epoch ${CRON_INTERVAL}`+${OVERLAP}/2
 #let GPS_START=${GPS_END}-${CRON_INTERVAL}*60-${OVERLAP}/2
 let MARGIN=${OVERLAP}/2
+
+# LASTCUT is length to cut the end og the lock segment. [sec]
+LASTCUT=30
+
 #echo $GPS_START
 #echo $GPS_END
 
@@ -86,8 +90,9 @@ do
 	#GPS_START=$(( $GPS_START - 60 ))
     #fi
 
-    GPS_START=$(( $GPS_START - $MARGIN ))
-    GPS_END=$(( $GPS_END + $MARGIN ))
+    #GPS_START=$(( $GPS_START - $MARGIN ))
+    #GPS_END=$(( $GPS_END + $MARGIN ))
+    GPS_END=$(( $GPS_END - $LASTCUT ))
     ${CMD_OMICRON} ${GPS_START} ${GPS_END} ${FILE_PARAM}
     echo "GPS_START" $GPS_START
     echo "GPS_END" $GPS_END
