@@ -62,7 +62,8 @@ OVERLAP=`printf "${STR_PARAM}" | grep "PARAMETER TIMING " | awk '{print $4}'`
 let MARGIN=${OVERLAP}/2
 
 # LASTCUT is length to cut the end og the lock segment. [sec]
-LASTCUT=30
+#LASTCUT=30
+LASTCUT=0
 
 #echo $GPS_START
 #echo $GPS_END
@@ -106,5 +107,5 @@ done
 ################################
 ### Move to LIGO convention
 ################################
-#__mv_etg_ligo_convention ${IFO} ${DIR_OUTPUT} ${ETG_DIR}
+__mv_etg_ligo_convention ${IFO} ${DIR_OUTPUT} ${ETG_DIR}
 echo __mv_etg_ligo_convention ${IFO} ${DIR_OUTPUT} ${ETG_DIR}

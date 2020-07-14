@@ -111,13 +111,13 @@ for channel in channels:
         print("Unknown segments")
         print(unknown)
 
-    with open("unknownSegments0602_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
+    with open("OmicronLog/unknownSegments0602_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
         for seg in unknown.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-    with open("failedSegments0602_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
+    with open("OmicronLog/failedSegments0602_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
         for seg in failed.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-    with open("succeededSegments0602_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
+    with open("OmicronLog/succeededSegments0602_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
         for seg in omicron.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 
