@@ -62,8 +62,8 @@ OVERLAP=`printf "${STR_PARAM}" | grep "PARAMETER TIMING " | awk '{print $4}'`
 let MARGIN=${OVERLAP}/2
 
 # LASTCUT is length to cut the end og the lock segment. [sec]
-#LASTCUT=30
-LASTCUT=0
+LASTCUT=30
+#LASTCUT=0
 
 #echo $GPS_START
 #echo $GPS_END
@@ -93,7 +93,18 @@ do
 
     #GPS_START=$(( $GPS_START - $MARGIN ))
     #GPS_END=$(( $GPS_END + $MARGIN ))
-    GPS_END=$(( $GPS_END - $LASTCUT ))
+
+
+
+    hhmmss=`gpstime $GPS_END | grep UTC`
+    hhmmss=${hhmmss:17}
+
+    if [ "$hhmmss" = "00:00:00" ]; then
+	echo ""
+	GPS_END=$(( $GPS_END + $MARGIN ))
+    else
+	GPS_END=$(( $GPS_END - $LASTCUT ))
+    fi
     ${CMD_OMICRON} ${GPS_START} ${GPS_END} ${FILE_PARAM}
     echo "GPS_START" $GPS_START
     echo "GPS_END" $GPS_END
