@@ -9,7 +9,7 @@
 ################################
 ### Set enviroment
 ################################
-[ -e /kagra/apps/etc/client-user-env.sh ] && source  /kagra/apps/etc/client-user-env.sh
+#[ -e /kagra/apps/etc/client-user-env.sh ] && source  /kagra/apps/etc/client-user-env.sh
 if test `whoami` = "controls"
 then
     DIR_FR0=/frame0/full

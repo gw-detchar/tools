@@ -11,7 +11,7 @@
 if test `whoami` = "controls"
 then
     DET_ROOT=/users/DET
-    DIR_SEG=${DET_ROOT}/Segments
+    DIR_SEG=${DET_ROOT}/Segments/K1-GRD_SCIENCE_MODE
 else
     DET_ROOT=${HOME}/git/kagra-detchar
     DIR_SEG=${HOME}/segment/UTC
@@ -35,13 +35,14 @@ source ${DET_FSCAN}/etc/environment.sh
 ### Get Time
 ################################
 JST_DATE=`date --date '1 day ago' +"%Y-%m-%d"`
+JST_YEAR=`date --date '1 day ago' +"%Y"`
 GPS_START=`${CMD_GPSTIME} ${JST_DATE} 09:00:00 | grep GPS | awk '{print $2}'`
 let GPS_END=${GPS_START}+86400
 
 echo "==> LOCAL: ${JST_DATE}"
 echo "==> START: ${GPS_START}"
 echo "==>   END: ${GPS_END}"
-FILE_SEG=${DIR_SEG}/SegmentList_IMC_UTC_${JST_DATE}.txt
+FILE_SEG=${DIR_SEG}/${JST_YEAR}/K1-GRD_SCIENCE_MODE_SEGMENT_UTC_${JST_DATE}.txt
 
 ################################
 ### Generate Resource File
@@ -87,8 +88,8 @@ ${CMD_LINK}
 printf "==>   SEG: "
 if test ! -e ${FILE_SEG}
 then
-    echo "${CMD_SEGGEN}"
-    PATH=${PATH}:${HOME}/bin ${CMD_SEGGEN}
+    echo "Error: No Segment file"
+    exit 1
 else
     echo "nothing to be done."
 fi

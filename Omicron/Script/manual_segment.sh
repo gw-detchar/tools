@@ -119,4 +119,4 @@ done
 ### Move to LIGO convention
 ################################
 __mv_etg_ligo_convention ${IFO} ${DIR_OUTPUT} ${ETG_DIR}
-echo __mv_etg_ligo_convention ${IFO} ${DIR_OUTPUT} ${ETG_DIR}
+

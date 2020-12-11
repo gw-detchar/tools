@@ -23,9 +23,15 @@ if len(day) < 2:
     day = "0"+day
 
 #=============Get locked segments=============
-#locked = DataQualityFlag.read("/users/DET/Segments/K1-GRD_LOCKED/2020/K1-GRD_LOCKED_SEGMENT_UTC_2020-04-17.xml")
-#locked = DataQualityFlag.read("/users/DET/Segments/K1-GRD_LOCK_STATE_N_EQ_1000/2020/K1-GRD_LOCK_STATE_N_EQ_1000_SEGMENT_UTC_2020-04-15.xml")
-locked = DataQualityFlag.read("/users/DET/Segments/K1-GRD_SCIENCE_MODE/"+year+"/K1-GRD_SCIENCE_MODE_SEGMENT_UTC_"+year+"-"+month+"-"+day+".xml")
+
+if year == "2020" and month == "04" and day == "15":
+    locked = DataQualityFlag.read("/users/DET/Segments/K1-DET_FOR_GRB200415A/"+year+"/K1-DET_FOR_GRB200415A_UTC_"+year+"-"+month+"-"+day+".xml")
+else:
+    #locked = DataQualityFlag.read("/users/DET/Segments/K1-GRD_LOCKED/2020/K1-GRD_LOCKED_SEGMENT_UTC_2020-04-17.xml")
+    #locked = DataQualityFlag.read("/users/DET/Segments/K1-GRD_LOCK_STATE_N_EQ_1000/2020/K1-GRD_LOCK_STATE_N_EQ_1000_SEGMENT_UTC_2020-04-15.xml")
+    locked = DataQualityFlag.read("/users/DET/Segments/K1-GRD_SCIENCE_MODE/"+year+"/K1-GRD_SCIENCE_MODE_SEGMENT_UTC_"+year+"-"+month+"-"+day+".xml")
+
+
 
 # Remove segments shorter than 94 sec
 
@@ -85,7 +91,8 @@ for channel in channels:
     #with open("/users/DET/tools/Omicron/Script/log200519_4096.dat") as f:  # for 4/15
     #with open("/users/DET/tools/Omicron/Script/log200519_256-1024.dat") as f:  # for 4/15
     #with open("/users/DET/tools/Omicron/Script/log200521_2048.dat") as f:  # for 4/15
-    with open("/users/DET/tools/Omicron/Script/log200602_20"+month+""+day+"_"+freq+".dat") as f:  # for O3GK
+    #with open("/users/DET/tools/Omicron/Script/log200602_20"+month+""+day+"_"+freq+".dat") as f:  # for O3GK
+    with open("/users/DET/tools/Omicron/log/log200825_20"+month+""+day+"_"+freq+".dat") as f:  # for O3GK
     #with open("/users/DET/tools/Omicron/Script/log200504.dat") as f:  # for 4/7-12
         lines = f.readlines()
         for line in lines:
