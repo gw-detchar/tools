@@ -57,26 +57,17 @@ OVERLAP=`printf "${STR_PARAM}" | grep "PARAMETER TIMING " | awk '{print $4}'`
 ################################
 ### Time epoch
 ################################
-#let GPS_END=`__get_periodic_gps_epoch ${CRON_INTERVAL}`+${OVERLAP}/2
-#let GPS_START=${GPS_END}-${CRON_INTERVAL}*60-${OVERLAP}/2
 let MARGIN=${OVERLAP}/2
 
 # LASTCUT is length to cut the end og the lock segment. [sec]
 LASTCUT=30
 #LASTCUT=0
 
-#echo $GPS_START
-#echo $GPS_END
-
 mkdir -p ${DIR_OUTPUT}
 
 # Using segments file
-date=`date -d '9 hours ago' '+%Y-%m-%d'`
-year=`date -d '9 hours ago' '+%Y'`
-#segment="/users/DET/Segments/SegmentList_silentFPMI_UTC_"$date".txt"
-#segment="/users/DET/tools/Segments/Script/Partial/K1-GRD_LOCKED_SEGMENT_UTC_"$date".txt"
 segment=$2
-#segment=/users/DET/tools/Segments/Script/tmp/Partial/2019/K1-SegmentList_Silent_UTC_2019-12-31.txt
+
 cat $segment | while read GPS_START GPS_END
 do
     ################################
@@ -94,17 +85,16 @@ do
     #GPS_START=$(( $GPS_START - $MARGIN ))
     #GPS_END=$(( $GPS_END + $MARGIN ))
 
-
-
+    # procedure to avoid skipping data around 0:00:00 for MARGIN and LASTCUT
     hhmmss=`gpstime $GPS_END | grep UTC`
     hhmmss=${hhmmss:17}
 
     if [ "$hhmmss" = "00:00:00" ]; then
-	echo ""
 	GPS_END=$(( $GPS_END + $MARGIN ))
     else
 	GPS_END=$(( $GPS_END - $LASTCUT ))
     fi
+
     ${CMD_OMICRON} ${GPS_START} ${GPS_END} ${FILE_PARAM}
     echo "GPS_START" $GPS_START
     echo "GPS_END" $GPS_END
