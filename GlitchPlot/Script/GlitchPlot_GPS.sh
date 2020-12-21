@@ -1,5 +1,12 @@
 #!/bin/bash
 
+################################################
+#
+# This is GlitchPlot manual run script for given GPS time.
+# Assumed to be used for RRT of CBC event.
+#
+################################################
+
 echo "GlitchPlot_GPS starts running."
 
 # Take argument of event GPS time.
