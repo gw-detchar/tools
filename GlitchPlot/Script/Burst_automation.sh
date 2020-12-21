@@ -34,16 +34,16 @@ do
     fi
 done
 
-{
-    echo "From: ckozakai <ckozakai@icrr.u-tokyo.ac.jp>"
-    echo "To: ckozakai <ckozakai@icrr.u-tokyo.ac.jp>"
-    echo "Subject: Please reprocess Yuzu summary page"
-    echo ""
-    echo "Yuzurihara-sama,"
-    echo ""
-    echo "Please reprocess Yuzu summary page during last week."
-    echo "From " $startdate " to " $enddateJST "."
-    echo ""
-    echo "Best,"
-    echo "Chihiro Kozakai"
-} | sendmail -i -t
+#{
+#    echo "From: ckozakai <ckozakai@icrr.u-tokyo.ac.jp>"
+#    echo "To: ckozakai <ckozakai@icrr.u-tokyo.ac.jp>"
+#    echo "Subject: Please reprocess Yuzu summary page"
+#    echo ""
+#    echo "Yuzurihara-sama,"
+#    echo ""
+#    echo "Please reprocess Yuzu summary page during last week."
+#    echo "From " $startdate " to " $enddateJST "."
+#    echo ""
+#    echo "Best,"
+#    echo "Chihiro Kozakai"
+#} | sendmail -i -t
