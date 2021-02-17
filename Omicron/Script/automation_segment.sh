@@ -59,32 +59,29 @@ OVERLAP=`printf "${STR_PARAM}" | grep "PARAMETER TIMING " | awk '{print $4}'`
 ################################
 #let GPS_END=`__get_periodic_gps_epoch ${CRON_INTERVAL}`+${OVERLAP}/2
 #let GPS_START=${GPS_END}-${CRON_INTERVAL}*60-${OVERLAP}/2
+
+# MARGIN is time margin before and after the processing data.
 let MARGIN=${OVERLAP}/2
-#echo $GPS_START
-#echo $GPS_END
 
 mkdir -p ${DIR_OUTPUT}
 
 # Using segments file
 date=`date -d '9 hours ago' '+%Y-%m-%d'`
 year=`date -d '9 hours ago' '+%Y'`
-#segment="/users/DET/Segments/SegmentList_silentFPMI_UTC_"$date".txt"
+
+# Maybe segment should be changed to SCIENCE mode when O4 starts.
 segment="/users/DET/tools/Segments/Script/Partial/K1-GRD_LOCKED_SEGMENT_UTC_"$date".txt"
 
-#segment=/users/DET/tools/Segments/Script/tmp/Partial/2019/K1-SegmentList_Silent_UTC_2019-12-31.txt
+# Loop over segments.
+# CAUTION: Bug in treatment of 0:00:00 !!!
+# the segment including 0:00:00 maybe separated in segment files. If one of them is shorter than 64 sec, not processed.
+# WARNING: MARGIN is different from O3GK configuration. In O3GK configuration, GPS_END is set earlier by 30 sec. 30 sec is determined by burst analysis margin.
 cat $segment | while read GPS_START GPS_END
+		     
 do
     ################################
     ### Execute
     ################################
-
-    echo --------------------------------------------
-    duration=$(( $GPS_END - $GPS_START ))
-
-    # To avoid failing job with 60 sec length
-    #if [ $duration -lt 60 ]; then
-	#GPS_START=$(( $GPS_START - 60 ))
-    #fi
 
     GPS_START=$(( $GPS_START - $MARGIN ))
     GPS_END=$(( $GPS_END + $MARGIN ))
@@ -92,10 +89,6 @@ do
     echo "GPS_START" $GPS_START
     echo "GPS_END" $GPS_END
 
-    # Remove marginal file
-    #if [ $duration -lt 60 ]; then
-	#rm -rf /home/controls/triggers/tmp/K1\:CAL-CS_PROC_DARM_DISPLACEMENT_DQ/*${GPS_START}*
-    #fi
 done
 
 ################################

@@ -1,3 +1,8 @@
+'''
+This sript checks if the omicron output is complete or not from segment file and omicron log file.
+Output goes to OmicronLog/. 
+'''
+
 import glob
 from gwpy.segments import DataQualityFlag
 from gwpy.segments import SegmentList
@@ -118,13 +123,13 @@ for channel in channels:
         print("Unknown segments")
         print(unknown)
 
-    with open("OmicronLog/unknownSegments0602_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
+    with open("OmicronLog/unknownSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
         for seg in unknown.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-    with open("OmicronLog/failedSegments0602_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
+    with open("OmicronLog/failedSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
         for seg in failed.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-    with open("OmicronLog/succeededSegments0602_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
+    with open("OmicronLog/succeededSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
         for seg in omicron.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 

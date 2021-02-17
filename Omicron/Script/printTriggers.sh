@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: Omicron/printTriggers.sh
 #        Author: Takahiro Yamamoto
-# Last Modified: 2019/04/04 19:43:32
+# Last Modified: 2021/02/02 10:32:30
 #******************************************#
 
 ################################
@@ -19,8 +19,9 @@ FLAG_FULL=0
 ################################
 function __helpecho(){
 cat <<EOF
-Usage: $0 [-fl] [-t threshold] [-h] startgps stopgps channel
+Usage: $0 [-d directory] [-fl] [-t threshold] [-h] startgps stopgps channel
    Options:
+      -d     specify a search directory
       -f     Display full parameters
       -t     Set threshold of SNR
       -l     lower limit of frequency
@@ -49,9 +50,12 @@ function __trigfind(){
 ###   Main
 ###################################################################################################
 ###################################################################################################
-while getopts fl:t:h opt
+while getopts d:fl:t:h opt
 do
     case $opt in
+	d) SEARCH_DIR=${OPTARG}
+	   ETG_DIR=${SEARCH_DIR}
+	   ;;
 	f) FLAG_FULL=1
 	   ;;
 	t) threshold=$OPTARG
@@ -73,7 +77,7 @@ startgps=${1}
 stopgps=${2}
 channel=${3}
 
-if test -e ${CMD_TRIGFIND}
+if test -e ${CMD_TRIGFIND} -a ${SEARCH_DIR} = ""
 then
     LIST="`${CMD_TRIGFIND} ${channel} ${ETG} ${startgps} ${stopgps} | sed -e 's@file://@@g'`"
 elif test -e ${ETG_DIR}

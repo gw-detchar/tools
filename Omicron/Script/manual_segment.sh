@@ -14,7 +14,8 @@ FILE_PARAM=${DET_OMICRON}/Parameter/test.txt
 CMD_OMICRON=/home/controls/opt/virgosoft/Omicron/v2r3/Linux-x86_64/omicron.exe
 CRON_INTERVAL=15 # Need to match the interval of omicron on the cron job. [min.]
 ETG_DIR=/home/controls/triggers
-IFO=K1
+#IFO=K1
+IFO=K1test
 
 ################################
 ### Omicron parameter

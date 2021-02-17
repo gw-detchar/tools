@@ -1,4 +1,4 @@
-DATA FFL /users/DET/Cache/O3/forOmicron/O3GK.ffl
+DATA FFL /users/DET/Cache/O3/latest.ffl
 
 DATA CHANNELS K1:IMC-MCE_PIT_OUT_DQ
 DATA CHANNELS K1:IMC-MCE_YAW_OUT_DQ
