@@ -1,4 +1,5 @@
-DATA FFL /users/DET/Cache/O3_C20/C20.ffl
+#DATA FFL /users/DET/Cache/O3_C20/C20.ffl
+DATA FFL /home/detchar/cache/C20_O3GK.ffl
 
 DATA CHANNELS K1:DAC-STRAIN_C20
 
@@ -11,8 +12,7 @@ PARAMETER MISMATCHMAX 0.2
 PARAMETER SNRTHRESHOLD 6
 PARAMETER PSDLENGTH 128
 
-#OUTPUT DIRECTORY /home/controls/triggers/tmp
-OUTPUT DIRECTORY /home/controls/triggers/test_O3
+OUTPUT DIRECTORY /home/detchar/triggers/tmp
 OUTPUT PRODUCTS triggers
 OUTPUT FORMAT xml
 OUTPUT VERBOSITY 0

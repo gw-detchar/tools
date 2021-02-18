@@ -1,6 +1,6 @@
 '''
-This sript checks if the omicron output is complete or not from segment file and omicron log file.
-Output goes to OmicronLog/. 
+This script checks if the omicron output is complete or not from segment file and omicron log file.
+Output goes to checkLog/. 
 '''
 
 import glob
@@ -10,10 +10,10 @@ from gwpy.segments import SegmentList
 import argparse
 
 parser = argparse.ArgumentParser(description='Check Omicron output file.')
-parser.add_argument('-f','--freq',help='sampling frequency. 256 or 512 or 1024 or 2048 or 4096.',default='4096')
+parser.add_argument('-f','--freq',help='sampling frequency. 256 or 512 or 1024 or 2048 or 4096.',default='2048')
 parser.add_argument('-y','--year',help='year.',default='2020')
 parser.add_argument('-m','--month',help='month.',default='04')
-parser.add_argument('-d','--day',help='day.',default='07')
+parser.add_argument('-d','--day',help='day.',default='15')
 
 args = parser.parse_args()
 
@@ -29,14 +29,7 @@ if len(day) < 2:
 
 #=============Get locked segments=============
 
-if year == "2020" and month == "04" and day == "15":
-    locked = DataQualityFlag.read("/users/DET/Segments/K1-DET_FOR_GRB200415A/"+year+"/K1-DET_FOR_GRB200415A_UTC_"+year+"-"+month+"-"+day+".xml")
-else:
-    #locked = DataQualityFlag.read("/users/DET/Segments/K1-GRD_LOCKED/2020/K1-GRD_LOCKED_SEGMENT_UTC_2020-04-17.xml")
-    #locked = DataQualityFlag.read("/users/DET/Segments/K1-GRD_LOCK_STATE_N_EQ_1000/2020/K1-GRD_LOCK_STATE_N_EQ_1000_SEGMENT_UTC_2020-04-15.xml")
-    locked = DataQualityFlag.read("/users/DET/Segments/K1-GRD_SCIENCE_MODE/"+year+"/K1-GRD_SCIENCE_MODE_SEGMENT_UTC_"+year+"-"+month+"-"+day+".xml")
-
-
+locked = DataQualityFlag.read("/users/DET/Segments/K1-DET_FOR_GRB200415A/"+year+"/K1-DET_FOR_GRB200415A_UTC_"+year+"-"+month+"-"+day+".xml")
 
 # Remove segments shorter than 94 sec
 
@@ -53,7 +46,7 @@ locked.active = act
 
 #=============Get omicron succeeded segments=============
 
-omicron = DataQualityFlag(known = locked.known,)
+omicron = DataQualityFlag(known = locked.known)
 gpsstart = locked.known[0][0]
 gpsend = locked.known[0][1]
 #gpsstart = 1270944018
@@ -61,7 +54,7 @@ gpsend = locked.known[0][1]
 #omicron = DataQualityFlag(name="Omicron",known = [(gpsstart,gpsend)])
 
 channels = []
-with open("/users/DET/tools/Omicron/Parameter/O3rerun_"+freq+".txt") as f:
+with open("/home/detchar/git/kagra-detchar/tools/Omicron/Parameter/O3rerun_"+freq+".txt") as f:
     lines = f.readlines()
     for line in lines:
         if "DATA CHANNELS " in line:
@@ -76,7 +69,7 @@ for channel in channels:
 
     for i in range(int(gpsstart/100000),int(gpsend/100000)+1):
         #tmp = glob.glob("/home/controls/triggers/K1/CAL_CS_PROC_DARM_DISPLACEMENT_DQ_OMICRON/"+str(i)+"/K1-CAL_CS_PROC_DARM_DISPLACEMENT_DQ_OMICRON-*")
-        tmp = glob.glob("/home/controls/triggers/K1/"+tmpchannel+"_OMICRON/"+str(i)+"/*")
+        tmp = glob.glob("/home/detchar/triggers/K1/"+tmpchannel+"_OMICRON/"+str(i)+"/*")
         files.extend(tmp)
 
     files.sort()
@@ -92,13 +85,9 @@ for channel in channels:
 
     failed = DataQualityFlag(name="Failed",known = [(gpsstart,gpsend)])
 
-    #with open("/users/DET/tools/Omicron/Script/log200428.dat") as f:  # for 4/14-20
-    #with open("/users/DET/tools/Omicron/Script/log200519_4096.dat") as f:  # for 4/15
-    #with open("/users/DET/tools/Omicron/Script/log200519_256-1024.dat") as f:  # for 4/15
-    #with open("/users/DET/tools/Omicron/Script/log200521_2048.dat") as f:  # for 4/15
     #with open("/users/DET/tools/Omicron/Script/log200602_20"+month+""+day+"_"+freq+".dat") as f:  # for O3GK
-    with open("/users/DET/tools/Omicron/log/log200825_20"+month+""+day+"_"+freq+".dat") as f:  # for O3GK
-    #with open("/users/DET/tools/Omicron/Script/log200504.dat") as f:  # for 4/7-12
+    with open("/home/detchar/git/kagra-detchar/tools/Omicron/log/20210217_"+month+""+day+"_"+freq+".dat") as f:  # for O3GK in Kashiwa
+
         lines = f.readlines()
         for line in lines:
             if "Omicron::ExtractTriggers: the maximum trigger rate (5000.00000 Hz) is exceeded ("+channel+" " in line:
@@ -123,13 +112,13 @@ for channel in channels:
         print("Unknown segments")
         print(unknown)
 
-    with open("OmicronLog/unknownSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
+    with open("checkLog/unknownSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
         for seg in unknown.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-    with open("OmicronLog/failedSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
+    with open("checkLog/failedSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
         for seg in failed.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-    with open("OmicronLog/succeededSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
+    with open("checkLog/succeededSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
         for seg in omicron.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 

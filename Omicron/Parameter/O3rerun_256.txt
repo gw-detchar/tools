@@ -1,4 +1,5 @@
-DATA FFL /users/DET/Cache/O3/latest.ffl
+#DATA FFL /home/detchar/cache/full_O3GK.ffl
+DATA FFL /home/detchar/git/kagra-detchar/tools/Cache/Script/test.ffl
 
 DATA CHANNELS K1:IMC-MCE_TRANS_QPDA1_DC_PIT_OUT_DQ
 DATA CHANNELS K1:IMC-MCE_TRANS_QPDA1_DC_SUM_OUT_DQ
@@ -22,7 +23,7 @@ PARAMETER MISMATCHMAX 0.2
 PARAMETER SNRTHRESHOLD 6
 PARAMETER PSDLENGTH 128
 
-OUTPUT DIRECTORY /home/controls/triggers/tmp
+OUTPUT DIRECTORY /home/detchar/triggers/tmp
 OUTPUT PRODUCTS triggers
 OUTPUT FORMAT xml
 OUTPUT VERBOSITY 0
