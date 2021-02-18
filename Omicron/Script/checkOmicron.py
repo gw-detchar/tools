@@ -29,7 +29,7 @@ if len(day) < 2:
 
 #=============Get locked segments=============
 
-locked = DataQualityFlag.read("/users/DET/Segments/K1-DET_FOR_GRB200415A/"+year+"/K1-DET_FOR_GRB200415A_UTC_"+year+"-"+month+"-"+day+".xml")
+locked = DataQualityFlag.read("/home/detchar/Segments/K1-DET_FOR_GRB200415A/"+year+"/K1-DET_FOR_GRB200415A_UTC_"+year+"-"+month+"-"+day+".xml")
 
 # Remove segments shorter than 94 sec
 
@@ -86,7 +86,7 @@ for channel in channels:
     failed = DataQualityFlag(name="Failed",known = [(gpsstart,gpsend)])
 
     #with open("/users/DET/tools/Omicron/Script/log200602_20"+month+""+day+"_"+freq+".dat") as f:  # for O3GK
-    with open("/home/detchar/git/kagra-detchar/tools/Omicron/log/20210217_"+month+""+day+"_"+freq+".dat") as f:  # for O3GK in Kashiwa
+    with open("/home/detchar/git/kagra-detchar/tools/Omicron/Script/log/20210217_"+month+""+day+"_"+freq+".out") as f:  # for O3GK in Kashiwa
 
         lines = f.readlines()
         for line in lines:
