@@ -27,7 +27,8 @@ EOF
 ### Virgo (Omicron) format
 if test "${1}" = 'V'
 then
-    for x in `find ${2} | grep .gwf`
+    #for x in `find ${2} | grep .gwf`
+for x in `find ${2} | grep .gwf | sort`
     do
 	echo "${x}      `basename $x .gwf | awk -F'-' '{printf(\"%s %s\", $3, $4)}'`  0 0"
     done
