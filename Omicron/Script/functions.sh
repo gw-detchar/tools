@@ -30,7 +30,9 @@ function __mv_etg_ligo_convention(){
     DST_DIR=${3}
     ETG=OMICRON
 
-    gzip -f ${SRC_DIR}/*/*.xml
+    #gzip -f ${SRC_DIR}/*/*.xml
+    # If error of "argument list too long" happened                             
+    gzip -r ${SRC_DIR}/*
     for dir_channel_old in ${SRC_DIR}/${IFO}*
     do
 	dir_channel_new=`basename ${dir_channel_old} | sed -e "s/${IFO}://g" -e 's/-/_/g'`_${ETG}
