@@ -4,10 +4,46 @@
 # Last Modified: 2020/05/21
 #
 
-#conda activate ligo-summary-3.7
-source /gpfs/ligo/sw/conda/etc/profile.d/conda.sh
-#conda activate igwn-py38
-conda activate igwn-py37
+# Kamioka
+if [ $USER == "controls" ]; then
+
+    conda activate ligo-summary-3.7
+
+    #SEGMENTFILE=/users/DET/Segments/SegmentList_FPMI_UTC_$3.xml
+    #SEGMENTFILE=`ls /users/DET/Segments/K1-GRD_SCIENCE_MODE/*/K1-GRD_SCIENCE_MODE_SEGMENT_UTC_$3.xml`
+    # Temporary setting for GRB200415
+    #SEGMENTFILE=`ls /users/DET/Segments/K1-GRD_LOCKED/*/K1-GRD_LOCKED_SEGMENT_UTC_$3.xml`
+    #SEGMENTFILE=/users/DET/Segments/K1-GRD_LOCKED/2020/K1-GRD_LOCKED_SEGMENT_UTC_${DIRNAME_DATE}.xml
+    #SEGMENTFILE=/users/DET/tools/Segments/Script/science_SEGMENT_UTC_2020-04-15.xml
+    #SEGMENTFILE=/users/DET/Segments/K1-DET_FOR_GRB200415A/2020/K1-DET_FOR_GRB200415A_UTC_${DIRNAME_DATE}.xml
+    SEGMENTFILE=/users/DET/Segments/K1-DET_FOR_GRB200415A/2020/K1-DET_FOR_GRB200415A_UTC_${DIRNAME_DATE}.xml
+
+    #INIFILE=/users/DET/tools/Hveto/etc/manual.ini
+    #INIFILE=/users/DET/tools/Hveto/etc/burst.ini
+    #INIFILE=/users/DET/tools/Hveto/etc/burst_O3.ini
+    #INIFILE=/users/DET/tools/Hveto/etc/O3GK.ini
+    #INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist1.ini
+    #INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist2.ini
+    #INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist1_ver2.ini
+    #INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_shortlist${n}.ini
+    #INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_0415.ini
+    INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_0415.ini
+    #INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_0415_KISTI.ini
+    
+    #INIFILE=/users/DET/tools/Hveto/etc/O3GK_test.ini
+
+    OUTPUTDIR=/home/controls/public_html/hveto/manual/test/${DIRNAME_DATE}_C20_${GPSSTART}_${GPSEND}_20210304
+
+# Kashiwa    
+else
+
+    source /gpfs/ligo/sw/conda/etc/profile.d/conda.sh
+    conda activate igwn-py38
+    
+    SEGMENTFILE=/home/detchar/Segments/K1-DET_FOR_GRB200415A/2020/K1-DET_FOR_GRB200415A_UTC_${DIRNAME_DATE}.xml
+    INIFILE=/home/detchar/git/kagra-detchar/tools/Hveto/etc/O3GKC20_0415.ini
+    OUTPUTDIR=/home/detchar/hveto/manual/test/${DIRNAME_DATE}_C20_${GPSSTART}_${GPSEND}_20210304
+fi
 
 #export PATH=/home/controls/bin/miniconda2/envs/test/bin:$PATH
 #export LIGO_DATAFIND_SERVER=10.68.10.85:80
@@ -55,14 +91,6 @@ echo $GPSEND
 # numbering of config file
 #n=$2
 
-#SEGMENTFILE=/users/DET/Segments/SegmentList_FPMI_UTC_$3.xml
-#SEGMENTFILE=`ls /users/DET/Segments/K1-GRD_SCIENCE_MODE/*/K1-GRD_SCIENCE_MODE_SEGMENT_UTC_$3.xml`
-# Temporary setting for GRB200415
-#SEGMENTFILE=`ls /users/DET/Segments/K1-GRD_LOCKED/*/K1-GRD_LOCKED_SEGMENT_UTC_$3.xml`
-#SEGMENTFILE=/users/DET/Segments/K1-GRD_LOCKED/2020/K1-GRD_LOCKED_SEGMENT_UTC_${DIRNAME_DATE}.xml
-#SEGMENTFILE=/users/DET/tools/Segments/Script/science_SEGMENT_UTC_2020-04-15.xml
-#SEGMENTFILE=/users/DET/Segments/K1-DET_FOR_GRB200415A/2020/K1-DET_FOR_GRB200415A_UTC_${DIRNAME_DATE}.xml
-SEGMENTFILE=/home/detchar/Segments/K1-DET_FOR_GRB200415A/2020/K1-DET_FOR_GRB200415A_UTC_${DIRNAME_DATE}.xml
 
 
 echo $GPSSTART
@@ -79,23 +107,10 @@ echo $SEGMENTFILE
 #SEGMENTFILE=/users/DET/Segments/SegmentList_FPMI_UTC_2019-12-19.xml
 
 IFO='K1'
-#INIFILE=/users/DET/tools/Hveto/etc/manual.ini
-#INIFILE=/users/DET/tools/Hveto/etc/burst.ini
-#INIFILE=/users/DET/tools/Hveto/etc/burst_O3.ini
-#INIFILE=/users/DET/tools/Hveto/etc/O3GK.ini
-#INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist1.ini
-#INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist2.ini
-#INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist1_ver2.ini
-#INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_shortlist${n}.ini
-#INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_0415.ini
-INIFILE=/home/detchar/git/kagra-detchar/tools/Hveto/etc/O3GKC20_0415.ini
-#INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_0415_KISTI.ini
-
-#INIFILE=/users/DET/tools/Hveto/etc/O3GK_test.ini
 #DIRNAME_DATE=$3
 
-#OUTPUTDIR=/home/controls/public_html/hveto/manual/test/${DIRNAME_DATE}_minimum_${GPSSTART}_${GPSEND}_20210212
-OUTPUTDIR=/home/detchar/hveto/manual/test/${DIRNAME_DATE}_C20_${GPSSTART}_${GPSEND}_20210304
+
+
 
 
 
