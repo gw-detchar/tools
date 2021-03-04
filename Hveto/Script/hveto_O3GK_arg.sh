@@ -5,9 +5,11 @@
 #
 
 #conda activate ligo-summary-3.7
+source /gpfs/ligo/sw/conda/etc/profile.d/conda.sh
+conda activate igwn-py38
 
 #export PATH=/home/controls/bin/miniconda2/envs/test/bin:$PATH
-export LIGO_DATAFIND_SERVER=10.68.10.85:80
+#export LIGO_DATAFIND_SERVER=10.68.10.85:80
 
 #EXEC : path to hveto
 EXEC=hveto
@@ -37,8 +39,9 @@ hveto -V
 #DIRNAME_DATE=2020-04-15
 
 DIRNAME_DATE=$1
-a=`gpstime $1 09:00:00 | grep GPS`
+a=`gpstime "$1 09:00:00" | grep GPS`
 GPSSTART=${a#*GPS: }
+GPSSTART=${GPSSTART:0:10}
 GPSEND=`expr $GPSSTART + 86400`
 
 # numbering of config file
@@ -50,7 +53,8 @@ GPSEND=`expr $GPSSTART + 86400`
 #SEGMENTFILE=`ls /users/DET/Segments/K1-GRD_LOCKED/*/K1-GRD_LOCKED_SEGMENT_UTC_$3.xml`
 #SEGMENTFILE=/users/DET/Segments/K1-GRD_LOCKED/2020/K1-GRD_LOCKED_SEGMENT_UTC_${DIRNAME_DATE}.xml
 #SEGMENTFILE=/users/DET/tools/Segments/Script/science_SEGMENT_UTC_2020-04-15.xml
-SEGMENTFILE=/users/DET/Segments/K1-DET_FOR_GRB200415A/2020/K1-DET_FOR_GRB200415A_UTC_${DIRNAME_DATE}.xml
+#SEGMENTFILE=/users/DET/Segments/K1-DET_FOR_GRB200415A/2020/K1-DET_FOR_GRB200415A_UTC_${DIRNAME_DATE}.xml
+SEGMENTFILE=/home/detchar/Segments/K1-DET_FOR_GRB200415A/2020/K1-DET_FOR_GRB200415A_UTC_${DIRNAME_DATE}.xml
 
 
 echo $GPSSTART
@@ -75,12 +79,13 @@ IFO='K1'
 #INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist2.ini
 #INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist1_ver2.ini
 #INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_shortlist${n}.ini
-INIFILE=/users/DET/tools/Hveto/etc/O3GKC20.ini
+#INIFILE=/users/DET/tools/Hveto/etc/O3GKC20.ini
+INIFILE=/home/detchar/git/kagra-detchar/tools/Hveto/etc/O3GKC20.ini
 
 #INIFILE=/users/DET/tools/Hveto/etc/O3GK_test.ini
 #DIRNAME_DATE=$3
 
-OUTPUTDIR=/home/controls/public_html/hveto/manual/test/${DIRNAME_DATE}_C20_${GPSSTART}_${GPSEND}_20210121
+OUTPUTDIR=/home/detchar/hveto/manual/test/${DIRNAME_DATE}_C20_${GPSSTART}_${GPSEND}_20210304
 
 
 

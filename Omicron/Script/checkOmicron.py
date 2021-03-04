@@ -86,7 +86,8 @@ for channel in channels:
     failed = DataQualityFlag(name="Failed",known = [(gpsstart,gpsend)])
 
     #with open("/users/DET/tools/Omicron/Script/log200602_20"+month+""+day+"_"+freq+".dat") as f:  # for O3GK
-    with open("/home/detchar/git/kagra-detchar/tools/Omicron/Script/log/20210217_"+month+""+day+"_"+freq+".out") as f:  # for O3GK in Kashiwa
+    with open("/home/detchar/git/kagra-detchar/tools/Omicron/Script/log/20210224_"+month+""+day+"_"+freq+".out") as f:  # for O3GK in Kashiwa
+    #with open("/home/detchar/git/kagra-detchar/tools/Omicron/Script/log/retry.out") as f:  # for O3GK retry
 
         lines = f.readlines()
         for line in lines:
@@ -112,13 +113,13 @@ for channel in channels:
         print("Unknown segments")
         print(unknown)
 
-    with open("checkLog/unknownSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
+    with open("/home/detchar/git/kagra-detchar/tools/Omicron/Script/checkLog/unknownSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
         for seg in unknown.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-    with open("checkLog/failedSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
+    with open("/home/detchar/git/kagra-detchar/tools/Omicron/Script/checkLog/failedSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
         for seg in failed.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
-    with open("checkLog/succeededSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
+    with open("/home/detchar/git/kagra-detchar/tools/Omicron/Script/checkLog/succeededSegments_"+year+month+day+"_"+freq+"_"+channel+".txt", mode='w') as f:
         for seg in omicron.active :
             f.write('{0} {1}\n'.format(int(seg[0]), int(seg[1])))
 

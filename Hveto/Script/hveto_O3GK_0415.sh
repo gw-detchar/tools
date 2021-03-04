@@ -6,7 +6,8 @@
 
 #conda activate ligo-summary-3.7
 source /gpfs/ligo/sw/conda/etc/profile.d/conda.sh
-conda activate igwn-py38
+#conda activate igwn-py38
+conda activate igwn-py37
 
 #export PATH=/home/controls/bin/miniconda2/envs/test/bin:$PATH
 #export LIGO_DATAFIND_SERVER=10.68.10.85:80
@@ -38,15 +39,16 @@ hveto -V
 #GPSEND=1271030418
 #DIRNAME_DATE=2020-04-15
 
-DIRNAME_DATE=$1
+#DIRNAME_DATE=$1
+DIRNAME_DATE=2020-04-15
 
 a=`gpstime "${DIRNAME_DATE} 9:00:00" | grep GPS`
 
-#GPSSTART=${a#*GPS: }
-#GPSSTART=${GPSSTART:0:10}
-#GPSEND=`expr $GPSSTART + 86400`
-GPSSTART=1270944018
-GPSEND=1270975803
+GPSSTART=${a#*GPS: }
+GPSSTART=${GPSSTART:0:10}
+GPSEND=`expr $GPSSTART + 86400`
+#GPSSTART=1270976180
+#GPSEND=1270976290
 
 echo $GPSSTART
 echo $GPSEND
@@ -93,7 +95,7 @@ INIFILE=/home/detchar/git/kagra-detchar/tools/Hveto/etc/O3GKC20_0415.ini
 #DIRNAME_DATE=$3
 
 #OUTPUTDIR=/home/controls/public_html/hveto/manual/test/${DIRNAME_DATE}_minimum_${GPSSTART}_${GPSEND}_20210212
-OUTPUTDIR=/home/detchar/hveto/manual/test/${DIRNAME_DATE}_C20_${GPSSTART}_${GPSEND}_20210224
+OUTPUTDIR=/home/detchar/hveto/manual/test/${DIRNAME_DATE}_C20_${GPSSTART}_${GPSEND}_20210304
 
 
 
