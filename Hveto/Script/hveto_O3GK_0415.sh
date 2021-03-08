@@ -4,10 +4,23 @@
 # Last Modified: 2020/05/21
 #
 
+#DIRNAME_DATE=$1
+DIRNAME_DATE=2020-04-15
+
 # Kamioka
 if [ $USER == "controls" ]; then
 
-    conda activate ligo-summary-3.7
+    # conda environment must be set before running this script.
+    #conda activate ligo-summary-3.7
+
+    a=`gpstime ${DIRNAME_DATE} 9:00:00 | grep GPS`
+
+    GPSSTART=${a#*GPS: }
+    GPSSTART=${GPSSTART:0:10}
+    GPSEND=`expr $GPSSTART + 86400`
+
+    echo $GPSSTART
+    echo $GPSEND
 
     #SEGMENTFILE=/users/DET/Segments/SegmentList_FPMI_UTC_$3.xml
     #SEGMENTFILE=`ls /users/DET/Segments/K1-GRD_SCIENCE_MODE/*/K1-GRD_SCIENCE_MODE_SEGMENT_UTC_$3.xml`
@@ -32,14 +45,23 @@ if [ $USER == "controls" ]; then
     
     #INIFILE=/users/DET/tools/Hveto/etc/O3GK_test.ini
 
-    OUTPUTDIR=/home/controls/public_html/hveto/manual/test/${DIRNAME_DATE}_C20_${GPSSTART}_${GPSEND}_20210304
+    OUTPUTDIR=/home/controls/public_html/hveto/manual/test/${DIRNAME_DATE}_kashiwa_${GPSSTART}_${GPSEND}_20210308
 
 # Kashiwa    
 else
 
     source /gpfs/ligo/sw/conda/etc/profile.d/conda.sh
     conda activate igwn-py38
-    
+
+    a=`gpstime "${DIRNAME_DATE} 9:00:00" | grep GPS`
+
+    GPSSTART=${a#*GPS: }
+    GPSSTART=${GPSSTART:0:10}
+    GPSEND=`expr $GPSSTART + 86400`
+
+    echo $GPSSTART
+    echo $GPSEND
+
     SEGMENTFILE=/home/detchar/Segments/K1-DET_FOR_GRB200415A/2020/K1-DET_FOR_GRB200415A_UTC_${DIRNAME_DATE}.xml
     INIFILE=/home/detchar/git/kagra-detchar/tools/Hveto/etc/O3GKC20_0415.ini
     OUTPUTDIR=/home/detchar/hveto/manual/test/${DIRNAME_DATE}_C20_${GPSSTART}_${GPSEND}_20210304
@@ -52,59 +74,6 @@ fi
 EXEC=hveto
 
 hveto -V
-#1/1
-#GPSSTART=1261920618
-#GPSEND=1261924218
-#SEGMENTFILE=/users/DET/tools/Segments/Script/tmp/Partial/2020/K1-GRD_SCIENCE_MODE_SEGMENT_UTC_2020-01-01.xml
-
-#GPSSTART=$1
-#GPSEND=$2
-
-# Around GRB200415A
-#GPSSTART=1270975483
-#GPSEND=1270975991
-#DIRNAME_DATE=2020-04-15
-
-# Around GRB200415A, 3hours with consistent IFO configuration
-#GPSSTART=1270974975
-#GPSEND=1270987464
-#DIRNAME_DATE=2020-04-15
-
-# Whole day on 2020/4/15
-#GPSSTART=1270944018
-#GPSEND=1271030418
-#DIRNAME_DATE=2020-04-15
-
-#DIRNAME_DATE=$1
-DIRNAME_DATE=2020-04-15
-
-a=`gpstime "${DIRNAME_DATE} 9:00:00" | grep GPS`
-
-GPSSTART=${a#*GPS: }
-GPSSTART=${GPSSTART:0:10}
-GPSEND=`expr $GPSSTART + 86400`
-#GPSSTART=1270976180
-#GPSEND=1270976290
-
-echo $GPSSTART
-echo $GPSEND
-# numbering of config file
-#n=$2
-
-
-
-echo $GPSSTART
-echo $GPSEND
-echo $SEGMENTFILE
-#12/17
-#GPSSTART=1260604818
-#GPSEND=1260662418
-#SEGMENTFILE=/users/DET/Segments/SegmentList_FPMI_UTC_2019-12-17.xml
-# burst test
-#GPSSTART=1260759400
-#GPSEND=1260759460
-#GPSEND=1260795400
-#SEGMENTFILE=/users/DET/Segments/SegmentList_FPMI_UTC_2019-12-19.xml
 
 IFO='K1'
 #DIRNAME_DATE=$3
