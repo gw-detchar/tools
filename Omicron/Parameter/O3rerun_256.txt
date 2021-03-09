@@ -1,5 +1,4 @@
-#DATA FFL /home/detchar/cache/full_O3GK.ffl
-DATA FFL /home/detchar/git/kagra-detchar/tools/Cache/Script/test.ffl
+DATA FFL /home/detchar/cache/full_O3GK_fixed_20210309.ffl
 
 DATA CHANNELS K1:IMC-MCE_TRANS_QPDA1_DC_PIT_OUT_DQ
 DATA CHANNELS K1:IMC-MCE_TRANS_QPDA1_DC_SUM_OUT_DQ
