@@ -51,8 +51,6 @@ start_time = time.time()
 # Set enviroment
 
     
-
-#test = False
 if test:
     if getpass.getuser() == "controls":
         SEGMENT_DIR = "/users/DET/tools/Segments/Script/tmp/"
@@ -121,7 +119,6 @@ for key in keys:
         filepath_txt[key] = tmp_DIR +key+'_SEGMENT_UTC_' + utc_date + '.txt'
         filepath_xml[key] = tmp_DIR +key+'_SEGMENT_UTC_' + utc_date + '.xml'
 
-#['K1-GRD_SCIENCE_MODE','K1-GRD_UNLOCKED','K1-GRD_LOCKED','K1-GRD_PEM_EARTHQUAKE','K1-OMC_OVERFLOW_VETO'])
 def mkSegment(gst, get, utc_date, txt=True) :
 
     chGRDLSC = 'K1:GRD-LSC_LOCK_STATE_N'
@@ -141,7 +138,7 @@ def mkSegment(gst, get, utc_date, txt=True) :
 
     #------------------------------------------------------------
 
-    #print('Reading {0} timeseries data...'.format(date))
+   # print('Reading {0} timeseries data...'.format(date))
     # add 1sec margin for locked segments contract.
     channeldata = TimeSeriesDict.read(cache, channels, start=gst-1, end=get+1, format='gwf.lalframe', gap='pad')
     channeldataGRDIFO = channeldata[chGRDIFO]
@@ -152,13 +149,14 @@ def mkSegment(gst, get, utc_date, txt=True) :
     sv={}
     sv['K1-GRD_SCIENCE_MODE'] = channeldataGRDIFO == 1000 
     # Locked will be defined by inverse of unlocked segments for technical reason.    
-    #sv['K1-GRD_LOCKED'] = channeldataGRDLSC == 1000 
-    sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC != 1000
+    sv['K1-GRD_LOCKED'] = channeldataGRDLSC == 10000 
+    sv['K1-GRD_UNLOCKED'] = channeldataGRDLSC != 10000
     sv['K1-GRD_PEM_EARTHQUAKE'] = channeldataGRDEQ == 1000
     sv['K1-OMC_OVERFLOW_VETO'] = channeldataOMCADC != 0
     # OMC_OVERFLOW_OK will be defined by inverse of veto segments for technical reason.
     #sv['K1-OMC_OVERFLOW_OK'] = channeldataOMCADC == 0
 
+    print(sv['K1-GRD_LOCKED'])
 
     dqflag = {}
     for key in keys:
@@ -171,14 +169,14 @@ def mkSegment(gst, get, utc_date, txt=True) :
     dqflag['K1-GRD_SCIENCE_MODE'].active = dqflag['K1-GRD_SCIENCE_MODE'].active.contract(1.0)
 
     dqflag['K1-GRD_LOCKED'] = ~dqflag['K1-GRD_UNLOCKED']
-    dqflag['K1-GRD_LOCKED'].name = "K1:GRD-LSC_LOCK_STATE_N == 1000"
+    dqflag['K1-GRD_LOCKED'].name = "K1:GRD-LSC_LOCK_STATE_N == 10000"
 
     dqflag['K1-OMC_OVERFLOW_OK'] = ~dqflag['K1-OMC_OVERFLOW_VETO']
     dqflag['K1-OMC_OVERFLOW_OK'].name = "K1:FEC-32_ADC_OVERFLOW_0_0 == 0"
     
     dqflag['K1-GRD_SCIENCE_MODE'].description = "Observation mode. K1:GRD-IFO_STATE_N == 1000"
-    dqflag['K1-GRD_UNLOCKED'].description = "Interferometer is not locked. K1:GRD-LSC_LOCK_STATE_N != 1000"
-    dqflag['K1-GRD_LOCKED'].description = "Interferometer is locked. K1:GRD-LSC_LOCK_STATE_N == 1000"
+    dqflag['K1-GRD_UNLOCKED'].description = "Interferometer is not locked. K1:GRD-LSC_LOCK_STATE_N != 10000"
+    dqflag['K1-GRD_LOCKED'].description = "Interferometer is locked. K1:GRD-LSC_LOCK_STATE_N == 10000"
     dqflag['K1-OMC_OVERFLOW_VETO'].description = "OMC overflow happened. K1:FEC-32_ADC_OVERFLOW_0_0 != 0"
     dqflag['K1-OMC_OVERFLOW_OK'].description = "OMC overflow does not happened. K1:FEC-32_ADC_OVERFLOW_0_0 == 0"
 
