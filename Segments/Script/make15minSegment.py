@@ -115,9 +115,11 @@ for key in keys:
     if manual:
         filepath_xml[key] = SEGMENT_DIR +key+'/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.xml'
         filepath_txt[key] = SEGMENT_DIR +key+'/'+year+'/'+key+'_SEGMENT_UTC_' + utc_date + '.txt'
+        print(filepath_xml[key])
     else:
         filepath_txt[key] = tmp_DIR +key+'_SEGMENT_UTC_' + utc_date + '.txt'
         filepath_xml[key] = tmp_DIR +key+'_SEGMENT_UTC_' + utc_date + '.xml'
+        print(filepath_xml[key])
 
 def mkSegment(gst, get, utc_date, txt=True) :
 
@@ -140,7 +142,8 @@ def mkSegment(gst, get, utc_date, txt=True) :
 
    # print('Reading {0} timeseries data...'.format(date))
     # add 1sec margin for locked segments contract.
-    channeldata = TimeSeriesDict.read(cache, channels, start=gst-1, end=get+1, format='gwf.lalframe', gap='pad')
+    #channeldata = TimeSeriesDict.read(cache, channels, start=gst-1, end=get+1, format='gwf.lalframe', gap='pad')
+    channeldata = TimeSeriesDict.read(cache, channels, start=gst-1, end=get+1, format='gwf', gap='pad')
     channeldataGRDIFO = channeldata[chGRDIFO]
     channeldataGRDLSC = channeldata[chGRDLSC]
     channeldataGRDEQ = channeldata[chGRDEQ]
@@ -197,7 +200,7 @@ def mkSegment(gst, get, utc_date, txt=True) :
             tmp = DataQualityFlag.read(filepath_xml[key])        
             dqflag[key] = dqflag[key] + tmp
 
-        dqflag[key].write(filepath_xml[key],overwrite=True)
+        dqflag[key].write(filepath_xml[key],overwrite=True,format="ligolw")
 
 #------------------------------------------------------------
 
@@ -209,6 +212,7 @@ def mkSegment(gst, get, utc_date, txt=True) :
 for key in keys:
     if not os.path.exists(SEGMENT_DIR+'/'+key+'/'+year):
         os.makedirs(SEGMENT_DIR+'/'+key+'/'+year)
+        #os.makedirs(SEGMENT_DIR+'/'+key+'/'+year, exist_ok=True)
 
 #if not os.path.exists(SEGMENT_DIR+'/Partial/'+year):
 #    os.makedirs(SEGMENT_DIR+'/Partial/'+year)
@@ -221,7 +225,6 @@ if manual:
         start_gps_time = int (float(subprocess.check_output('/home/detchar/git/kagra-detchar/tools/Segments/Script/date_to_gps.sh '+utc_date, shell = True)) )
 
     end_gps_time = start_gps_time + 86400 
-
 
     try :
         mkSegment(start_gps_time, end_gps_time, utc_date)
