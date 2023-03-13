@@ -51,17 +51,17 @@ start_time = time.time()
 # Set enviroment
 
 if cluster == "Kamioka":
-    cache_DIR = "later"
+    cache_DIR = "/users/DET/Cache/Cache_GPS/"
     if output == None:
         SEGMENT_DIR = "/users/DET/Segments/"
     else:
-        SEGMENT_DIR = output
+        SEGMENT_DIR = output + "/"
 else:
     cache_DIR = "/home/detchar/cache/Cache_GPS/"
     if output == None:
         SEGMENT_DIR = "/home/detchar/Segments/"
     else:
-        SEGMENT_DIR = output
+        SEGMENT_DIR = output + "/"
         
 #------------------------------
 # define output file path
