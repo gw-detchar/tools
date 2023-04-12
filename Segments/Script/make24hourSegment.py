@@ -30,7 +30,7 @@ segments=[{'name':'K1-GRD_SCIENCE_MODE','channel':'K1:GRD-IFO_STATE_N','conditio
           {'name':'K1-GRD_LOCKED','channel':'K1:GRD-LSC_LOCK_STATE_N','condition':'equal','value':10000,'description':"Interferometer is locked. K1:GRD-LSC_LOCK_STATE_N == 10000"},
           {'name':'K1-OMC_OVERFLOW_OK','channel':'K1:FEC-32_ADC_OVERFLOW_0_0','condition':'equal','value':0,'description':"OMC overflow does not happened. K1:FEC-32_ADC_OVERFLOW_0_0 == 0"},
           {'name':'K1-OMC_OVERFLOW_VETO','channel':'K1:FEC-32_ADC_OVERFLOW_0_0','condition':'not equal','value':0,'description':"OMC overflow happened. K1:FEC-32_ADC_OVERFLOW_0_0 != 0"},
-          {'name':'K1-GRD_PEM_EARTHQUAKE','channel':'K1:GRD-PEM_EARTHQUAKE_STATE_N','condition':'equal','value':1000,'description':"K1:GRD-PEM_EARTHQUAKE_STATE_N == 1000"}
+          {'name':'K1-GRD_PEM_EARTHQUAKE','channel':'K1:GRD-PEM_EARTHQUAKE_STATE_N','condition':'equal','value':1000,'description':"K1:GRD-PEM_EARTHQUAKE_STATE_N == 1000",'round_contract':False}
          ]
 
 import argparse
@@ -123,13 +123,19 @@ def mkSegment(gst, get, utc_date, txt=True) :
         condition = d['condition']
         value = d['value']
         description = d['description']
-  
+        # reference for the round option https://gwpy.github.io/docs/stable/api/gwpy.segments.DataQualityFlag/#gwpy.segments.DataQualityFlag.round  
         if(condition == 'equal'):
             sv[key] = StateTimeSeries(channeldata[channel_name].value == value, t0=channeldata[channel_name].t0, dt=channeldata[channel_name].dt)
-            dqflag[key] = sv[key].to_dqflag().round(contract=True)
+            if 'round_contract' in d.keys() and d['round_contract'] == False:
+                # expand each segment to the containing integer boundaries 
+                dqflag[key] = sv[key].to_dqflag().round(contract=False) 
+            else:
+                # contract each segment to the contained boundaries
+                dqflag[key] = sv[key].to_dqflag().round(contract=True)
             dqflag[key].name = channel_name + ':' + str(value)
         else:
             sv[key] = StateTimeSeries(channeldata[channel_name].value != value, t0=channeldata[channel_name].t0, dt=channeldata[channel_name].dt)
+            # expand each segment to the containing integer boundaries
             dqflag[key] = sv[key].to_dqflag().round(contract=False)
             dqflag[key].name = channel_name + '!:' + str(value)
         dqflag[key].description = description
