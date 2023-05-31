@@ -49,11 +49,11 @@ segments = [{'name':'K1-DAQ-IPC_ERROR',
                 'K1:FEC-83_TIME_DIAG',  ### k1omc
                 'K1:FEC-103_TIME_DIAG', ### k1visetmxp              
                ]},
-                {'name':'K1-test',
-                 'function':DAQ_IPC_ERROR._make_ipc_glitch_flag,
-                'option':"",
-                'channel':['K1:GRD-LSC_LOCK_STATE_N',]
-               },            
+               #  {'name':'K1-test',
+               #   'function':DAQ_IPC_ERROR._make_ipc_glitch_flag,
+               #  'option':"",
+               #  'channel':['K1:GRD-LSC_LOCK_STATE_N',]
+               # },            
                ]
 
 
@@ -148,6 +148,7 @@ def mkSegment(gst, get, utc_date, txt=True) :
         key = d['name']
 
         dqflag[key] = d['function'](channeldata)
+        print(dqflag)
         
 #         channel_name = d['channel']
 #         condition = d['condition']
@@ -174,11 +175,10 @@ def mkSegment(gst, get, utc_date, txt=True) :
 #             dqflag[key].active = dqflag[key].active.contract(1.0)
 #     print(channeldata['K1:FEC-32_ADC_OVERFLOW_0_0'])
 #     print(sv)    
-#     print(dqflag)
     
     #for key in conditions.keys():
-    for d in segments:
-        key = d['name']
+#    for d in segments:
+#        key = d['name']
         # added 1sec margin for locked segments contract is removed.
 #         margin = DataQualityFlag(known=[(gst,get)],active=[(gst-1,gst),(get,get+1)])
 #         dqflag[key] -= margin
