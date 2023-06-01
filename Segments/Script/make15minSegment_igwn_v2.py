@@ -28,7 +28,6 @@ import numpy as np
 import getpass
 import glob
 
-import DAQ_IPC_ERROR
 
 #------------------------------------------------------------
 # Segments information
@@ -40,21 +39,6 @@ import DAQ_IPC_ERROR
 #           {'name':'K1-OMC_OVERFLOW_VETO','channel':'K1:FEC-32_ADC_OVERFLOW_0_0','condition':'not equal','value':0,'description':"OMC overflow happened. K1:FEC-32_ADC_OVERFLOW_0_0 != 0"},
 #           {'name':'K1-GRD_PEM_EARTHQUAKE','channel':'K1:GRD-PEM_EARTHQUAKE_STATE_N','condition':'equal','value':1000,'description':"K1:GRD-PEM_EARTHQUAKE_STATE_N == 1000",'round_contract':False}
 #          ]
-
-segments = [{'name':'K1-DAQ-IPC_ERROR',
-                 'function':DAQ_IPC_ERROR._make_ipc_glitch_flag,
-                'option':"round=True",
-                'channel':['K1:FEC-8_TIME_DIAG',   ### k1lsc
-                'K1:FEC-11_TIME_DIAG',  ### k1calcs
-                'K1:FEC-83_TIME_DIAG',  ### k1omc
-                'K1:FEC-103_TIME_DIAG', ### k1visetmxp              
-               ]},
-               #  {'name':'K1-test',
-               #   'function':DAQ_IPC_ERROR._make_ipc_glitch_flag,
-               #  'option':"",
-               #  'channel':['K1:GRD-LSC_LOCK_STATE_N',]
-               # },            
-               ]
 
 import argparse
 
@@ -74,16 +58,36 @@ start_time = time.time()
     
 if cluster == "Kamioka":
     cache_DIR = "/users/DET/Cache/Cache_GPS/"
+    sys.path.append(os.path.join(os.path.dirname(__file__), '/users/DET/tools/Segments/Script'))
     if output == None:
         SEGMENT_DIR = "/users/DET/Segments/"
     else:
         SEGMENT_DIR = output + "/"
 else:
     cache_DIR = "/home/detchar/cache/Cache_GPS/"
+    sys.path.append(os.path.join(os.path.dirname(__file__), '/home/detchar/git/kagra-detchar/tools/Segments/Script'))
     if output == None:
         SEGMENT_DIR = "/home/detchar/Segments/"
     else:
         SEGMENT_DIR = output + "/"
+
+import DAQ_IPC_ERROR
+
+
+segments = [{'name':'K1-DAQ-IPC_ERROR',
+                 'function':DAQ_IPC_ERROR._make_ipc_glitch_flag,
+                'option':"round=True",
+                'channel':['K1:FEC-8_TIME_DIAG',   ### k1lsc
+                'K1:FEC-11_TIME_DIAG',  ### k1calcs
+                'K1:FEC-83_TIME_DIAG',  ### k1omc
+                'K1:FEC-103_TIME_DIAG', ### k1visetmxp              
+               ]},
+               #  {'name':'K1-test',
+               #   'function':DAQ_IPC_ERROR._make_ipc_glitch_flag,
+               #  'option':"",
+               #  'channel':['K1:GRD-LSC_LOCK_STATE_N',]
+               # },            
+               ]
         
 #------------------------------
 # define output file path
