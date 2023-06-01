@@ -43,7 +43,7 @@ import DAQ_IPC_ERROR
 
 segments = [{'name':'K1-DAQ-IPC_ERROR',
                  'function':DAQ_IPC_ERROR._make_ipc_glitch_flag,
-                'option':"",
+                'option':"round=True",
                 'channel':['K1:FEC-8_TIME_DIAG',   ### k1lsc
                 'K1:FEC-11_TIME_DIAG',  ### k1calcs
                 'K1:FEC-83_TIME_DIAG',  ### k1omc
@@ -55,7 +55,6 @@ segments = [{'name':'K1-DAQ-IPC_ERROR',
                #  'channel':['K1:GRD-LSC_LOCK_STATE_N',]
                # },            
                ]
-
 
 import argparse
 
@@ -140,14 +139,14 @@ def mkSegment(gst, get, utc_date, txt=True) :
 #     channel_list = set(channel_list0)  # remove duplicate channel name
    # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf', gap='pad')
 #     channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf')
-    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst, end=get, format='gwf')
+    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf')
     
     sv={}
     dqflag={}
     for d in segments:
         key = d['name']
 
-        dqflag[key] = d['function'](channeldata)
+        dqflag[key] = d['function'](channeldata, d['option'])
         print(dqflag)
         
 #         channel_name = d['channel']
@@ -190,12 +189,17 @@ def mkSegment(gst, get, utc_date, txt=True) :
 
         dqflag[key].write(filepath_xml[key],overwrite=True,format="ligolw")
         np.savetxt(filepath_txt[key], dqflag[key].active, fmt = '%d')
+        # file = open(filepath_txt[key], "w")
+        # for i in range(len(dqflag[key])):
+        #     file.write("%d %d\n" % (dqflag[key][i].active[0], dqflag[key][i].active[1]))
+        # file.close()
+
         
 # Create missing segments for each segment name
 def reSegment(gst, get, utc_date, key, channel_name, condition, value, description, txt=True) :
 
     # add 1sec margin for locked segments contract.
-    cache = GetFilelist(gst, get)
+    cache = GetFilelist(gst-1, get+1)
 
     #------------------------------------------------------------
    # print('Reading {0} timeseries data...'.format(date))
@@ -224,9 +228,9 @@ def reSegment(gst, get, utc_date, key, channel_name, condition, value, descripti
     # if(key == 'K1-GRD_SCIENCE_MODE'):
     #     dqflag[key].active = dqflag[key].active.contract(1.0)
 
-    dqflag[key] = d['function'](channeldata)
-        
+    dqflag[key] = d['function'](channeldata, d['option'])
     print(dqflag)
+
     # added 1sec margin for locked segments contract is removed.
     #margin = DataQualityFlag(known=[(gst,get)],active=[(gst-1,gst),(get,get+1)])
     #dqflag[key] -= margin
