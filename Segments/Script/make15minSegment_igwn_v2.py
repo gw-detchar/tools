@@ -143,7 +143,7 @@ def mkSegment(gst, get, utc_date, txt=True) :
 #     channel_list = set(channel_list0)  # remove duplicate channel name
    # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf', gap='pad')
 #     channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf')
-    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf')
+    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst, end=get, format='gwf')
     
     sv={}
     dqflag={}
@@ -209,7 +209,7 @@ def reSegment(gst, get, utc_date, key, channel_name, condition, value, descripti
    # print('Reading {0} timeseries data...'.format(date))
     # add 1sec margin for locked segments contract.
     #channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf', gap='pad')
-    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf')
+    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst, end=get, format='gwf')
 
     #sv={}
     dqflag={}
