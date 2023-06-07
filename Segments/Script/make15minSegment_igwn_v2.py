@@ -27,7 +27,7 @@ from glue.lal import Cache
 import numpy as np
 import getpass
 import glob
-
+import math
 
 #------------------------------------------------------------
 # Segments information
@@ -72,23 +72,27 @@ else:
         SEGMENT_DIR = output + "/"
 
 import DAQ_IPC_ERROR
+import frame_available
 
+filepath_txt = {}
+filepath_xml = {}
 
 segments = [{'name':'K1-DAQ-IPC_ERROR',
-                 'function':DAQ_IPC_ERROR._make_ipc_glitch_flag,
-                'option':"round=True",
-                'channel':['K1:FEC-8_TIME_DIAG',   ### k1lsc
-                'K1:FEC-11_TIME_DIAG',  ### k1calcs
-                'K1:FEC-83_TIME_DIAG',  ### k1omc
-                'K1:FEC-103_TIME_DIAG', ### k1visetmxp              
-               ]},
-               #  {'name':'K1-test',
-               #   'function':DAQ_IPC_ERROR._make_ipc_glitch_flag,
-               #  'option':"",
-               #  'channel':['K1:GRD-LSC_LOCK_STATE_N',]
-               # },            
-               ]
-        
+             'function':DAQ_IPC_ERROR._make_ipc_glitch_flag,
+             'option':[True],
+             'channel':['K1:FEC-8_TIME_DIAG',   ### k1lsc
+                        'K1:FEC-11_TIME_DIAG',  ### k1calcs
+                        'K1:FEC-83_TIME_DIAG',  ### k1omc
+                        'K1:FEC-103_TIME_DIAG', ### k1visetmxp              
+                    ]},
+            {'name':'K1-DET_FRAME_AVAILABLE',
+             'function':frame_available._make_frame_available_flag,
+             'option':[filepath_xml, filepath_txt, SEGMENT_DIR, True],
+             'channel':["K1:GRD-LSC_LOCK_STATE_N"],
+         }, 
+]
+
+
 #------------------------------
 # define output file path
 
@@ -139,60 +143,35 @@ def mkSegment(gst, get, utc_date, txt=True) :
     channel_list = sum(channel_list, [])
     channel_list = set(channel_list)  # remove duplicate channel name    
        
-#     channel_list0 = [d['channel'] for d in segments] # make a list of channels
-#     channel_list = set(channel_list0)  # remove duplicate channel name
-   # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf', gap='pad')
-#     channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf')
-    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst, end=get, format='gwf')
+    # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf', gap='pad')
+    # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf')
+    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst, end=get, format='gwf', gap='pad')
     
     sv={}
     dqflag={}
     for d in segments:
         key = d['name']
 
-        dqflag[key] = d['function'](channeldata, d['option'])
-        print(dqflag)
-        
-#         channel_name = d['channel']
-#         condition = d['condition']
-#         value = d['value']
-#         description = d['description']
-        # reference for the round option 
-        # https://gwpy.github.io/docs/stable/api/gwpy.segments.DataQualityFlag/#gwpy.segments.DataQualityFlag.round  
-#         if(condition == 'equal'):
-#             sv[key] = StateTimeSeries(channeldata[channel_name].value == value, t0=channeldata[channel_name].t0, dt=channeldata[channel_name].dt)
-#             if 'round_contract' in d.keys() and d['round_contract'] == False:
-#                 # expand each segment to the containing integer boundaries
-#                 dqflag[key] = sv[key].to_dqflag().round(contract=False) 
-#             else:
-#                 # contract each segment to the contained boundaries            
-#                 dqflag[key] = sv[key].to_dqflag().round(contract=True)
-#             dqflag[key].name = channel_name + ':' + str(value)
-#         else:
-#             sv[key] = StateTimeSeries(channeldata[channel_name].value != value, t0=channeldata[channel_name].t0, dt=channeldata[channel_name].dt)
-#             # expand each segment to the containing integer boundaries            
-#             dqflag[key] = sv[key].to_dqflag().round(contract=False)
-#             dqflag[key].name = channel_name + '!:' + str(value)
-#         dqflag[key].description = description
-#         if(key == 'K1-GRD_SCIENCE_MODE'):
-#             dqflag[key].active = dqflag[key].active.contract(1.0)
-#     print(channeldata['K1:FEC-32_ADC_OVERFLOW_0_0'])
-#     print(sv)    
-    
-    #for key in conditions.keys():
-#    for d in segments:
-#        key = d['name']
-        # added 1sec margin for locked segments contract is removed.
-#         margin = DataQualityFlag(known=[(gst,get)],active=[(gst-1,gst),(get,get+1)])
-#         dqflag[key] -= margin
+        channeldata_p = {k: v for k, v in channeldata.items() if k in d["channel"]}        
+        dqflag[key] = d['function'](channeldata_p, *d['option'])
+        print(dqflag[key])
 
+        print(filepath_xml[key])
+        print(filepath_txt[key])
+        
         # if accumulated file exists, it is added. 
         if os.path.exists(filepath_xml[key]):
             tmp = DataQualityFlag.read(filepath_xml[key])        
             dqflag[key] = dqflag[key] + tmp
 
         dqflag[key].write(filepath_xml[key],overwrite=True,format="ligolw")
-        np.savetxt(filepath_txt[key], dqflag[key].active, fmt = '%d')
+        #np.savetxt(filepath_txt[key], dqflag[key].active, fmt = '%d')
+        file = open(filepath_txt[key], "w")
+        for dq in dqflag[key].active:
+            file.write("%d %d\n" % (math.floor(dq[0]), math.ceil(dq[1])))
+            print("%d %d" % (math.floor(dq[0]), math.ceil(dq[1])))
+        file.close()        
+
         # file = open(filepath_txt[key], "w")
         # for i in range(len(dqflag[key])):
         #     file.write("%d %d\n" % (dqflag[key][i].active[0], dqflag[key][i].active[1]))
@@ -206,33 +185,16 @@ def reSegment(gst, get, utc_date, key, channel_name, condition, value, descripti
     cache = GetFilelist(gst-1, get+1)
 
     #------------------------------------------------------------
-   # print('Reading {0} timeseries data...'.format(date))
+    # print('Reading {0} timeseries data...'.format(date))
     # add 1sec margin for locked segments contract.
     #channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf', gap='pad')
-    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst, end=get, format='gwf')
+    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst, end=get, format='gwf', gap='pad')
 
     #sv={}
     dqflag={}
 
-    # if(condition == 'equal'):
-    #     sv[key] = StateTimeSeries(channeldata[channel_name].value == value, t0=channeldata[channel_name].t0, dt=channeldata[channel_name].dt)
-    #     if 'round_contract' in d.keys() and d['round_contract'] == False:
-    #         # expand each segment to the containing integer boundaries                                                                        
-    #         dqflag[key] = sv[key].to_dqflag().round(contract=False)
-    #     else:
-    #         # contract each segment to the contained boundaries         
-    #         dqflag[key] = sv[key].to_dqflag().round(contract=True)
-    #     dqflag[key].name = channel_name + ':' + str(value)
-    # else:
-    #     sv[key] = StateTimeSeries(channeldata[channel_name].value != value, t0=channeldata[channel_name].t0, dt=channeldata[channel_name].dt)
-    #     # expand each segment to the containing integer boundaries        
-    #     dqflag[key] = sv[key].to_dqflag().round(contract=False)
-    #     dqflag[key].name = channel_name + '!:' + str(value)
-    # dqflag[key].description = description
-    # if(key == 'K1-GRD_SCIENCE_MODE'):
-    #     dqflag[key].active = dqflag[key].active.contract(1.0)
-
-    dqflag[key] = d['function'](channeldata, d['option'])
+    channeldata_p = {k: v for k, v in channeldata.items() if k in d["channel"]}        
+    dqflag[key] = d['function'](channeldata_p, d['option'])
     print(dqflag)
 
     # added 1sec margin for locked segments contract is removed.
@@ -246,7 +208,12 @@ def reSegment(gst, get, utc_date, key, channel_name, condition, value, descripti
     print(dqflag[key])
     
     dqflag[key].write(filepath_xml[key],overwrite=True,format="ligolw")
-    np.savetxt(filepath_txt[key], dqflag[key].active, fmt = '%d')
+    #np.savetxt(filepath_txt[key], dqflag[key].active, fmt = '%d')
+    file = open(filepath_txt[key], "w")
+    for dq in dqflag[key].active:
+        file.write("%d %d\n" % (math.floor(dq[0]), math.ceil(dq[1])))
+        print("%d %d" % (math.floor(dq[0]), math.ceil(dq[1])))
+    file.close()        
         
     
 #------------------------------------------------------------
@@ -267,9 +234,6 @@ utc_date = start_date.strftime('%Y-%m-%d')
 end_date = from_gps(end_gps_time)
 end_time = end_date.strftime('%Y-%m-%d')
 print(utc_date)
-
-filepath_txt = {}
-filepath_xml = {}
 
 Filepath(utc_date, year) 
 
