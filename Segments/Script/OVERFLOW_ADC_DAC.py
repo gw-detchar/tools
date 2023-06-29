@@ -33,7 +33,42 @@ def _make_overflow_flag(sigs:TimeSeriesDict, name:str, round:bool=False) -> Data
     threshold = TimeSeries([0.0], unit='NONE', name='threshold:0.0')
     for sig in sigs.values():
         state = sig != threshold
-        dqflag |= state.to_dqflag(round=round)
+        #dqflag |= state.to_dqflag(round=round)
+        dqflag |= state.to_dqflag().round(contract=round) # Modified by Uchikata 2023/06/23
+
+    return dqflag
+
+#Added by Uchikata 2023/06/23 #
+def _make_overflow_ok_flag(sigs:TimeSeriesDict, name:str, round:bool=False) -> DataQualityFlag:
+    '''
+    Core function for making DataQualityFlag about No ADC/DAC Overflows.
+
+    name:str
+        'OMC', 'ETMX', or 'ETMY'
+    '''
+    temp = DataQualityFlag(name='K1:{0}_OVF_OK:1'.format(name),
+                           label='No overflows on {0}'.format(name),
+                           category=None,
+                           description='No overflows on {0}'.format(name),
+                           isgood=True)
+    threshold = TimeSeries([0.0], unit='NONE', name='threshold:0.0')
+    sigN = 1
+    for sig in sigs.values():
+        state = sig == threshold
+        #print(state)
+        if sigN == 1:
+            temp = state.to_dqflag().round(contract=round)
+        else:
+            temp &= state.to_dqflag().round(contract=round)
+        sigN = sigN + 1
+        
+    ### [NOTE] Definition of this flag.
+    dqflag = DataQualityFlag(name='K1:{0}_OVF_OK:1'.format(name),
+                             label='No overflows on {0}'.format(name),
+                             category=None,
+                             description='No overflows on {0}'.format(name),
+                             isgood=True)
+    dqflag |= temp
 
     return dqflag
 
