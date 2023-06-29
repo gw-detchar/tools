@@ -44,7 +44,8 @@ def _make_ipc_glitch_flag(sigs:TimeSeriesDict, round:bool=False) -> DataQualityF
 
         ### [NOTE] Flag is enabled when a timing jump is detected
         ###            on at least one model.
-        dqflag |= state.to_dqflag(round=round)
+       # dqflag |= state.to_dqflag(round=round)
+        dqflag |= state.to_dqflag().round(contract=round) # Modified by Uchikata 2023/06/23
 
     return dqflag
 
