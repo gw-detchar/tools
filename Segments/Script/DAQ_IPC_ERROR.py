@@ -1,7 +1,7 @@
 #******************************************#
 #     File Name: DAQ_IPC_ERROR.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2023/04/24 19:57:45
+# Last Modified: 2023/06/22 13:15:06
 #******************************************#
 
 #######################################
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     t1 = max(args.gps0, args.gps1)
     round = args.round
 
-    x = make_ipc_glitch_flag(t0, t1, round=round)
+    x = make_ipc_glitch_flag(t0, t1, round=round, host='k1nds2')
     if args.only_nevent:
         print('{0}'.format(len(x.active)))
     else:
