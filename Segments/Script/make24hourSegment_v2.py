@@ -48,12 +48,14 @@ start_time = time.time()
 
 if cluster == "Kamioka":
     cache_DIR = "/users/DET/Cache/Cache_GPS/"
+    sys.path.append(os.path.join(os.path.dirname(__file__), '/users/DET/tools/Segments/Script'))
     if output == None:
         SEGMENT_DIR = "/users/DET/Segments/"
     else:
         SEGMENT_DIR = output + "/"
 else:
     cache_DIR = "/home/detchar/cache/Cache_GPS/"
+    sys.path.append(os.path.join(os.path.dirname(__file__), '/home/detchar/git/kagra-detchar/tools/Segments/Script'))
     if output == None:
         SEGMENT_DIR = "/home/detchar/Segments/"
     else:

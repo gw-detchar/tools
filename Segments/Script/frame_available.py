@@ -47,14 +47,14 @@ def _make_frame_available_flag(sigs:TimeSeriesDict, filepath_xml, filepath_txt, 
     ### [NOTE] Definition of this flag.
     ### [HACK] This flag should be included in category 1.
     
-    fname="%s/frame_available_%s.txt" % (dirname, yesterday_date)
+    fname="%s/frame_available_UTC_%s.txt" % (dirname, yesterday_date)
     #print(fname)
     if os.path.isfile(fname):
         frames = np.loadtxt(fname, dtype=str, unpack=True, usecols=[0, 2, 3])
-        gps  = frames[0].astype(np.int)
+        gps  = frames[0].astype(int)
         duration = gps[1] - gps[0]
 
-        flag = frames[1].astype(np.int) + frames[2].astype(np.int) # if flag == 2, data is OK.
+        flag = frames[1].astype(int) + frames[2].astype(int) # if flag == 2, data is OK.
         gps_baddata = gps[flag != 2]
 
         yesterday = yesterday.replace(hour=0, minute=0, second=0)
@@ -70,11 +70,11 @@ def _make_frame_available_flag(sigs:TimeSeriesDict, filepath_xml, filepath_txt, 
         #global filepath_xml, filepath_txt
         # xml = filepath_xml[key]
         # txt = filepath_txt[key]
-        print(filepath_xml[key])
-        print(segment_dir +key+'/'+year+'/'+key+'_SEGMENT_UTC_' + yesterday_date + '.xml')
+        #print(filepath_xml[key])
+        #print(segment_dir +key+'/'+year+'/'+key+'_SEGMENT_UTC_' + yesterday_date + '.xml')
         filepath_xml[key] = segment_dir +key+'/'+year+'/'+key+'_SEGMENT_UTC_' + yesterday_date + '.xml'
         filepath_txt[key] = segment_dir +key+'/'+year+'/'+key+'_SEGMENT_UTC_' + yesterday_date + '.txt'
-        print(filepath_xml[key])        
+        #print(filepath_xml[key])        
         
         for x in gps_baddata:
             dqflag_tmp = dqflag.copy()
