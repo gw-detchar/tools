@@ -94,7 +94,7 @@ segments = [{'name':'K1-DAQ-IPC_ERROR',
             {'name':'K1-DET_FRAME_AVAILABLE',
              'function':frame_available._make_frame_available_flag,
              'option':[filepath_xml, filepath_txt, SEGMENT_DIR, True],
-             'channel':["K1:GRD-LSC_LOCK_STATE_N"]
+             'channel':["K1:GRD-IFO_STATE_N"]
                     },
             {'name':'K1-OMC_OVERFLOW_VETO',
              'function':OVERFLOW_ADC_DAC._make_overflow_flag,
