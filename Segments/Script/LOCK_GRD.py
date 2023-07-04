@@ -22,7 +22,7 @@ def _make_locked_flag(sigs:TimeSeriesDict, round:bool=False) -> DataQualityFlag:
     '''
     ### [NOTE] Definition of this flag.
     
-    dqflag = DataQualityFlag(name='K1:GRD-_LOCKED:1',
+    dqflag = DataQualityFlag(name='K1:GRD_LOCKED:1',
                              label='K1-GRD_LOCKED',
                              category=None,
                              description='Interferometer is locked.',
@@ -42,7 +42,7 @@ def _make_unlocked_flag(sigs:TimeSeriesDict, round:bool=False) -> DataQualityFla
     '''
     ### [NOTE] Definition of this flag.
     
-    dqflag = DataQualityFlag(name='K1:GRD-UNLOCKED:1',
+    dqflag = DataQualityFlag(name='K1:GRD_UNLOCKED:1',
                              label='K1-GRD_UNLOCKED',
                              category=None,
                              description='Interferometer is not locked.',
