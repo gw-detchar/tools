@@ -18,6 +18,9 @@ Output       = /dev/null
 
 Executable   = /gpfs/home/detchar/git/kagra-detchar/tools/Cache/Script/makeCache.sh
 Arguments    = ${1}
+
+periodic_remove = (JobStatus == 1) && (time() - QDate) > 40
+
 Queue
 EOF
 
