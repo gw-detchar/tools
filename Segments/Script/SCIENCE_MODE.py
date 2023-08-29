@@ -1,7 +1,7 @@
 #******************************************#
-#     File Name: SCIENCE_MODE.py
+#     File Name: SCIENCE_MODE2.py
 #        Author: Nami Uchikata
-# Last Modified: 2023/06/23 
+# Last Modified: 2023/08/25 
 #******************************************#
 
 #######################################
@@ -27,12 +27,24 @@ def _make_science_flag(sigs:TimeSeriesDict, round:bool=False) -> DataQualityFlag
                              category=None,
                              description='Observation mode.',
                              isgood=True)
-
+    
+    # Modified to refer two channels. (2023/08/25 N. Uchikata)
+    # Check the LOCK state
+    threshold = TimeSeries([10000.0], unit='V', name='threshold:10000.0')
+    state = sigs['K1:GRD-LSC_LOCK_STATE_N'] == threshold
+    dqflag |= state.to_dqflag().round(contract=round)
+    
+    # Check the IFO state
+    threshold = TimeSeries([1000.0], unit='V', name='threshold:1000.0')
+    state = sigs['K1:GRD-IFO_STATE_N'] == threshold
+    dqflag &= state.to_dqflag().round(contract=round)
+    
+    """
     threshold = TimeSeries([1000.0], unit='V', name='threshold:1000.0')
     for sig in sigs.values():
         state = sig == threshold
         dqflag |= state.to_dqflag().round(contract=round)
-
+    """
     return dqflag
 
 

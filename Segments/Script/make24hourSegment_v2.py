@@ -66,7 +66,7 @@ import OVERFLOW_ADC_DAC
 import frame_available
 import LOCK_GRD
 import PEM_EARTHQUAKE
-import SCIENCE_MODE2
+import SCIENCE_MODE
 
 filepath_txt = {}
 filepath_xml = {}
@@ -195,7 +195,7 @@ segments = [#{'name':'K1-DAQ-IPC_ERROR',
            # 'channel':['K1:GRD-IFO_STATE_N']                            
            #        },
             {'name':'K1-GRD_SCIENCE_MODE',
-             'function':SCIENCE_MODE2._make_science_flag,
+             'function':SCIENCE_MODE._make_science_flag,
              'option':[True],
              'channel':['K1:GRD-IFO_STATE_N',
                        'K1:GRD-LSC_LOCK_STATE_N']
