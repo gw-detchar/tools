@@ -203,12 +203,12 @@ segments = [{'name':'K1-DAQ-IPC_ERROR',
             'option':[False],
             'channel':['K1:GRD-IFO_STATE_N']                            
                    },
-           # {'name':'K1-GRD_SCIENCE_MODE',
-           #  'function':SCIENCE_MODE._make_science_flag,
-           #  'option':[True],
-           #  'channel':['K1:GRD-IFO_STATE_N',
-                #  'K1:GRD-LSC_LOCK_STATE_N']
-            #},
+            {'name':'K1-GRD_SCIENCE_MODE',
+             'function':SCIENCE_MODE._make_science_flag,
+             'option':[True],
+             'channel':['K1:GRD-IFO_STATE_N',
+                  'K1:GRD-LSC_LOCK_STATE_N']
+            },
             ]
 
 
@@ -238,7 +238,7 @@ def GetFilelist(gpsstart,gpsend): # by H. Yuzurihara
         # merge two cache files
         cache1 = cache_DIR+"%s.ffl" % gps_beg_head
         cache2 = cache_DIR+"%s.ffl"% gps_end_head
-        cache_file="/tmp/%s_%s.ffl" % (gpsstart, gpsend)
+        cache_file="/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/%s_%s.ffl" % (gpsstart, gpsend)
 
         with open(cache_file, 'w') as outfile:
           for i in [cache1, cache2]:
@@ -362,6 +362,8 @@ try :
 except ValueError :
     print('    Cannot append discontiguous TimeSeries')
 pass
+
+
 #------------------------------------------------------------
 
 print('\n--- Total {0}h {1}m ---'.format( int((time.time()-start_time)/3600), int(( (time.time()-start_time)/3600 - int((time.time()-start_time)/3600) )*60) ))
@@ -385,3 +387,9 @@ if utc_date != end_time:
         for seg in missing:
             reSegment(seg[0], seg[1], utc_date, key, channel_name, condition, value, description, txt=False)
 
+
+# Remove a combined cache file if exists                                                                        
+combined_cache = "%s_%s.ffl" % (start_gps_time-1, end_gps_time+1)
+print(combined_cache)
+if(os.path.isfile("/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"+combined_cache)):
+    os.remove("/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"+combined_cache)
