@@ -5,7 +5,6 @@ author      = "Shoichi Oshino, oshino@icrr.u-tokyo.ac.jp"
 
 # Modified for the IGWN environment. N. Uchikata (2022.12.15)
 # Summarize information of segements in an array of dictionaries.  N. Uchikata (2023.1.10)
-# Note: 'equal' conditions use 'to_dqflag().round(contract=True)', while 'not equal' conditions 'to_dqflag().round(contract=False)'.
 # Added parsers for choice of clusters and the output directory. N. Uchikata (2023.1.10)
 # remove the manual mode. --> make24hourSegment.py  N. Uchikata (2023.1.16)
 
@@ -27,17 +26,18 @@ from glue.lal import Cache
 import numpy as np
 import getpass
 import glob
+import math
 
 #------------------------------------------------------------
 # Segments information
 
-segments=[{'name':'K1-GRD_SCIENCE_MODE','channel':'K1:GRD-IFO_STATE_N','condition':'equal','value':1000, 'description':"Observation mode. K1:GRD-IFO_STATE_N == 1000"},
-          {'name':'K1-GRD_UNLOCKED','channel':'K1:GRD-LSC_LOCK_STATE_N','condition':'not equal','value':10000,'description':"Interferometer is not locked. K1:GRD-LSC_LOCK_STATE_N != 10000"},
-          {'name':'K1-GRD_LOCKED','channel':'K1:GRD-LSC_LOCK_STATE_N','condition':'equal','value':10000,'description':"Interferometer is locked. K1:GRD-LSC_LOCK_STATE_N == 10000"},
-          {'name':'K1-OMC_OVERFLOW_OK','channel':'K1:FEC-32_ADC_OVERFLOW_0_0','condition':'equal','value':0,'description':"OMC overflow does not happened. K1:FEC-32_ADC_OVERFLOW_0_0 == 0"},
-          {'name':'K1-OMC_OVERFLOW_VETO','channel':'K1:FEC-32_ADC_OVERFLOW_0_0','condition':'not equal','value':0,'description':"OMC overflow happened. K1:FEC-32_ADC_OVERFLOW_0_0 != 0"},
-          {'name':'K1-GRD_PEM_EARTHQUAKE','channel':'K1:GRD-PEM_EARTHQUAKE_STATE_N','condition':'equal','value':1000,'description':"K1:GRD-PEM_EARTHQUAKE_STATE_N == 1000",'round_contract':False}
-         ]
+# segments=[{'name':'K1-GRD_SCIENCE_MODE','channel':'K1:GRD-IFO_STATE_N','condition':'equal','value':1000, 'description':"Observation mode. K1:GRD-IFO_STATE_N == 1000"},
+#           {'name':'K1-GRD_UNLOCKED','channel':'K1:GRD-LSC_LOCK_STATE_N','condition':'not equal','value':10000,'description':"Interferometer is not locked. K1:GRD-LSC_LOCK_STATE_N != 10000"},
+#           {'name':'K1-GRD_LOCKED','channel':'K1:GRD-LSC_LOCK_STATE_N','condition':'equal','value':10000,'description':"Interferometer is locked. K1:GRD-LSC_LOCK_STATE_N == 10000"},
+#           {'name':'K1-OMC_OVERFLOW_OK','channel':'K1:FEC-32_ADC_OVERFLOW_0_0','condition':'equal','value':0,'description':"OMC overflow does not happened. K1:FEC-32_ADC_OVERFLOW_0_0 == 0"},
+#           {'name':'K1-OMC_OVERFLOW_VETO','channel':'K1:FEC-32_ADC_OVERFLOW_0_0','condition':'not equal','value':0,'description':"OMC overflow happened. K1:FEC-32_ADC_OVERFLOW_0_0 != 0"},
+#           {'name':'K1-GRD_PEM_EARTHQUAKE','channel':'K1:GRD-PEM_EARTHQUAKE_STATE_N','condition':'equal','value':1000,'description':"K1:GRD-PEM_EARTHQUAKE_STATE_N == 1000",'round_contract':False}
+#          ]
 
 import argparse
 
@@ -57,17 +57,161 @@ start_time = time.time()
     
 if cluster == "Kamioka":
     cache_DIR = "/users/DET/Cache/Cache_GPS/"
+    sys.path.append(os.path.join(os.path.dirname(__file__), '/users/DET/tools/Segments/Script'))
     if output == None:
         SEGMENT_DIR = "/users/DET/Segments/"
     else:
         SEGMENT_DIR = output + "/"
 else:
     cache_DIR = "/home/detchar/cache/Cache_GPS/"
+    sys.path.append(os.path.join(os.path.dirname(__file__), '/home/detchar/git/kagra-detchar/tools/Segments/Script'))
     if output == None:
         SEGMENT_DIR = "/home/detchar/Segments/"
     else:
         SEGMENT_DIR = output + "/"
-        
+
+import DAQ_IPC_ERROR
+import OVERFLOW_ADC_DAC
+import frame_available
+import LOCK_GRD
+import PEM_EARTHQUAKE
+import SCIENCE_MODE
+
+filepath_txt = {}
+filepath_xml = {}
+
+# Note: 'to_dqflag().round(contract=round)' is used for the round option
+# 'True' for good data segments, 'False' for bad data segments.
+
+segments = [{'name':'K1-DAQ-IPC_ERROR',
+             'function':DAQ_IPC_ERROR._make_ipc_glitch_flag,
+             'option':[False],
+             'channel':['K1:FEC-8_TIME_DIAG',   ### k1lsc
+                        'K1:FEC-11_TIME_DIAG',  ### k1calcs
+                        'K1:FEC-83_TIME_DIAG',  ### k1omc
+                        'K1:FEC-103_TIME_DIAG', ### k1visetmxp              
+                    ]},
+            {'name':'K1-DET_FRAME_AVAILABLE',
+             'function':frame_available._make_frame_available_flag,
+             'option':[filepath_xml, filepath_txt, SEGMENT_DIR, True],
+             'channel':["K1:GRD-IFO_STATE_N"]
+                    },
+            {'name':'K1-OMC_OVERFLOW_VETO',
+             'function':OVERFLOW_ADC_DAC._make_overflow_flag,
+             'option':['OMC',False],
+             'channel':['K1:FEC-79_ADC_OVERFLOW_0_0',  ### DCPD_A                             
+                        'K1:FEC-79_ADC_OVERFLOW_0_1'   ### DCPD_B 
+                    ]}, 
+             {'name':'K1-OMC_OVERFLOW_OK',
+             'function':OVERFLOW_ADC_DAC._make_overflow_ok_flag,
+             'option':['OMC',True],
+             'channel':['K1:FEC-79_ADC_OVERFLOW_0_0',  ### DCPD_A                             
+                        'K1:FEC-79_ADC_OVERFLOW_0_1'   ### DCPD_B 
+                    ]}, 
+            {'name':'K1-ETMX_OVERFLOW_VETO',
+             'function':OVERFLOW_ADC_DAC._make_overflow_flag,
+             'option':['ETMX',False],
+             'channel':['K1:FEC-103_DAC_OVERFLOW_1_0',   ### MN_V3
+                      'K1:FEC-103_DAC_OVERFLOW_1_1',   ### MN_H1
+                      'K1:FEC-103_DAC_OVERFLOW_1_2',   ### MN_H2
+                      'K1:FEC-103_DAC_OVERFLOW_1_3',   ### MN_H3
+                      'K1:FEC-103_DAC_OVERFLOW_1_4',   ### MN_V1
+                      'K1:FEC-103_DAC_OVERFLOW_1_5',   ### MN_V2
+                      'K1:FEC-103_DAC_OVERFLOW_1_6',   ### IM_V1
+                      'K1:FEC-103_DAC_OVERFLOW_1_7',   ### IM_V2
+                      'K1:FEC-103_DAC_OVERFLOW_1_8',   ### IM_V3
+                      'K1:FEC-103_DAC_OVERFLOW_1_9',   ### IM_H1
+                      'K1:FEC-103_DAC_OVERFLOW_1_10',  ### IM_H2
+                      'K1:FEC-103_DAC_OVERFLOW_1_11',  ### IM_H3
+                      'K1:FEC-103_DAC_OVERFLOW_1_12',  ### TM_H1
+                      'K1:FEC-103_DAC_OVERFLOW_1_13',  ### TM_H2
+                      'K1:FEC-103_DAC_OVERFLOW_1_14',  ### TM_H3
+                      'K1:FEC-103_DAC_OVERFLOW_1_15']  ### TM_H4
+             },
+            {'name':'K1-ETMX_OVERFLOW_OK',
+             'function':OVERFLOW_ADC_DAC._make_overflow_ok_flag,
+             'option':['ETMX',True],
+             'channel':['K1:FEC-103_DAC_OVERFLOW_1_0',   ### MN_V3
+                      'K1:FEC-103_DAC_OVERFLOW_1_1',   ### MN_H1
+                      'K1:FEC-103_DAC_OVERFLOW_1_2',   ### MN_H2
+                      'K1:FEC-103_DAC_OVERFLOW_1_3',   ### MN_H3
+                      'K1:FEC-103_DAC_OVERFLOW_1_4',   ### MN_V1
+                      'K1:FEC-103_DAC_OVERFLOW_1_5',   ### MN_V2
+                      'K1:FEC-103_DAC_OVERFLOW_1_6',   ### IM_V1
+                      'K1:FEC-103_DAC_OVERFLOW_1_7',   ### IM_V2
+                      'K1:FEC-103_DAC_OVERFLOW_1_8',   ### IM_V3
+                      'K1:FEC-103_DAC_OVERFLOW_1_9',   ### IM_H1
+                      'K1:FEC-103_DAC_OVERFLOW_1_10',  ### IM_H2
+                      'K1:FEC-103_DAC_OVERFLOW_1_11',  ### IM_H3
+                      'K1:FEC-103_DAC_OVERFLOW_1_12',  ### TM_H1
+                      'K1:FEC-103_DAC_OVERFLOW_1_13',  ### TM_H2
+                      'K1:FEC-103_DAC_OVERFLOW_1_14',  ### TM_H3
+                      'K1:FEC-103_DAC_OVERFLOW_1_15']  ### TM_H4
+             },
+            {'name':'K1-ETMY_OVERFLOW_VETO',
+             'function':OVERFLOW_ADC_DAC._make_overflow_flag,
+             'option':['ETMY',False],
+             'channel':['K1:FEC-108_DAC_OVERFLOW_1_0',   ### MN_V3
+                      'K1:FEC-108_DAC_OVERFLOW_1_1',   ### MN_H1
+                      'K1:FEC-108_DAC_OVERFLOW_1_2',   ### MN_H2
+                      'K1:FEC-108_DAC_OVERFLOW_1_3',   ### MN_H3
+                      'K1:FEC-108_DAC_OVERFLOW_1_4',   ### MN_V1
+                      'K1:FEC-108_DAC_OVERFLOW_1_5',   ### MN_V2
+                      'K1:FEC-108_DAC_OVERFLOW_1_6',   ### IM_V1
+                      'K1:FEC-108_DAC_OVERFLOW_1_7',   ### IM_V2
+                      'K1:FEC-108_DAC_OVERFLOW_1_8',   ### IM_V3
+                      'K1:FEC-108_DAC_OVERFLOW_1_9',   ### IM_H1
+                      'K1:FEC-108_DAC_OVERFLOW_1_10',  ### IM_H2
+                      'K1:FEC-108_DAC_OVERFLOW_1_11',  ### IM_H3
+                      'K1:FEC-108_DAC_OVERFLOW_1_12',  ### TM_H1
+                      'K1:FEC-108_DAC_OVERFLOW_1_13',  ### TM_H2
+                      'K1:FEC-108_DAC_OVERFLOW_1_14',  ### TM_H3
+                      'K1:FEC-108_DAC_OVERFLOW_1_15']  ### TM_H4
+             },
+            {'name':'K1-ETMY_OVERFLOW_OK',
+             'function':OVERFLOW_ADC_DAC._make_overflow_ok_flag,
+             'option':['ETMY',True],
+             'channel':['K1:FEC-108_DAC_OVERFLOW_1_0',   ### MN_V3
+                      'K1:FEC-108_DAC_OVERFLOW_1_1',   ### MN_H1
+                      'K1:FEC-108_DAC_OVERFLOW_1_2',   ### MN_H2
+                      'K1:FEC-108_DAC_OVERFLOW_1_3',   ### MN_H3
+                      'K1:FEC-108_DAC_OVERFLOW_1_4',   ### MN_V1
+                      'K1:FEC-108_DAC_OVERFLOW_1_5',   ### MN_V2
+                      'K1:FEC-108_DAC_OVERFLOW_1_6',   ### IM_V1
+                      'K1:FEC-108_DAC_OVERFLOW_1_7',   ### IM_V2
+                      'K1:FEC-108_DAC_OVERFLOW_1_8',   ### IM_V3
+                      'K1:FEC-108_DAC_OVERFLOW_1_9',   ### IM_H1
+                      'K1:FEC-108_DAC_OVERFLOW_1_10',  ### IM_H2
+                      'K1:FEC-108_DAC_OVERFLOW_1_11',  ### IM_H3
+                      'K1:FEC-108_DAC_OVERFLOW_1_12',  ### TM_H1
+                      'K1:FEC-108_DAC_OVERFLOW_1_13',  ### TM_H2
+                      'K1:FEC-108_DAC_OVERFLOW_1_14',  ### TM_H3
+                      'K1:FEC-108_DAC_OVERFLOW_1_15']  ### TM_H4
+             },
+             {'name':'K1-GRD_PEM_EARTHQUAKE',
+             'function':PEM_EARTHQUAKE._make_earthquake_flag,
+             'option':[False],
+             'channel':['K1:GRD-PEM_EARTHQUAKE_STATE_N']
+                    },
+            {'name':'K1-GRD_LOCKED',
+             'function':LOCK_GRD._make_locked_flag,
+             'option':[True],
+             'channel':['K1:GRD-IFO_STATE_N' ]                           
+                    },
+            {'name':'K1-GRD_UNLOCKED',
+            'function':LOCK_GRD._make_unlocked_flag,
+            'option':[False],
+            'channel':['K1:GRD-IFO_STATE_N']                            
+                   },
+            {'name':'K1-GRD_SCIENCE_MODE',
+             'function':SCIENCE_MODE._make_science_flag,
+             'option':[True],
+             'channel':['K1:GRD-IFO_STATE_N',
+                  'K1:GRD-LSC_LOCK_STATE_N']
+            },
+            ]
+
+
 #------------------------------
 # define output file path
 
@@ -94,7 +238,7 @@ def GetFilelist(gpsstart,gpsend): # by H. Yuzurihara
         # merge two cache files
         cache1 = cache_DIR+"%s.ffl" % gps_beg_head
         cache2 = cache_DIR+"%s.ffl"% gps_end_head
-        cache_file="/tmp/%s_%s.ffl" % (gpsstart, gpsend)
+        cache_file="/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/%s_%s.ffl" % (gpsstart, gpsend)
 
         with open(cache_file, 'w') as outfile:
           for i in [cache1, cache2]:
@@ -113,49 +257,26 @@ def mkSegment(gst, get, utc_date, txt=True) :
 
    # print('Reading {0} timeseries data...'.format(date))
     # add 1sec margin for locked segments contract.
-    
-    channel_list0 = [d['channel'] for d in segments] # make a list of channels
-    channel_list = set(channel_list0)  # remove duplicate channel name
-   # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf', gap='pad')
-    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf')
 
+    channel_list = [d['channel'] for d in segments] # make a list of channels
+    channel_list = sum(channel_list, [])
+    channel_list = set(channel_list)  # remove duplicate channel name    
+       
+    # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf', gap='pad')
+    # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf')
+    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst, end=get, format='gwf', gap='pad')
+    
     sv={}
     dqflag={}
     for d in segments:
         key = d['name']
-        channel_name = d['channel']
-        condition = d['condition']
-        value = d['value']
-        description = d['description']
-        # reference for the round option 
-        # https://gwpy.github.io/docs/stable/api/gwpy.segments.DataQualityFlag/#gwpy.segments.DataQualityFlag.round  
-        if(condition == 'equal'):
-            sv[key] = StateTimeSeries(channeldata[channel_name].value == value, t0=channeldata[channel_name].t0, dt=channeldata[channel_name].dt)
-            if 'round_contract' in d.keys() and d['round_contract'] == False:
-                # expand each segment to the containing integer boundaries
-                dqflag[key] = sv[key].to_dqflag().round(contract=False) 
-            else:
-                # contract each segment to the contained boundaries            
-                dqflag[key] = sv[key].to_dqflag().round(contract=True)
-            dqflag[key].name = channel_name + ':' + str(value)
-        else:
-            sv[key] = StateTimeSeries(channeldata[channel_name].value != value, t0=channeldata[channel_name].t0, dt=channeldata[channel_name].dt)
-            # expand each segment to the containing integer boundaries            
-            dqflag[key] = sv[key].to_dqflag().round(contract=False)
-            dqflag[key].name = channel_name + '!:' + str(value)
-        dqflag[key].description = description
-        if(key == 'K1-GRD_SCIENCE_MODE'):
-            dqflag[key].active = dqflag[key].active.contract(1.0)
-    print(channeldata['K1:FEC-32_ADC_OVERFLOW_0_0'])
-    print(sv)    
-    print(dqflag)
-    
-    #for key in conditions.keys():
-    for d in segments:
-        key = d['name']
-        # added 1sec margin for locked segments contract is removed.
-        margin = DataQualityFlag(known=[(gst,get)],active=[(gst-1,gst),(get,get+1)])
-        dqflag[key] -= margin
+
+        channeldata_p = {k: v for k, v in channeldata.items() if k in d["channel"]}        
+        dqflag[key] = d['function'](channeldata_p, *d['option'])
+        print(dqflag[key])
+
+        print(filepath_xml[key])
+        print(filepath_txt[key])
         
         # if accumulated file exists, it is added. 
         if os.path.exists(filepath_xml[key]):
@@ -163,7 +284,18 @@ def mkSegment(gst, get, utc_date, txt=True) :
             dqflag[key] = dqflag[key] + tmp
 
         dqflag[key].write(filepath_xml[key],overwrite=True,format="ligolw")
-        np.savetxt(filepath_txt[key], dqflag[key].active, fmt = '%d')
+        #np.savetxt(filepath_txt[key], dqflag[key].active, fmt = '%d')
+        file = open(filepath_txt[key], "w")
+        for dq in dqflag[key].active:
+            file.write("%d %d\n" % (math.floor(dq[0]), math.ceil(dq[1])))
+            print("%d %d" % (math.floor(dq[0]), math.ceil(dq[1])))
+        file.close()        
+
+        # file = open(filepath_txt[key], "w")
+        # for i in range(len(dqflag[key])):
+        #     file.write("%d %d\n" % (dqflag[key][i].active[0], dqflag[key][i].active[1]))
+        # file.close()
+
         
 # Create missing segments for each segment name
 def reSegment(gst, get, utc_date, key, channel_name, condition, value, description, txt=True) :
@@ -172,36 +304,21 @@ def reSegment(gst, get, utc_date, key, channel_name, condition, value, descripti
     cache = GetFilelist(gst-1, get+1)
 
     #------------------------------------------------------------
-   # print('Reading {0} timeseries data...'.format(date))
+    # print('Reading {0} timeseries data...'.format(date))
     # add 1sec margin for locked segments contract.
     #channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf', gap='pad')
-    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf')
+    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst, end=get, format='gwf', gap='pad')
 
-    sv={}
+    #sv={}
     dqflag={}
 
-    if(condition == 'equal'):
-        sv[key] = StateTimeSeries(channeldata[channel_name].value == value, t0=channeldata[channel_name].t0, dt=channeldata[channel_name].dt)
-        if 'round_contract' in d.keys() and d['round_contract'] == False:
-            # expand each segment to the containing integer boundaries                                                                        
-            dqflag[key] = sv[key].to_dqflag().round(contract=False)
-        else:
-            # contract each segment to the contained boundaries         
-            dqflag[key] = sv[key].to_dqflag().round(contract=True)
-        dqflag[key].name = channel_name + ':' + str(value)
-    else:
-        sv[key] = StateTimeSeries(channeldata[channel_name].value != value, t0=channeldata[channel_name].t0, dt=channeldata[channel_name].dt)
-        # expand each segment to the containing integer boundaries        
-        dqflag[key] = sv[key].to_dqflag().round(contract=False)
-        dqflag[key].name = channel_name + '!:' + str(value)
-    dqflag[key].description = description
-    if(key == 'K1-GRD_SCIENCE_MODE'):
-        dqflag[key].active = dqflag[key].active.contract(1.0)
-        
+    channeldata_p = {k: v for k, v in channeldata.items() if k in d["channel"]}        
+    dqflag[key] = d['function'](channeldata_p, d['option'])
     print(dqflag)
+
     # added 1sec margin for locked segments contract is removed.
-    margin = DataQualityFlag(known=[(gst,get)],active=[(gst-1,gst),(get,get+1)])
-    dqflag[key] -= margin
+    #margin = DataQualityFlag(known=[(gst,get)],active=[(gst-1,gst),(get,get+1)])
+    #dqflag[key] -= margin
 
     # write down 
     if os.path.exists(filepath_xml[key]):
@@ -210,7 +327,12 @@ def reSegment(gst, get, utc_date, key, channel_name, condition, value, descripti
     print(dqflag[key])
     
     dqflag[key].write(filepath_xml[key],overwrite=True,format="ligolw")
-    np.savetxt(filepath_txt[key], dqflag[key].active, fmt = '%d')
+    #np.savetxt(filepath_txt[key], dqflag[key].active, fmt = '%d')
+    file = open(filepath_txt[key], "w")
+    for dq in dqflag[key].active:
+        file.write("%d %d\n" % (math.floor(dq[0]), math.ceil(dq[1])))
+        print("%d %d" % (math.floor(dq[0]), math.ceil(dq[1])))
+    file.close()        
         
     
 #------------------------------------------------------------
@@ -232,9 +354,6 @@ end_date = from_gps(end_gps_time)
 end_time = end_date.strftime('%Y-%m-%d')
 print(utc_date)
 
-filepath_txt = {}
-filepath_xml = {}
-
 Filepath(utc_date, year) 
 
 try :
@@ -243,6 +362,8 @@ try :
 except ValueError :
     print('    Cannot append discontiguous TimeSeries')
 pass
+
+
 #------------------------------------------------------------
 
 print('\n--- Total {0}h {1}m ---'.format( int((time.time()-start_time)/3600), int(( (time.time()-start_time)/3600 - int((time.time()-start_time)/3600) )*60) ))
@@ -266,3 +387,9 @@ if utc_date != end_time:
         for seg in missing:
             reSegment(seg[0], seg[1], utc_date, key, channel_name, condition, value, description, txt=False)
 
+
+# Remove a combined cache file if exists                                                                        
+combined_cache = "%s_%s.ffl" % (start_gps_time-1, end_gps_time+1)
+print(combined_cache)
+if(os.path.isfile("/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"+combined_cache)):
+    os.remove("/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"+combined_cache)
