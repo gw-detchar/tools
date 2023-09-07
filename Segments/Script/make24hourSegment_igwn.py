@@ -228,7 +228,7 @@ def GetFilelist(gpsstart,gpsend): # by H. Yuzurihara
         # merge two cache files
         cache1 = cache_DIR+"%s.ffl" % gps_beg_head
         cache2 = cache_DIR+"%s.ffl"% gps_end_head
-        cache_file="/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/%s_%s.ffl" % (gpsstart, gpsend)
+        cache_file="%s/%s_%s.ffl" % (cache_DIR, gpsstart, gpsend)
 
         with open(cache_file, 'w') as outfile:
           for i in [cache1, cache2]:
@@ -319,10 +319,10 @@ except ValueError :
 pass
 
 # Remove a combined cache file if exists
-combined_cache = "%s_%s.ffl" % (start_gps_time-1, end_gps_time+1)
+combined_cache = "%s/%s_%s.ffl" % (cache_DIR, start_gps_time-1, end_gps_time+1)
 print(combined_cache)
-if(os.path.isfile("/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"+combined_cache)):
-    os.remove("/home/detchar/git/kagra-detchar/tools/Segments/Script/tmp/"+combined_cache)
+if(os.path.isfile(combined_cache)):
+    os.remove(combined_cache)
 
 #------------------------------------------------------------
 
