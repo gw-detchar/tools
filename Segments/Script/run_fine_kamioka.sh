@@ -13,5 +13,5 @@ source /home/controls/bin/miniconda2/etc/profile.d/conda.sh
 conda activate igwn-py38
 
 #python /users/DET/tools/Segments/Script/make15minSegment_igwn.py -c Kamioka -o /users/DET/tools/Segments/Script/tmp
-
-python /users/DET/tools/Segments/Script/make15minSegment_igwn.py -c Kamioka -o /users/DET/Segments
+#python /users/DET/tools/Segments/Script/make15minSegment_igwn.py -c Kamioka -o /users/DET/Segments
+python /users/DET/tools/Segments/Script/make15minSegment_igwn.py -c Kamioka -o /users/DET/tools/Segments/Script/Partial
