@@ -35,11 +35,13 @@ parser = argparse.ArgumentParser(description='Make segment files.')
 parser.add_argument('-d','--date',help='date for manual run.',default = "2020-04-15", required = True)
 parser.add_argument('-c','--cluster',help='Choose Kamioka or Kashiwa', required = True, choices=['Kamioka','Kashiwa'])
 parser.add_argument('-o','--output',help='Specify output directory. Default:/users/DET/Segments/ for Kamioka, /home/detchar/Segments/ for Kashiwa')
+parser.add_argument('-n','--nproc',help='Number of process for reading data. Default:1', default=1, type=int)
 
 args = parser.parse_args()
 date = args.date
 cluster = args.cluster
 output = args.output
+nproc = args.nproc
 
 start_time = time.time()
 
@@ -257,7 +259,7 @@ def mkSegment(gst, get, utc_date, txt=True) :
 
     # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf', gap='pad')
     # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf')
-    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst, end=get, format='gwf', gap='pad')
+    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst, end=get, format='gwf', gap='pad', nproc=nproc)
 
 
     sv={}
