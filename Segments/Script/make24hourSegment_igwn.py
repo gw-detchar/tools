@@ -32,7 +32,7 @@ import math
 import argparse
 
 parser = argparse.ArgumentParser(description='Make segment files.')
-parser.add_argument('-d','--date',help='date for manual run.',default = "2020-04-15", required = True)
+parser.add_argument('-d','--date',help='date for manual run. (ex: 2024-08-31)',default = "2020-04-15", required = True)
 parser.add_argument('-c','--cluster',help='Choose Kamioka or Kashiwa', required = True, choices=['Kamioka','Kashiwa'])
 parser.add_argument('-o','--output',help='Specify output directory. Default:/users/DET/Segments/ for Kamioka, /home/detchar/Segments/ for Kashiwa')
 parser.add_argument('-n','--nproc',help='Number of process for reading data. Default:1', default=1, type=int)
@@ -69,6 +69,7 @@ import frame_available
 import LOCK_GRD
 import PEM_EARTHQUAKE
 import SCIENCE_MODE
+import LOCK_LOSS
 
 filepath_txt = {}
 filepath_xml = {}
@@ -196,13 +197,19 @@ segments = [{'name':'K1-DAQ-IPC_ERROR',
             'option':[False],
             'channel':['K1:GRD-IFO_STATE_N']                            
                    },
-            {'name':'K1-GRD_SCIENCE_MODE',
-             'function':SCIENCE_MODE._make_science_flag,
-             'option':[True],
-             'channel':['K1:GRD-IFO_STATE_N',
-                       'K1:GRD-LSC_LOCK_STATE_N']
-            }
-            ]
+           {'name':'K1-GRD_SCIENCE_MODE',
+            'function':SCIENCE_MODE._make_science_flag,
+            'option':[True],
+            'channel':['K1:GRD-IFO_STATE_N',
+                      'K1:GRD-LSC_LOCK_STATE_N']
+           },
+            {'name':'K1-GRD_LSC_LOCK_LOSS',
+             'function':LOCK_LOSS._make_lsc_lock_loss_flag,
+             #'option':[True],
+             'option':[False],
+             'channel':['K1:GRD-LSC_LOCK_STATE_N']
+            },             
+]
 #------------------------------
 # define output file path
 
