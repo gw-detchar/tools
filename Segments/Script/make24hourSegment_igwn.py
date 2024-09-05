@@ -196,12 +196,12 @@ segments = [{'name':'K1-DAQ-IPC_ERROR',
             'option':[False],
             'channel':['K1:GRD-IFO_STATE_N']                            
                    },
-           # {'name':'K1-GRD_SCIENCE_MODE',
-           #  'function':SCIENCE_MODE._make_science_flag,
-           #  'option':[True],
-           #  'channel':['K1:GRD-IFO_STATE_N',
-           #            'K1:GRD-LSC_LOCK_STATE_N']
-           # }
+            {'name':'K1-GRD_SCIENCE_MODE',
+             'function':SCIENCE_MODE._make_science_flag,
+             'option':[True],
+             'channel':['K1:GRD-IFO_STATE_N',
+                       'K1:GRD-LSC_LOCK_STATE_N']
+            }
             ]
 #------------------------------
 # define output file path
