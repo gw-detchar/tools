@@ -42,7 +42,8 @@ let GPS_END=${GPS_START}+86400
 echo "==> LOCAL: ${JST_DATE}"
 echo "==> START: ${GPS_START}"
 echo "==>   END: ${GPS_END}"
-FILE_SEG=${DIR_SEG}/${JST_YEAR}/K1-GRD_SCIENCE_MODE_SEGMENT_UTC_${JST_DATE}.txt
+FILE_SEG=${DET_ROOT}/Segments/K1-GRD_LOCKED/${JST_YEAR}/K1-GRD_LOCKED_SEGMENT_UTC_${JST_DATE}.txt
+#FILE_SEG=${DIR_SEG}/${JST_YEAR}/K1-GRD_SCIENCE_MODE_SEGMENT_UTC_${JST_DATE}.txt
 
 ################################
 ### Generate Resource File
@@ -51,8 +52,8 @@ cat <<EOF > ${FILE_RSC}
 set ::masterList {\\
 {K1:CAL-CS_PROC_MICH_DISPLACEMENT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
 {K1:CAL-CS_PROC_DARM_DISPLACEMENT_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
-{K1:CAL-CS_PROC_IMC_FREQUENCY_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
-{K1:CAL-CS_PROC_C00_STRAIN_DBL_DQ ADC_REAL8 K1 K1_C default none 0 0 0 1800 0 5000 100 32 0.25 default}\\
+{K1:LSC-MICH_IN1_DQ ADC_REAL4 K1 K1_C default none 0 0 0 1800 10 2000 100 32 0.25 default}\\
+{K1:CAL-CS_PROC_DARM_STRAIN_DBL_DQ ADC_REAL8 K1 K1_C default none 0 0 0 1800 10 5000 100 32 0.25 default}\\
 }
 
 set fixedComparison 0;
