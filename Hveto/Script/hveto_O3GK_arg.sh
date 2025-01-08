@@ -4,8 +4,8 @@
 # Last Modified: 2020/05/21
 #
 
-#DIRNAME_DATE=$1
-DIRNAME_DATE=2020-04-15
+DIRNAME_DATE=$1
+#DIRNAME_DATE=2020-04-15
 
 # Kamioka
 if [ $USER == "controls" ]; then
@@ -47,7 +47,7 @@ if [ $USER == "controls" ]; then
 	#INIFILE=/users/DET/tools/Hveto/etc/O3GK_test.ini
     fi
     
-    OUTPUTDIR=/home/controls/public_html/hveto/manual/test/${DIRNAME_DATE}_kashiwa_${GPSSTART}_${GPSEND}_20210308
+    OUTPUTDIR=/home/controls/public_html/hveto/manual/test/${DIRNAME_DATE}_kisti_${GPSSTART}_${GPSEND}_20210318
 
 # Kashiwa    
 else

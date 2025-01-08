@@ -13,7 +13,7 @@ if [ $USER == "controls" ]; then
     # conda environment must be set before running this script.
     #conda activate ligo-summary-3.7
 
-    a=`gpstime ${DIRNAME_DATE} 9:00:00 | grep GPS`
+    a=`gpstime "${DIRNAME_DATE} 9:00:00" | grep GPS`
 
     GPSSTART=${a#*GPS: }
     GPSSTART=${GPSSTART:0:10}
@@ -31,21 +31,23 @@ if [ $USER == "controls" ]; then
     #SEGMENTFILE=/users/DET/Segments/K1-DET_FOR_GRB200415A/2020/K1-DET_FOR_GRB200415A_UTC_${DIRNAME_DATE}.xml
     SEGMENTFILE=/users/DET/Segments/K1-DET_FOR_GRB200415A/2020/K1-DET_FOR_GRB200415A_UTC_${DIRNAME_DATE}.xml
 
-    #INIFILE=/users/DET/tools/Hveto/etc/manual.ini
-    #INIFILE=/users/DET/tools/Hveto/etc/burst.ini
-    #INIFILE=/users/DET/tools/Hveto/etc/burst_O3.ini
-    #INIFILE=/users/DET/tools/Hveto/etc/O3GK.ini
-    #INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist1.ini
-    #INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist2.ini
-    #INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist1_ver2.ini
-    #INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_shortlist${n}.ini
-    #INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_0415.ini
-    INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_0415.ini
-    #INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_0415_KISTI.ini
+    if [ "${DIRNAME_DATE}" = "2020-04-15" ]; then
+	INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_0415.ini
+    else
+	#INIFILE=/users/DET/tools/Hveto/etc/manual.ini
+	#INIFILE=/users/DET/tools/Hveto/etc/burst.ini
+	#INIFILE=/users/DET/tools/Hveto/etc/burst_O3.ini
+	#INIFILE=/users/DET/tools/Hveto/etc/O3GK.ini
+	#INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist1.ini
+	#INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist2.ini
+	#INIFILE=/users/DET/tools/Hveto/etc/O3GK_shortlist1_ver2.ini
+	#INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_shortlist${n}.ini
+	INIFILE=/users/DET/tools/Hveto/etc/O3GKC20.ini
+	#INIFILE=/users/DET/tools/Hveto/etc/O3GKC20_0415_KISTI.ini
+	#INIFILE=/users/DET/tools/Hveto/etc/O3GK_test.ini
+    fi
     
-    #INIFILE=/users/DET/tools/Hveto/etc/O3GK_test.ini
-
-    OUTPUTDIR=/home/controls/public_html/hveto/manual/test/${DIRNAME_DATE}_kashiwa_${GPSSTART}_${GPSEND}_20210308
+    OUTPUTDIR=/home/controls/public_html/hveto/manual/test/${DIRNAME_DATE}_igwnpy38_${GPSSTART}_${GPSEND}_20210308
 
 # Kashiwa    
 else
@@ -63,7 +65,13 @@ else
     echo $GPSEND
 
     SEGMENTFILE=/home/detchar/Segments/K1-DET_FOR_GRB200415A/2020/K1-DET_FOR_GRB200415A_UTC_${DIRNAME_DATE}.xml
-    INIFILE=/home/detchar/git/kagra-detchar/tools/Hveto/etc/O3GKC20_0415.ini
+
+    if [ "${DIRNAME_DATE}" = "2020-04-15" ]; then
+	INIFILE=/home/detchar/git/kagra-detchar/tools/Hveto/etc/O3GKC20_0415.ini
+    else
+	INIFILE=/home/detchar/git/kagra-detchar/tools/Hveto/etc/O3GKC20.ini
+    fi
+    
     OUTPUTDIR=/home/detchar/hveto/manual/test/${DIRNAME_DATE}_C20_${GPSSTART}_${GPSEND}_20210304
 fi
 
