@@ -64,7 +64,7 @@ else
     GPS_LATEST=${1}00000
     let GPS_STOP=${GPS_LATEST}+100000
     LEN_LATEST=`ls ${DIR_FR0}/${1}/*.gwf 2> /dev/null | head -1 | cut -d'-' -f4 | sed -e 's/.gwf//g'`
-    if test "${FILE_TMP}" = ""
+    if test "${LEN_LATEST}" = ""
     then
 	LEN_LATEST=`ls ${DIR_FR1}/${1}/*.gwf 2> /dev/null | head -1 | cut -d'-' -f4 | sed -e 's/.gwf//g'`
 	[ "${LEN_LATEST}" = "" ] && echo "Can't find both ${DIR_FR0}/${1}/ and ${DIR_FR1}/${1}/." > /dev/stderr && exit 1
