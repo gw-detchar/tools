@@ -66,11 +66,14 @@ let MARGIN=${OVERLAP}/2
 mkdir -p ${DIR_OUTPUT}
 
 # Using segments file
-date=`date -d '9 hours ago' '+%Y-%m-%d'`
-year=`date -d '9 hours ago' '+%Y'`
+date=`date -d '9 hours ago 15 minutes ago' '+%Y-%m-%d'`
+year=`date -d '9 hours ago 15 minutes ago' '+%Y'`
 
 # Maybe segment should be changed to SCIENCE mode when O4 starts.
-segment="/users/DET/tools/Segments/Script/Partial/K1-GRD_LOCKED_SEGMENT_UTC_"$date".txt"
+### FIXME: it should be given as input arguments of this scripts
+###    2021-06-17  changed unlocked segments for investigating Oplev glitches
+#segment="/users/DET/tools/Segments/Script/Partial/K1-GRD_LOCKED_SEGMENT_UTC_"$date".txt"
+segment="/users/oshino/Segments/Script/tmp/Partial/K1-GRD_LOCKED_SEGMENT_UTC_"$date".txt"
 
 # Loop over segments.
 # CAUTION: Bug in treatment of 0:00:00 !!!
