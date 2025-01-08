@@ -77,7 +77,7 @@ startgps=${1}
 stopgps=${2}
 channel=${3}
 
-if test -e ${CMD_TRIGFIND} -a ${SEARCH_DIR} = ""
+if test -e ${CMD_TRIGFIND} -a "${SEARCH_DIR}" = ""
 then
     LIST="`${CMD_TRIGFIND} ${channel} ${ETG} ${startgps} ${stopgps} | sed -e 's@file://@@g'`"
 elif test -e ${ETG_DIR}
