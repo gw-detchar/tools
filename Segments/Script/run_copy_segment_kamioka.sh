@@ -15,6 +15,11 @@ echo $yesterday $year
 for ii in `ls /users/DET/tools/Segments/Script/Partial/`
 do
     segment=`basename $ii`
+    if [ ! -d /users/DET/Segments/${segment}/${year} ]; then
+	mkdir /users/DET/Segments/${segment}/${year}
+    fi
     cp -r /users/DET/tools/Segments/Script/Partial/${segment}/${year}/*${yesterday}* /users/DET/Segments/${segment}/${year}/
+
+    #cp -r /users/DET/tools/Segments/Script/Partial/${segment}/${year}/* /users/DET/Segments/${segment}/${year}/
 done
 
