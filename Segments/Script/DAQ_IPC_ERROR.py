@@ -29,7 +29,7 @@ def _make_ipc_glitch_flag(sigs:TimeSeriesDict, round:bool=False) -> DataQualityF
     '''
     ### [NOTE] Definition of this flag.
     ### [HACK] This flag should be included in category 1.
-    dqflag = DataQualityFlag(name='K1:DAQ-IPC_ERROR:1',
+    dqflag = DataQualityFlag(name='K1:DAQ_IPC_ERROR:1',
                              label='IPC_ERROR',
                              category=None,
                              description='A timing delay related to machine power makes DARM glitches',

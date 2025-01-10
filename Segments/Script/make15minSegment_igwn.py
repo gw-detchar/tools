@@ -84,7 +84,7 @@ filepath_xml = {}
 # Note: 'to_dqflag().round(contract=round)' is used for the round option
 # 'True' for good data segments, 'False' for bad data segments.
 
-segments = [{'name':'K1-DAQ-IPC_ERROR',
+segments = [{'name':'K1-DAQ_IPC_ERROR',
              'function':DAQ_IPC_ERROR._make_ipc_glitch_flag,
              'option':[False],
              'channel':['K1:FEC-8_TIME_DIAG',   ### k1lsc
