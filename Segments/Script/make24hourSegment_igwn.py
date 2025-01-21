@@ -35,6 +35,7 @@ parser = argparse.ArgumentParser(description='Make segment files.')
 parser.add_argument('-d','--date',help='date for manual run. (ex: 2024-08-31)',default = "2020-04-15", required = True)
 parser.add_argument('-c','--cluster',help='Choose Kamioka or Kashiwa', required = True, choices=['Kamioka','Kashiwa'])
 parser.add_argument('-o','--output',help='Specify output directory. Default:/users/DET/Segments/ for Kamioka, /home/detchar/Segments/ for Kashiwa')
+parser.add_argument('-N','--nds2',help='Reading the data vis NDS2 server running at Kashiwa cluster. This option can be used only when setting --cluster Kamioka. Default:False', action='store_true', default=False)
 parser.add_argument('-n','--nproc',help='Number of process for reading data. Default:1', default=1, type=int)
 
 args = parser.parse_args()
@@ -42,6 +43,7 @@ date = args.date
 cluster = args.cluster
 output = args.output
 nproc = args.nproc
+flag_nds2 = args.nds2
 
 start_time = time.time()
 
@@ -250,24 +252,27 @@ def GetFilelist(gpsstart,gpsend): # by H. Yuzurihara
 # make segments and write to the output files
 
 
-def mkSegment(gst, get, utc_date, txt=True) :
+def mkSegment(gst, get, utc_date, flag_nds2, txt=True):
 
+    # print('Reading {0} timeseries data...'.format(date))
     # add 1sec margin for locked segments contract.
-    cache = GetFilelist(gst-1, get+1)
-
-    #------------------------------------------------------------
-
-   # print('Reading {0} timeseries data...'.format(date))
-    # add 1sec margin for locked segments contract.
-
+    
     channel_list = [d['channel'] for d in segments] # make a list of channels
     channel_list = sum(channel_list, [])
     channel_list = set(channel_list)  # remove duplicate channel name    
+    
+    if flag_nds2 and cluster == "Kamioka":
+        channeldata = TimeSeriesDict.fetch(channel_list, gst, get, host='k1nds2', port=8088, pad=0, verbose=True)
+    else:         
+       # add 1sec margin for locked segments contract.
+       cache = GetFilelist(gst-1, get+1)
 
-    # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf', gap='pad')
-    # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf')
-    channeldata = TimeSeriesDict.read(cache, channel_list, start=gst, end=get, format='gwf', gap='pad', nproc=nproc)
+       #------------------------------------------------------------
 
+       # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf', gap='pad')
+       # channeldata = TimeSeriesDict.read(cache, channel_list, start=gst-1, end=get+1, format='gwf')
+       channeldata = TimeSeriesDict.read(cache, channel_list, start=gst, end=get, format='gwf', gap='pad', nproc=nproc)
+    
 
     sv={}
     dqflag={}
@@ -321,7 +326,7 @@ Filepath(utc_date, year)
 print(start_gps_time, end_gps_time, utc_date)
 
 try :
-    mkSegment(start_gps_time, end_gps_time, utc_date)
+    mkSegment(start_gps_time, end_gps_time, utc_date, flag_nds2)
         #print('    DQF segment file saved')
 except ValueError :
     print('    Cannot append discontiguous TimeSeries')
