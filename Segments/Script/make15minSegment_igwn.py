@@ -221,7 +221,6 @@ segments = [{'name':'K1-DAQ_IPC_ERROR',
 ]
 #------------------------------
 # define output file path
-
 def Filepath(utc_data, year):
    
     for d in segments:
@@ -386,9 +385,19 @@ Filepath(utc_date, year)
 
 try :
     mkSegment(start_gps_time, end_gps_time, utc_date)
-#print('    DQF segment file saved')
+    # dt_now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+    # message="test dayo"
+    # msg = "%s JST   %s" % (dt_now, message)
+    # cmd = ['/kagra/bin/slack', "detchar-alert", msg]
+    # subprocess.Popen(cmd)    
 except ValueError :
     print('    Cannot append discontiguous TimeSeries')
+    if cluster == "Kamioka":
+        message="Segment production failed at k1det (see /tmp/segmentfine.log)"
+        dt_now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+        msg = "%s JST   %s" % (dt_now, message)
+        cmd = ['/kagra/bin/slack', "detchar-alert", msg]
+        subprocess.Popen(cmd)
 pass
 
 
