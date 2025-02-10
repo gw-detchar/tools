@@ -90,7 +90,7 @@ segments = [{'name':'K1-DAQ_IPC_ERROR',
              'channel':['K1:FEC-8_TIME_DIAG',   ### k1lsc
                         'K1:FEC-11_TIME_DIAG',  ### k1calcs
                         'K1:FEC-83_TIME_DIAG',  ### k1omc
-                        'K1:FEC-103_TIME_DIAG', ### k1visetmxp              
+                        'K1:FEC-104_TIME_DIAG', ### k1visetmxp              
                     ]},
             {'name':'K1-DET_FRAME_AVAILABLE',
              'function':frame_available._make_frame_available_flag,
@@ -112,82 +112,82 @@ segments = [{'name':'K1-DAQ_IPC_ERROR',
             {'name':'K1-ETMX_OVERFLOW_VETO',
              'function':OVERFLOW_ADC_DAC._make_overflow_flag,
              'option':['ETMX',False],
-             'channel':['K1:FEC-103_DAC_OVERFLOW_1_0',   ### MN_V3
-                      'K1:FEC-103_DAC_OVERFLOW_1_1',   ### MN_H1
-                      'K1:FEC-103_DAC_OVERFLOW_1_2',   ### MN_H2
-                      'K1:FEC-103_DAC_OVERFLOW_1_3',   ### MN_H3
-                      'K1:FEC-103_DAC_OVERFLOW_1_4',   ### MN_V1
-                      'K1:FEC-103_DAC_OVERFLOW_1_5',   ### MN_V2
-                      'K1:FEC-103_DAC_OVERFLOW_1_6',   ### IM_V1
-                      'K1:FEC-103_DAC_OVERFLOW_1_7',   ### IM_V2
-                      'K1:FEC-103_DAC_OVERFLOW_1_8',   ### IM_V3
-                      'K1:FEC-103_DAC_OVERFLOW_1_9',   ### IM_H1
-                      'K1:FEC-103_DAC_OVERFLOW_1_10',  ### IM_H2
-                      'K1:FEC-103_DAC_OVERFLOW_1_11',  ### IM_H3
-                      'K1:FEC-103_DAC_OVERFLOW_1_12',  ### TM_H1
-                      'K1:FEC-103_DAC_OVERFLOW_1_13',  ### TM_H2
-                      'K1:FEC-103_DAC_OVERFLOW_1_14',  ### TM_H3
-                      'K1:FEC-103_DAC_OVERFLOW_1_15']  ### TM_H4
+             'channel':['K1:FEC-104_DAC_OVERFLOW_1_0',   ### MN_V3
+                      'K1:FEC-104_DAC_OVERFLOW_1_1',   ### MN_H1
+                      'K1:FEC-104_DAC_OVERFLOW_1_2',   ### MN_H2
+                      'K1:FEC-104_DAC_OVERFLOW_1_3',   ### MN_H3
+                      'K1:FEC-104_DAC_OVERFLOW_1_4',   ### MN_V1
+                      'K1:FEC-104_DAC_OVERFLOW_1_5',   ### MN_V2
+                      'K1:FEC-104_DAC_OVERFLOW_1_6',   ### IM_V1
+                      'K1:FEC-104_DAC_OVERFLOW_1_7',   ### IM_V2
+                      'K1:FEC-104_DAC_OVERFLOW_1_8',   ### IM_V3
+                      'K1:FEC-104_DAC_OVERFLOW_1_9',   ### IM_H1
+                      'K1:FEC-104_DAC_OVERFLOW_1_10',  ### IM_H2
+                      'K1:FEC-104_DAC_OVERFLOW_1_11',  ### IM_H3
+                      'K1:FEC-104_DAC_OVERFLOW_1_12',  ### TM_H1
+                      'K1:FEC-104_DAC_OVERFLOW_1_13',  ### TM_H2
+                      'K1:FEC-104_DAC_OVERFLOW_1_14',  ### TM_H3
+                      'K1:FEC-104_DAC_OVERFLOW_1_15']  ### TM_H4
              },
             {'name':'K1-ETMX_OVERFLOW_OK',
              'function':OVERFLOW_ADC_DAC._make_overflow_ok_flag,
              'option':['ETMX',True],
-             'channel':['K1:FEC-103_DAC_OVERFLOW_1_0',   ### MN_V3
-                      'K1:FEC-103_DAC_OVERFLOW_1_1',   ### MN_H1
-                      'K1:FEC-103_DAC_OVERFLOW_1_2',   ### MN_H2
-                      'K1:FEC-103_DAC_OVERFLOW_1_3',   ### MN_H3
-                      'K1:FEC-103_DAC_OVERFLOW_1_4',   ### MN_V1
-                      'K1:FEC-103_DAC_OVERFLOW_1_5',   ### MN_V2
-                      'K1:FEC-103_DAC_OVERFLOW_1_6',   ### IM_V1
-                      'K1:FEC-103_DAC_OVERFLOW_1_7',   ### IM_V2
-                      'K1:FEC-103_DAC_OVERFLOW_1_8',   ### IM_V3
-                      'K1:FEC-103_DAC_OVERFLOW_1_9',   ### IM_H1
-                      'K1:FEC-103_DAC_OVERFLOW_1_10',  ### IM_H2
-                      'K1:FEC-103_DAC_OVERFLOW_1_11',  ### IM_H3
-                      'K1:FEC-103_DAC_OVERFLOW_1_12',  ### TM_H1
-                      'K1:FEC-103_DAC_OVERFLOW_1_13',  ### TM_H2
-                      'K1:FEC-103_DAC_OVERFLOW_1_14',  ### TM_H3
-                      'K1:FEC-103_DAC_OVERFLOW_1_15']  ### TM_H4
+             'channel':['K1:FEC-104_DAC_OVERFLOW_1_0',   ### MN_V3
+                      'K1:FEC-104_DAC_OVERFLOW_1_1',   ### MN_H1
+                      'K1:FEC-104_DAC_OVERFLOW_1_2',   ### MN_H2
+                      'K1:FEC-104_DAC_OVERFLOW_1_3',   ### MN_H3
+                      'K1:FEC-104_DAC_OVERFLOW_1_4',   ### MN_V1
+                      'K1:FEC-104_DAC_OVERFLOW_1_5',   ### MN_V2
+                      'K1:FEC-104_DAC_OVERFLOW_1_6',   ### IM_V1
+                      'K1:FEC-104_DAC_OVERFLOW_1_7',   ### IM_V2
+                      'K1:FEC-104_DAC_OVERFLOW_1_8',   ### IM_V3
+                      'K1:FEC-104_DAC_OVERFLOW_1_9',   ### IM_H1
+                      'K1:FEC-104_DAC_OVERFLOW_1_10',  ### IM_H2
+                      'K1:FEC-104_DAC_OVERFLOW_1_11',  ### IM_H3
+                      'K1:FEC-104_DAC_OVERFLOW_1_12',  ### TM_H1
+                      'K1:FEC-104_DAC_OVERFLOW_1_13',  ### TM_H2
+                      'K1:FEC-104_DAC_OVERFLOW_1_14',  ### TM_H3
+                      'K1:FEC-104_DAC_OVERFLOW_1_15']  ### TM_H4
              },
             {'name':'K1-ETMY_OVERFLOW_VETO',
              'function':OVERFLOW_ADC_DAC._make_overflow_flag,
              'option':['ETMY',False],
-             'channel':['K1:FEC-108_DAC_OVERFLOW_1_0',   ### MN_V3
-                      'K1:FEC-108_DAC_OVERFLOW_1_1',   ### MN_H1
-                      'K1:FEC-108_DAC_OVERFLOW_1_2',   ### MN_H2
-                      'K1:FEC-108_DAC_OVERFLOW_1_3',   ### MN_H3
-                      'K1:FEC-108_DAC_OVERFLOW_1_4',   ### MN_V1
-                      'K1:FEC-108_DAC_OVERFLOW_1_5',   ### MN_V2
-                      'K1:FEC-108_DAC_OVERFLOW_1_6',   ### IM_V1
-                      'K1:FEC-108_DAC_OVERFLOW_1_7',   ### IM_V2
-                      'K1:FEC-108_DAC_OVERFLOW_1_8',   ### IM_V3
-                      'K1:FEC-108_DAC_OVERFLOW_1_9',   ### IM_H1
-                      'K1:FEC-108_DAC_OVERFLOW_1_10',  ### IM_H2
-                      'K1:FEC-108_DAC_OVERFLOW_1_11',  ### IM_H3
-                      'K1:FEC-108_DAC_OVERFLOW_1_12',  ### TM_H1
-                      'K1:FEC-108_DAC_OVERFLOW_1_13',  ### TM_H2
-                      'K1:FEC-108_DAC_OVERFLOW_1_14',  ### TM_H3
-                      'K1:FEC-108_DAC_OVERFLOW_1_15']  ### TM_H4
+             'channel':['K1:FEC-109_DAC_OVERFLOW_1_0',   ### MN_V3
+                      'K1:FEC-109_DAC_OVERFLOW_1_1',   ### MN_H1
+                      'K1:FEC-109_DAC_OVERFLOW_1_2',   ### MN_H2
+                      'K1:FEC-109_DAC_OVERFLOW_1_3',   ### MN_H3
+                      'K1:FEC-109_DAC_OVERFLOW_1_4',   ### MN_V1
+                      'K1:FEC-109_DAC_OVERFLOW_1_5',   ### MN_V2
+                      'K1:FEC-109_DAC_OVERFLOW_1_6',   ### IM_V1
+                      'K1:FEC-109_DAC_OVERFLOW_1_7',   ### IM_V2
+                      'K1:FEC-109_DAC_OVERFLOW_1_8',   ### IM_V3
+                      'K1:FEC-109_DAC_OVERFLOW_1_9',   ### IM_H1
+                      'K1:FEC-109_DAC_OVERFLOW_1_10',  ### IM_H2
+                      'K1:FEC-109_DAC_OVERFLOW_1_11',  ### IM_H3
+                      'K1:FEC-109_DAC_OVERFLOW_1_12',  ### TM_H1
+                      'K1:FEC-109_DAC_OVERFLOW_1_13',  ### TM_H2
+                      'K1:FEC-109_DAC_OVERFLOW_1_14',  ### TM_H3
+                      'K1:FEC-109_DAC_OVERFLOW_1_15']  ### TM_H4
              },
             {'name':'K1-ETMY_OVERFLOW_OK',
              'function':OVERFLOW_ADC_DAC._make_overflow_ok_flag,
              'option':['ETMY',True],
-             'channel':['K1:FEC-108_DAC_OVERFLOW_1_0',   ### MN_V3
-                      'K1:FEC-108_DAC_OVERFLOW_1_1',   ### MN_H1
-                      'K1:FEC-108_DAC_OVERFLOW_1_2',   ### MN_H2
-                      'K1:FEC-108_DAC_OVERFLOW_1_3',   ### MN_H3
-                      'K1:FEC-108_DAC_OVERFLOW_1_4',   ### MN_V1
-                      'K1:FEC-108_DAC_OVERFLOW_1_5',   ### MN_V2
-                      'K1:FEC-108_DAC_OVERFLOW_1_6',   ### IM_V1
-                      'K1:FEC-108_DAC_OVERFLOW_1_7',   ### IM_V2
-                      'K1:FEC-108_DAC_OVERFLOW_1_8',   ### IM_V3
-                      'K1:FEC-108_DAC_OVERFLOW_1_9',   ### IM_H1
-                      'K1:FEC-108_DAC_OVERFLOW_1_10',  ### IM_H2
-                      'K1:FEC-108_DAC_OVERFLOW_1_11',  ### IM_H3
-                      'K1:FEC-108_DAC_OVERFLOW_1_12',  ### TM_H1
-                      'K1:FEC-108_DAC_OVERFLOW_1_13',  ### TM_H2
-                      'K1:FEC-108_DAC_OVERFLOW_1_14',  ### TM_H3
-                      'K1:FEC-108_DAC_OVERFLOW_1_15']  ### TM_H4
+             'channel':['K1:FEC-109_DAC_OVERFLOW_1_0',   ### MN_V3
+                      'K1:FEC-109_DAC_OVERFLOW_1_1',   ### MN_H1
+                      'K1:FEC-109_DAC_OVERFLOW_1_2',   ### MN_H2
+                      'K1:FEC-109_DAC_OVERFLOW_1_3',   ### MN_H3
+                      'K1:FEC-109_DAC_OVERFLOW_1_4',   ### MN_V1
+                      'K1:FEC-109_DAC_OVERFLOW_1_5',   ### MN_V2
+                      'K1:FEC-109_DAC_OVERFLOW_1_6',   ### IM_V1
+                      'K1:FEC-109_DAC_OVERFLOW_1_7',   ### IM_V2
+                      'K1:FEC-109_DAC_OVERFLOW_1_8',   ### IM_V3
+                      'K1:FEC-109_DAC_OVERFLOW_1_9',   ### IM_H1
+                      'K1:FEC-109_DAC_OVERFLOW_1_10',  ### IM_H2
+                      'K1:FEC-109_DAC_OVERFLOW_1_11',  ### IM_H3
+                      'K1:FEC-109_DAC_OVERFLOW_1_12',  ### TM_H1
+                      'K1:FEC-109_DAC_OVERFLOW_1_13',  ### TM_H2
+                      'K1:FEC-109_DAC_OVERFLOW_1_14',  ### TM_H3
+                      'K1:FEC-109_DAC_OVERFLOW_1_15']  ### TM_H4
              },
              {'name':'K1-GRD_PEM_EARTHQUAKE',
              'function':PEM_EARTHQUAKE._make_earthquake_flag,
@@ -397,3 +397,4 @@ combined_cache = "%s/%s_%s.ffl" % (cache_DIR,start_gps_time-1, end_gps_time+1)
 print(combined_cache)
 if(os.path.isfile(combined_cache)):
     os.remove(combined_cache)
+ 
