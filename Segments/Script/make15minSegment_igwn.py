@@ -356,13 +356,24 @@ end_date = from_gps(end_gps_time)
 year = end_date.strftime('%Y')
 utc_date = end_date.strftime('%Y-%m-%d')
 seg="K1-DAQ_IPC_ERROR"
-fname=SEGMENT_DIR+seg+'/'+year+'/'+seg+'_SEGMENT_UTC_' + utc_date + '.txt'
-if os.path.exists(fname):   
+fname=SEGMENT_DIR+seg+'/'+year+'/'+seg+'_SEGMENT_UTC_' + utc_date + '.xml'
+if os.path.exists(fname):
+    tmp = DataQualityFlag.read(fname)
+    seg_end = int(tmp.known[-1][1])
     start_gps_time = int(end_gps_time) - 900
+    if seg_end == start_gps_time: # normal case
+        start_gps_time = int(end_gps_time) - 900
+        print("*** normal operatio of every 15 min.")
+    else:
+        start_gps_time = seg_end # there are missing segments
+        print("*** there are missing segments.")
+        print("*** the starting gps time is set at %d" % start_gps_time)
 else:
-    start_gps_time = to_gps(end_date.replace(hour=0, minute=0, second=0))
+    start_gps_time = to_gps(end_date.replace(hour=0, minute=0, second=0)) # failed to generate segment files in whole the day
+    print("*** failed to generate segment files in whole the day")
+    print("*** the starting gps time is set at %d" % start_gps_time)
 
-print(start_gps_time)
+print(start_gps_time, end_gps_time)
     
 start_date = from_gps(start_gps_time)
 year = start_date.strftime('%Y')
