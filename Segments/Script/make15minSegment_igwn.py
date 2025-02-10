@@ -2,6 +2,9 @@
 usage       = "python LockingStatus.py"
 description = "Checking KAGRA Locking status"
 author      = "Shoichi Oshino, oshino@icrr.u-tokyo.ac.jp"
+author      = "Nami Uchikata"
+author      = "Takahiro Yamamoto"
+author      = "Hirotaka Yuzurihara"
 
 # Modified for the IGWN environment. N. Uchikata (2022.12.15)
 # Summarize information of segements in an array of dictionaries.  N. Uchikata (2023.1.10)
@@ -20,7 +23,7 @@ from gwpy.timeseries import TimeSeries
 from gwpy.timeseries import TimeSeriesDict
 from gwpy.timeseries import StateTimeSeries
 from gwpy.segments import DataQualityFlag
-from gwpy.time import from_gps
+from gwpy.time import from_gps, to_gps
 from glue.lal import Cache
 
 import numpy as np
@@ -349,8 +352,18 @@ if getpass.getuser() == "controls":
 else:
     end_gps_time = int (float(subprocess.check_output('/home/detchar/git/kagra-detchar/tools/Segments/Script/periodictime.sh', shell = True)) )
 
-start_gps_time = int(end_gps_time) - 900
+end_date = from_gps(end_gps_time)
+year = end_date.strftime('%Y')
+utc_date = end_date.strftime('%Y-%m-%d')
+seg="K1-DAQ_IPC_ERROR"
+fname=SEGMENT_DIR+seg+'/'+year+'/'+seg+'_SEGMENT_UTC_' + utc_date + '.txt'
+if os.path.exists(fname):   
+    start_gps_time = int(end_gps_time) - 900
+else:
+    start_gps_time = to_gps(end_date.replace(hour=0, minute=0, second=0))
 
+print(start_gps_time)
+    
 start_date = from_gps(start_gps_time)
 year = start_date.strftime('%Y')
 utc_date = start_date.strftime('%Y-%m-%d')

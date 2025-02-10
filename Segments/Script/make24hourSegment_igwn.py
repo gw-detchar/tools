@@ -2,6 +2,9 @@
 usage       = "python LockingStatus.py"
 description = "Checking KAGRA Locking status"
 author      = "Shoichi Oshino, oshino@icrr.u-tokyo.ac.jp"
+author      = "Nami Uchikata"
+author      = "Takahiro Yamamoto"
+author      = "Hirotaka Yuzurihara"
 
 # Modified for the IGWN environment. N. Uchikata (2022.12.15)
 # Summarize information of segements in an array of dictionaries.  N. Uchikata (2023.1.10)
