@@ -351,15 +351,15 @@ if getpass.getuser() == "controls":
 else:
     end_gps_time = int (float(subprocess.check_output('/home/detchar/git/kagra-detchar/tools/Segments/Script/periodictime.sh', shell = True)) )
 
-end_date = from_gps(end_gps_time)
-year = end_date.strftime('%Y')
-utc_date = end_date.strftime('%Y-%m-%d')
+start_gps_time = int(end_gps_time) - 900
+start_date = from_gps(start_gps_time)
+year = start_date.strftime('%Y')
+utc_date = start_date.strftime('%Y-%m-%d')
 seg="K1-DAQ_IPC_ERROR"
 fname=SEGMENT_DIR+seg+'/'+year+'/'+seg+'_SEGMENT_UTC_' + utc_date + '.xml'
 if os.path.exists(fname):
     tmp = DataQualityFlag.read(fname)
     seg_end = int(tmp.known[-1][1])
-    start_gps_time = int(end_gps_time) - 900
     if seg_end == start_gps_time: # normal case
         start_gps_time = int(end_gps_time) - 900
         print("*** normal operatio of every 15 min.")
@@ -368,7 +368,7 @@ if os.path.exists(fname):
         print("*** there are missing segments.")
         print("*** the starting gps time is set at %d" % start_gps_time)
 else:
-    start_gps_time = to_gps(end_date.replace(hour=0, minute=0, second=0)) # failed to generate segment files in whole the day
+    start_gps_time = to_gps(start_date.replace(hour=0, minute=0, second=0)) # failed to generate segment files in whole the day
     print("*** failed to generate segment files in whole the day")
     print("*** the starting gps time is set at %d" % start_gps_time)
 
@@ -393,11 +393,13 @@ try :
 except ValueError :
     print('    Cannot append discontiguous TimeSeries')
     if cluster == "Kamioka":
-        message="Segment production failed at k1det (see /tmp/segmentfine.log)"
+        import sys
+        sys.path.append('/kagra/lib/python3/dist-packages')
+        from slack import slackpost
+        
         dt_now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-        msg = "%s JST   %s" % (dt_now, message)
-        cmd = ['/kagra/bin/slack', "detchar-alert", msg]
-        subprocess.Popen(cmd)
+        msg="%s JST : Segment production failed at k1det1 (see /tmp/segmentfine.log)" % (dt_now)
+        slackpost(channel='detchar-alert', text=msg, mention=['Yuzurihara', 'yamat'])
 pass
 
 
