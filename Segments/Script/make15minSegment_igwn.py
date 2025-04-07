@@ -75,7 +75,7 @@ else:
 
 import DAQ_IPC_ERROR
 import OVERFLOW_ADC_DAC
-import frame_available
+#import frame_available
 import LOCK_GRD
 import PEM_EARTHQUAKE
 import SCIENCE_MODE
@@ -95,11 +95,11 @@ segments = [{'name':'K1-DAQ_IPC_ERROR',
                         'K1:FEC-83_TIME_DIAG',  ### k1omc
                         'K1:FEC-104_TIME_DIAG', ### k1visetmxp              
                     ]},
-            {'name':'K1-DET_FRAME_AVAILABLE',
-             'function':frame_available._make_frame_available_flag,
-             'option':[filepath_xml, filepath_txt, SEGMENT_DIR, True],
-             'channel':["K1:GRD-IFO_STATE_N"]
-                    },
+            # {'name':'K1-DET_FRAME_AVAILABLE',
+            #  'function':frame_available._make_frame_available_flag,
+            #  'option':[filepath_xml, filepath_txt, SEGMENT_DIR, True],
+            #  'channel':["K1:GRD-IFO_STATE_N"]
+            #         },
             {'name':'K1-OMC_OVERFLOW_VETO',
              'function':OVERFLOW_ADC_DAC._make_overflow_flag,
              'option':['OMC',False],
@@ -399,7 +399,7 @@ except ValueError :
         
         dt_now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
         msg="%s JST : Segment production failed at k1det1 (see /tmp/segmentfine.log)" % (dt_now)
-        slackpost(channel='detchar-alert', text=msg, mention=['Yuzurihara', 'yamat'])
+        slackpost(channel='detchar-alert', text=msg, mention=['yuzurihara', 'yamat'])
 pass
 
 
