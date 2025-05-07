@@ -10,16 +10,16 @@ request_memory = 100 MB
 Initialdir     = 
 Notify_User    =
 Notification   = Never
-+Group         = "Xc"
+#+Group         = "Xc"
+accounting_group = group_priority
 
-Error        = /dev/null
-Log          = /dev/null
-Output       = /dev/null
+Error        = /home/detchar/log/cache.err
+Output       = /home/detchar/log/cache.out
 
-Executable   = /gpfs/home/detchar/git/kagra-detchar/tools/Cache/Script/makeCache.sh
+Executable   = /disk/home/detchar/git/kagra-detchar/tools/Cache/Script/makeCache.sh
 Arguments    = ${1}
 
-periodic_remove = (JobStatus == 1) && (time() - QDate) > 40
+#periodic_remove = (JobStatus == 1) && (time() - QDate) > 45
 
 Queue
 EOF
