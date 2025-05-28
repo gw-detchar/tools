@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in `seq 13689 13713`
+for i in `seq 14040 14064`
 do
     #echo $i
     fname=/home/detchar/cache/Cache_GPS/${i}.ffl
