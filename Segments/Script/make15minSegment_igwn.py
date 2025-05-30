@@ -130,8 +130,12 @@ segments = [{'name':'K1-DAQ_IPC_ERROR',
                       'K1:FEC-104_DAC_OVERFLOW_1_12',  ### TM_H1
                       'K1:FEC-104_DAC_OVERFLOW_1_13',  ### TM_H2
                       'K1:FEC-104_DAC_OVERFLOW_1_14',  ### TM_H3
-                      'K1:FEC-104_DAC_OVERFLOW_1_15']  ### TM_H4
-             },
+                      'K1:FEC-104_DAC_OVERFLOW_1_15',  ### TM_H4
+                      'K1:FEC-104_DAC_OVERFLOW_2_12',  ### TM_LP
+                      'K1:FEC-104_DAC_OVERFLOW_2_13',  ### TM_LP
+                      'K1:FEC-104_DAC_OVERFLOW_2_14',  ### TM_LP
+                      'K1:FEC-104_DAC_OVERFLOW_2_15',  ### TM_LP                                     
+                        ]},
             {'name':'K1-ETMX_OVERFLOW_OK',
              'function':OVERFLOW_ADC_DAC._make_overflow_ok_flag,
              'option':['ETMX',True],
@@ -150,8 +154,12 @@ segments = [{'name':'K1-DAQ_IPC_ERROR',
                       'K1:FEC-104_DAC_OVERFLOW_1_12',  ### TM_H1
                       'K1:FEC-104_DAC_OVERFLOW_1_13',  ### TM_H2
                       'K1:FEC-104_DAC_OVERFLOW_1_14',  ### TM_H3
-                      'K1:FEC-104_DAC_OVERFLOW_1_15']  ### TM_H4
-             },
+                      'K1:FEC-104_DAC_OVERFLOW_1_15',  ### TM_H4
+                      'K1:FEC-104_DAC_OVERFLOW_2_12',  ### TM_LP
+                      'K1:FEC-104_DAC_OVERFLOW_2_13',  ### TM_LP
+                      'K1:FEC-104_DAC_OVERFLOW_2_14',  ### TM_LP
+                      'K1:FEC-104_DAC_OVERFLOW_2_15',  ### TM_LP                                                
+                        ]},
             {'name':'K1-ETMY_OVERFLOW_VETO',
              'function':OVERFLOW_ADC_DAC._make_overflow_flag,
              'option':['ETMY',False],
