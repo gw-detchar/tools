@@ -13,9 +13,15 @@ import numpy as np
 
 ### [REMOVE] for too old astropy
 ###          related to leap-secs in future
-import warnings 
-from astropy._erfa.core import ErfaWarning 
-warnings.filterwarnings('ignore', category=ErfaWarning)
+try:
+    try:
+        from erfa import ErfaWarning
+    except:
+        from astropy._erfa.core import ErfaWarning 
+    import warnings 
+    warnings.filterwarnings('ignore', category=ErfaWarning)
+except:
+    pass
 
 import gpstime
 from gwpy.timeseries import TimeSeriesDict
@@ -336,7 +342,7 @@ if __name__ == '__main__':
             try:
                 all_data = TimeSeriesDict.read(gwf_files, all_channels, start=ii_gps, end=ii_gps+segment_length,
                                                pad='pad')
-            except Exeption as e:
+            except Exception as e:
                 print('     fail: {0} {1}'.format(output_xml, e))
                 break
 
@@ -353,8 +359,9 @@ if __name__ == '__main__':
             host = host[0]
             gwf_files = []
             try:
-                all_data = TimeSeriesDict.fetch(all_channels, start=ii_gps, end=ii_gps+segment_length, pad='pad')
-            except Exeption as e:
+                all_data = TimeSeriesDict.fetch(all_channels, start=ii_gps, end=ii_gps+segment_length,
+                                                host=host, port=port, pad='pad')
+            except Exception as e:
                 print('     fail: {0} {1}'.format(output_xml, e))
                 break
 
