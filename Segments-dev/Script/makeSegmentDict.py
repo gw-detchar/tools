@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: makeSegmentDict.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/06/18 21:48:09
+# Last Modified: 2025/06/19 17:11:17
 #******************************************#
 
 import os
@@ -413,9 +413,7 @@ if __name__ == '__main__':
 
         ### Write segments file for each GPS slice
         if not args.dry_run:
-            if not os.path.exists('{0}/{1}'.format(segment_dir, gps_dir)):
-                print('   create: {0}/{1}'.format(segment_dir, gps_dir))
-                os.makedirs('{0}/{1}'.format(segment_dir, gps_dir), exist_ok=True)
+            os.makedirs('{0}/{1}'.format(segment_dir, gps_dir), exist_ok=True)
             DQDic.write(output_xml, overwrite=args.overwrite, format='ligolw')
 
 #########################################
