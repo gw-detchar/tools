@@ -41,6 +41,10 @@ SEGDIR = {
     'Kamioka': '/users/DET/test-Segments',
     'Kashiwa': '/home/detchar/test-Segments',
 }
+SEGPREF = {
+    'DQSEGDB': 'K-K1_SEG',
+    'LOCAL': 'K-K1_TST',
+}
 SEGLEN = 800
 CACHEDIR = {
     'Kamioka': '/users/DET/Cache/Cache_GPS',
@@ -55,7 +59,6 @@ GWFMARGIN = {
 #########################################
 ###  ro params
 #########################################
-SEGPREF = 'K-K1_SEG'
 GWFLEN = 32
 
 #########################################
@@ -128,7 +131,7 @@ SEGLIST = { ### 'name' is no longer used
         'option': [True],
         'channel': SCI.SEGMENT_WITNESS,
     },
-    12: {
+    -12: {
         'name':'K1-GRD_LSC_LOCK_LOSS',
         'function': LOSS._make_lsc_lock_loss_flag,
         'option': [True],
@@ -213,6 +216,9 @@ if __name__ == '__main__':
     parser.add_argument('--overwrite', action='store_true',
                         help='\n'.join(['fill-mode option [default=False]',
                                         ' ']))
+    parser.add_argument('--prefix', type=str, default=None, metavar='PREF',
+                        help='\n'.join(['common option',
+                                        '  prefix of file name [default={0}]'.format(SEGPREF['DQSEGDB'])]))
     parser.add_argument('--output', type=str, default=None, metavar='DIR',
                         help='\n'.join(['common option', '  output segments directory']
                                        + ['   * {0}: {1}'.format(k,v) for k,v in SEGDIR.items()]))
@@ -227,6 +233,10 @@ if __name__ == '__main__':
     parser.add_argument('--nds', type=str, default=None, metavar='NDS',
                         help='\n'.join(['debug option',
                                         '  gwf reading: NDS-mode [default=None (Cache-mode)]']))
+    parser.add_argument('--private', action='store_true',
+                        help='\n'.join(['debug option [default=False]',
+                                        '  enable also negative keys in segment list',
+                                        '  default prefix is override as {0}'.format(SEGPREF['LOCAL'])]))
     parser.add_argument('--dry-run', action='store_true',
                         help='\n'.join(['debug option [default=False]',
                                         '  skip writing segments']))
@@ -250,6 +260,17 @@ if __name__ == '__main__':
         n_file = GWFMARGIN[args.cluster]
     else:
         n_file = args.nmargin
+    if args.prefix == None:
+        if args.private:
+            segment_pref = SEGPREF['LOCAL']
+        else:
+            segment_pref = SEGPREF['DQSEGDB']
+    else:
+        if not args.private or args.prefix != SEGPREF['DQSEGDB']:
+            segment_pref = args.prefix
+        else:
+            print("Can't use {0} in private-mode".format(SEGPREF['DQSEGDB']))
+            exit(1)
 
     ### Try to get start GPS and segment length form the latest segment file
     start_gps, segment_length = _get_next_segment_start(segment_dir)
@@ -303,7 +324,7 @@ if __name__ == '__main__':
         print('      gwf len: {0}'.format(GWFLEN))
         print('     N margin: {0}'.format(n_file))
         print('  segment dir: {0} (specified={1})'.format(segment_dir, segment_dir!=SEGDIR[args.cluster]))
-        print(' segment pref: {0}'.format(SEGPREF))
+        print(' segment pref: {0}'.format(segment_pref))
         print('  segment len: {0}'.format(segment_length))
         print('  segment GPS: {0}'.format(list(gpsrange)))
         print('     fraction: {0} - {1} ({2}s)'.format(end_gps, available_gps, available_gps - end_gps))
@@ -313,7 +334,7 @@ if __name__ == '__main__':
     ### Make DataQualityDict for each GPS slice
     for ii_gps in gpsrange:
         gps_dir = int(ii_gps / 100000)
-        output_xml = '{0}/{1}/{2}-{3}-{4}.xml'.format(segment_dir, gps_dir, SEGPREF, ii_gps, segment_length)
+        output_xml = '{0}/{1}/{2}-{3}-{4}.xml'.format(segment_dir, gps_dir, segment_pref, ii_gps, segment_length)
 
         ### [NOTE] Overwrite-mode
         ###        When file already exists, process will be skipped except overwrite-mode.
@@ -371,7 +392,8 @@ if __name__ == '__main__':
             ### Pick-up only necessary data for each Segment
             dq_data = {k: v for k, v in all_data.items() if k in SEGLIST[key]["channel"]}
             tmpDQD = SEGLIST[key]['function'](dq_data, *SEGLIST[key]['option'])
-            DQDic[tmpDQD.name] = tmpDQD
+            if key > 0 or args.private:
+                DQDic[tmpDQD.name] = tmpDQD
 
         ### Overwrite check
         if args.overwrite and os.path.exists(output_xml):
