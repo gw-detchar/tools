@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: makeSegmentDict.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/06/19 17:11:17
+# Last Modified: 2025/06/20 23:02:55
 #******************************************#
 
 import os
@@ -26,6 +26,8 @@ except:
 import gpstime
 from gwpy.timeseries import TimeSeriesDict
 from gwpy.segments import DataQualityDict
+
+from compareSegmentDict import compareSegmentDict
 
 import DAQ_IPC_ERROR as IPC
 import OVERFLOW_ADC_DAC as OVF
@@ -398,10 +400,10 @@ if __name__ == '__main__':
         ### Overwrite check
         if args.overwrite and os.path.exists(output_xml):
             old_DQDic = DataQualityDict.read(output_xml)
-            diff = _compare_dqd(DQDic, old_DQDic)
+            diff = compareSegmentDict(DQDic, old_DQDic)
             if not diff:
                 print('no change: {0}'.format(output_xml))
-                # continue
+                continue
 
             print('overwrite: {0}'.format(output_xml))
             if args.nds == None:
