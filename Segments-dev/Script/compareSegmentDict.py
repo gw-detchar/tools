@@ -66,6 +66,6 @@ if __name__ == '__main__':
         msg += [args.dir2]
 
     if msg == []:
-        compare_segment_dict(dq1, dq2, args.t0, args.t1)
+        compareSegmentDict(dq1, dq2, args.t0, args.t1)
     else:
         print("Can't find segment [{0}, {1}) in {2}".format(args.t0, args.t1, ', '.join(msg)))
