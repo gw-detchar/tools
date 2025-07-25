@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: findSegments.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/06/20 22:55:00
+# Last Modified: 2025/07/24 10:52:10
 #******************************************#
 
 import re
@@ -18,13 +18,17 @@ def _check_type(seg_dir):
         return 'Unknown'
 
     try:
-        _ = int(os.path.basename(child_dir[0]))
-        return 'GPS'
+        x = int(os.path.basename(child_dir[0]))
+        if x < 3000:
+            return 'UTC1'
+        else:
+            return 'GPS'
     except:
         return 'UTC'
 
 def findSegmentFiles(seg_dir, gps0, gps1):
-    if _check_type(seg_dir) == 'GPS':
+    seg_type = _check_type(seg_dir)
+    if seg_type == 'GPS':
         gps_dir_0 = int(gps0 / 100000)
         gps_dir_1 = int(gps1 / 100000)
 
@@ -34,12 +38,16 @@ def findSegmentFiles(seg_dir, gps0, gps1):
         files = [f for d in gps_dir for f in glob.glob('{0}/*.xml'.format(d))
                  if gps0 - int(re.split('[-.]', f)[-2]) <= int(re.split('[-.]', f)[-3]) <= gps1]
         return files
-    elif _check_type(seg_dir) == 'UTC':
+    elif seg_type in ['UTC', 'UTC1']:
         year0 = int(gpstime.tconvert(gps0).split(' ')[0].split('-')[0])
         year1 = int(gpstime.tconvert(gps1).split(' ')[0].split('-')[0])
 
-        year_dir = [d for d in glob.glob('{0}/*/[0-9][0-9]*'.format(seg_dir))
-                    if year0 <= int(os.path.basename(d)) <= year1]
+        if seg_type == 'UTC':
+            year_dir = [d for d in glob.glob('{0}/*/[0-9][0-9]*'.format(seg_dir))
+                        if year0 <= int(os.path.basename(d)) <= year1]
+        else:
+            year_dir = [d for d in glob.glob('{0}/[0-9][0-9]*'.format(seg_dir))
+                        if year0 <= int(os.path.basename(d)) <= year1]
 
         files = [f for d in year_dir for f in glob.glob('{0}/*.xml'.format(d))
                  if gps0 - 86400 <= gpstime.tconvert('{0} 00:00:00 UTC'.format(re.split('[_.]', os.path.basename(f))[-2])) <= gps1]
