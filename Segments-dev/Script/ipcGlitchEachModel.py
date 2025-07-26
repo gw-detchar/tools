@@ -2,11 +2,12 @@
 #******************************************#
 #     File Name: ipcGlitchEachModel.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/07/25 21:31:49
+# Last Modified: 2025/07/26 12:35:11
 #******************************************#
 
 import os
 import sys
+import numpy as np
 
 from findSegments import findSegments
 from DAQ_IPC_ERROR import _make_ipc_glitch_flag
