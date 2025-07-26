@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: ipcGlitchEachModel.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/07/26 12:56:43
+# Last Modified: 2025/07/26 13:13:08
 #******************************************#
 
 import os
@@ -22,12 +22,14 @@ CACHEDIR = {
     'Kamioka': '/users/DET/Cache/Cache_GPS',
     'Kashiwa': '/home/detchar/cache/Cache_GPS'
 }
+GWFLEN=32
+
 def _get_gwf_list(start_gps, stop_gps, cachedir):
     cachefiles = sorted({ '{0}/{1}.ffl'.format(cachedir, int(t/100000))
                           for t in [start_gps, stop_gps]
                           if os.path.exists('{0}/{1}.ffl'.format(cachedir, int(t/100000)))
                          })
-    gwffiles = [l[0] for c in cachefiles for l in np.loadtxt(c, dtype=str) if start_gps <= int(l[1]) < stop_gps]
+    gwffiles = [l[0] for c in cachefiles for l in np.loadtxt(c, dtype=str) if int(start_gps/GWFLEN)*GWFLEN <= int(l[1]) < stop_gps]
     return gwffiles
 
 if __name__ == '__main__':

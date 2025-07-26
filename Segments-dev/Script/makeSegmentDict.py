@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: makeSegmentDict.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/06/20 23:02:55
+# Last Modified: 2025/07/26 13:12:36
 #******************************************#
 
 import os
@@ -167,7 +167,7 @@ def _get_gwf_list(start_gps, stop_gps, cachedir):
                           for t in [start_gps, stop_gps]
                           if os.path.exists('{0}/{1}.ffl'.format(cachedir, int(t/100000)))
                          })
-    gwffiles = [l[0] for c in cachefiles for l in np.loadtxt(c, dtype=str) if start_gps <= int(l[1]) < stop_gps]
+    gwffiles = [l[0] for c in cachefiles for l in np.loadtxt(c, dtype=str) if int(start_gps/GWFLEN)*GWFLEN <= int(l[1]) < stop_gps]
     return gwffiles
 
 def _compare_dqd(dqd, dqd_ref):
