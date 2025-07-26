@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: ipcGlitchEachModel.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/07/26 12:54:29
+# Last Modified: 2025/07/26 12:56:43
 #******************************************#
 
 import os
@@ -92,7 +92,7 @@ if __name__ == '__main__':
         if gps0 > end or gps1 < start:
             continue
 
-        if start < gsp0:
+        if start < gps0:
             start = gps0
         if gps1 < end:
             end = gps1
