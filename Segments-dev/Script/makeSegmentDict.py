@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: makeSegmentDict.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/07/26 13:12:36
+# Last Modified: 2025/08/01 11:21:20
 #******************************************#
 
 import os
@@ -66,75 +66,75 @@ GWFLEN = 32
 #########################################
 ###  Segment List
 #########################################
-SEGLIST = { ### 'name' is no longer used
+SEGLIST = { ### 'name' is only used for overriting segname
     1: {
-        'name': 'K1-DAQ_IPC_ERROR',
+        'name': None,
         'function': IPC._make_ipc_glitch_flag,
         'option': [False],
         'channel': IPC.SEGMENT_WITNESS,
     },
     2: {
-        'name': 'K1-OMC_OVERFLOW_VETO',
+        'name': None,
         'function': OVF._make_overflow_flag,
         'option': ['OMC',False],
         'channel': OVF.SEGMENT_WITNESS['OMC'],
     },
     3: {
-        'name': 'K1-OMC_OVERFLOW_OK',
+        'name': None,
         'function': OVF._make_overflow_ok_flag,
         'option': ['OMC',True],
         'channel': OVF.SEGMENT_WITNESS['OMC'],
     },
     4: {
-        'name': 'K1-ETMX_OVERFLOW_VETO',
+        'name': None,
         'function': OVF._make_overflow_flag,
         'option': ['ETMX',False],
         'channel': OVF.SEGMENT_WITNESS['ETMX'],
     },
     5: {
-        'name': 'K1-ETMX_OVERFLOW_OK',
+        'name': None,
         'function': OVF._make_overflow_ok_flag,
         'option': ['ETMX',True],
         'channel': OVF.SEGMENT_WITNESS['ETMX'],
     },
     6: {
-        'name': 'K1-ETMY_OVERFLOW_VETO',
+        'name': None,
         'function': OVF._make_overflow_flag,
         'option': ['ETMY',False],
         'channel': OVF.SEGMENT_WITNESS['ETMY'],
     },
     7: {
-        'name': 'K1-ETMY_OVERFLOW_OK',
+        'name': None,
         'function': OVF._make_overflow_ok_flag,
         'option': ['ETMY',True],
         'channel': OVF.SEGMENT_WITNESS['ETMY'],
     },
     8: {
-        'name': 'K1-GRD_PEM_EARTHQUAKE',
+        'name': None,
         'function': PEM._make_earthquake_flag,
         'option': [False],
         'channel': PEM.SEGMENT_WITNESS,
     },
     9: {
-        'name': 'K1-GRD_LOCKED',
+        'name': None,
         'function': LOCK._make_locked_flag,
         'option': [True],
         'channel': LOCK.SEGMENT_WITNESS,
     },
     10: {
-        'name':'K1-GRD_UNLOCKED',
+        'name': None,
         'function': LOCK._make_unlocked_flag,
         'option':[False],
         'channel': LOCK.SEGMENT_WITNESS,
     },
     11: {
-        'name': 'K1-GRD_SCIENCE_MODE',
+        'name': None,
         'function': SCI._make_science_flag,
         'option': [True],
         'channel': SCI.SEGMENT_WITNESS,
     },
     -12: {
-        'name':'K1-GRD_LSC_LOCK_LOSS',
+        'name': None,
         'function': LOSS._make_lsc_lock_loss_flag,
         'option': [True],
         'channel': LOSS.SEGMENT_WITNESS,
@@ -394,6 +394,8 @@ if __name__ == '__main__':
             ### Pick-up only necessary data for each Segment
             dq_data = {k: v for k, v in all_data.items() if k in SEGLIST[key]["channel"]}
             tmpDQD = SEGLIST[key]['function'](dq_data, *SEGLIST[key]['option'])
+            if 'name' in SEGLIST[key] and 'name' != None:
+                tmpDQD.name = SEGLIST[key]['name']
             if key > 0 or args.private:
                 DQDic[tmpDQD.name] = tmpDQD
 
