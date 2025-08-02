@@ -1,7 +1,7 @@
 #******************************************#
 #     File Name: LOCKLOSS.py
 #        Author: Hirotaka Yuzurihara
-# Last Modified: 2025/06/18 10:11:13
+# Last Modified: 2025/08/01 20:40:17
 #******************************************#
 
 #######################################
@@ -15,9 +15,11 @@ from gwpy.segments import DataQualityFlag
 #######################################
 ### witness channels
 #######################################
-SEGMENT_WITNESS = [
-    'K1:GRD-LSC_LOCK_STATE_N'
-]
+SEGMENT_WITNESS = {
+    'default': [
+        'K1:GRD-LSC_LOCK_STATE_N'
+    ],
+}
 
 #######################################
 ### Functions

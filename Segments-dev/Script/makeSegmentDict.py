@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: makeSegmentDict.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/08/01 11:21:20
+# Last Modified: 2025/08/02 17:26:16
 #******************************************#
 
 import os
@@ -144,6 +144,13 @@ SEGLIST = { ### 'name' is only used for overriting segname
 #########################################
 ###  Helper function
 #########################################
+def _get_obs_term(gps0, gps1):
+    terms = {'O4a': (1368975618, 1371337218)}
+    for key in terms.keys():
+        if terms[key][0] <= gps0 <= terms[key][1] or terms[key][0] <= gps1 <= terms[key][1]:
+            return key
+    return 'default'
+
 def _get_next_segment_start(rootdir):
     dirs = sorted(glob.glob('{0}/[0-9][0-9][0-9][0-9][0-9]'.format(rootdir)), reverse=True)
     if len(dirs) == 0:
@@ -357,8 +364,14 @@ if __name__ == '__main__':
                 print('\n'.join(['           {0}'.format(g) for g in gwf_files]))
             continue
 
+        ### decide obs term
+        term = _get_obs_term(ii_gps, ii_gps+segment_length)
+
         ### Read all channels
-        all_channels = list( {c for k in SEGLIST for c in SEGLIST[k]['channel']} )
+        all_channels = list( {c for k in SEGLIST
+                              if term in SEGLIST[k]['channel'] for c in SEGLIST[k]['channel'][term]}
+                             | {c for k in SEGLIST
+                                if term not in SEGLIST[k]['channel'] for c in SEGLIST[k]['channel']['default']} )
         if args.nds == None:
             ### [NOTE] Cache-mode (default)
             gwf_files = _get_gwf_list(ii_gps, ii_gps+segment_length, cache_dir)
@@ -392,9 +405,12 @@ if __name__ == '__main__':
         DQDic = DataQualityDict()
         for key in SEGLIST.keys():
             ### Pick-up only necessary data for each Segment
-            dq_data = {k: v for k, v in all_data.items() if k in SEGLIST[key]["channel"]}
+            dq_data = ( {k: v for k, v in all_data.items()
+                         if term in SEGLIST[key]["channel"] and k in SEGLIST[key]["channel"][term]}
+                        | {k: v for k, v in all_data.items()
+                           if term not in SEGLIST[key]["channel"] and k in SEGLIST[key]["channel"]['default']} )
             tmpDQD = SEGLIST[key]['function'](dq_data, *SEGLIST[key]['option'])
-            if 'name' in SEGLIST[key] and 'name' != None:
+            if 'name' in SEGLIST[key] and SEGLIST[key]['name'] != None:
                 tmpDQD.name = SEGLIST[key]['name']
             if key > 0 or args.private:
                 DQDic[tmpDQD.name] = tmpDQD

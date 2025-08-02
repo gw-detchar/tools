@@ -1,7 +1,7 @@
 #******************************************#
 #     File Name: OVERFLOW_ADC_DAC.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/06/18 11:08:30
+# Last Modified: 2025/08/02 17:24:00
 #******************************************#
 
 #######################################
@@ -13,50 +13,39 @@ from gwpy.timeseries import TimeSeries, TimeSeriesDict
 from gwpy.segments import DataQualityFlag
 
 SEGMENT_WITNESS = {
-    'OMC': [
-        'K1:FEC-79_ADC_OVERFLOW_0_0',  ### DCPD_A                             
-        'K1:FEC-79_ADC_OVERFLOW_0_1',   ### DCPD_B
-    ],
-    'ETMX': [
-        'K1:FEC-104_DAC_OVERFLOW_1_0',   ### MN_V3
-        'K1:FEC-104_DAC_OVERFLOW_1_1',   ### MN_H1
-        'K1:FEC-104_DAC_OVERFLOW_1_2',   ### MN_H2
-        'K1:FEC-104_DAC_OVERFLOW_1_3',   ### MN_H3
-        'K1:FEC-104_DAC_OVERFLOW_1_4',   ### MN_V1
-        'K1:FEC-104_DAC_OVERFLOW_1_5',   ### MN_V2
-        'K1:FEC-104_DAC_OVERFLOW_1_6',   ### IM_V1
-        'K1:FEC-104_DAC_OVERFLOW_1_7',   ### IM_V2
-        'K1:FEC-104_DAC_OVERFLOW_1_8',   ### IM_V3
-        'K1:FEC-104_DAC_OVERFLOW_1_9',   ### IM_H1
-        'K1:FEC-104_DAC_OVERFLOW_1_10',  ### IM_H2
-        'K1:FEC-104_DAC_OVERFLOW_1_11',  ### IM_H3
-        'K1:FEC-104_DAC_OVERFLOW_1_12',  ### TM_H1
-        'K1:FEC-104_DAC_OVERFLOW_1_13',  ### TM_H2
-        'K1:FEC-104_DAC_OVERFLOW_1_14',  ### TM_H3
-        'K1:FEC-104_DAC_OVERFLOW_1_15',  ### TM_H4
-        'K1:FEC-104_DAC_OVERFLOW_2_12',  ### TM_LP
-        'K1:FEC-104_DAC_OVERFLOW_2_13',  ### TM_LP
-        'K1:FEC-104_DAC_OVERFLOW_2_14',  ### TM_LP
-        'K1:FEC-104_DAC_OVERFLOW_2_15',  ### TM_LP                                     
-    ],
-    'ETMY': [
-        'K1:FEC-109_DAC_OVERFLOW_1_0',   ### MN_V3
-        'K1:FEC-109_DAC_OVERFLOW_1_1',   ### MN_H1
-        'K1:FEC-109_DAC_OVERFLOW_1_2',   ### MN_H2
-        'K1:FEC-109_DAC_OVERFLOW_1_3',   ### MN_H3
-        'K1:FEC-109_DAC_OVERFLOW_1_4',   ### MN_V1
-        'K1:FEC-109_DAC_OVERFLOW_1_5',   ### MN_V2
-        'K1:FEC-109_DAC_OVERFLOW_1_6',   ### IM_V1
-        'K1:FEC-109_DAC_OVERFLOW_1_7',   ### IM_V2
-        'K1:FEC-109_DAC_OVERFLOW_1_8',   ### IM_V3
-        'K1:FEC-109_DAC_OVERFLOW_1_9',   ### IM_H1
-        'K1:FEC-109_DAC_OVERFLOW_1_10',  ### IM_H2
-        'K1:FEC-109_DAC_OVERFLOW_1_11',  ### IM_H3
-        'K1:FEC-109_DAC_OVERFLOW_1_12',  ### TM_H1
-        'K1:FEC-109_DAC_OVERFLOW_1_13',  ### TM_H2
-        'K1:FEC-109_DAC_OVERFLOW_1_14',  ### TM_H3
-        'K1:FEC-109_DAC_OVERFLOW_1_15',  ### TM_H4
-    ],
+    'OMC': {
+        'default': ['K1:FEC-79_ADC_OVERFLOW_0_0',  ### DCPD_A
+                    'K1:FEC-79_ADC_OVERFLOW_0_1'], ### DCPD_B
+    },
+    'ETMX': {
+        'default': [
+            'K1:FEC-104_DAC_OVERFLOW_1_0',   ### MN_V3
+            'K1:FEC-104_DAC_OVERFLOW_1_1',   ### MN_H1
+            'K1:FEC-104_DAC_OVERFLOW_1_2',   ### MN_H2
+            'K1:FEC-104_DAC_OVERFLOW_1_3',   ### MN_H3
+            'K1:FEC-104_DAC_OVERFLOW_1_4',   ### MN_V1
+            'K1:FEC-104_DAC_OVERFLOW_1_5',   ### MN_V2
+            'K1:FEC-104_DAC_OVERFLOW_1_6',   ### IM_V1
+            'K1:FEC-104_DAC_OVERFLOW_1_7',   ### IM_V2
+            'K1:FEC-104_DAC_OVERFLOW_1_8',   ### IM_V3
+            'K1:FEC-104_DAC_OVERFLOW_1_9',   ### IM_H1
+            'K1:FEC-104_DAC_OVERFLOW_1_10',  ### IM_H2
+            'K1:FEC-104_DAC_OVERFLOW_1_11',  ### IM_H3
+            'K1:FEC-104_DAC_OVERFLOW_1_12',  ### TM_H1
+            'K1:FEC-104_DAC_OVERFLOW_1_13',  ### TM_H2
+            'K1:FEC-104_DAC_OVERFLOW_1_14',  ### TM_H3
+            'K1:FEC-104_DAC_OVERFLOW_1_15',  ### TM_H4
+            'K1:FEC-104_DAC_OVERFLOW_2_12',  ### TM_LP
+            'K1:FEC-104_DAC_OVERFLOW_2_13',  ### TM_LP
+            'K1:FEC-104_DAC_OVERFLOW_2_14',  ### TM_LP
+            'K1:FEC-104_DAC_OVERFLOW_2_15',  ### TM_LP
+        ],
+        'O4a': ['K1:FEC-103_DAC_OVERFLOW_1_{0}'.format(ii) for ii in range(0, 16)], ### MN_6,IM_6,TM_4
+    },
+    'ETMY': {
+        'default': ['K1:FEC-109_DAC_OVERFLOW_1_{0}'.format(ii) for ii in range(0, 16)], ### MN_6,IM_6,TM_4
+        'O4a': ['K1:FEC-108_DAC_OVERFLOW_1_{0}'.format(ii) for ii in range(0, 16)], ### MN_6,IM_6,TM_4
+    },
 }
 
 #######################################

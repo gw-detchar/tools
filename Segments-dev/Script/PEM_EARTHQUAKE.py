@@ -1,7 +1,7 @@
 #******************************************#
 #     File Name: PEM_EARTHQUAKE.py
 #        Author: Nami Uchikata
-# Last Modified: 2025/06/18 10:11:29
+# Last Modified: 2025/08/01 20:40:54
 #******************************************#
 
 #######################################
@@ -15,9 +15,11 @@ from gwpy.segments import DataQualityFlag
 #######################################
 ### witness channels
 #######################################
-SEGMENT_WITNESS = [
-    'K1:GRD-PEM_EARTHQUAKE_STATE_N',
-]
+SEGMENT_WITNESS = {
+    'default': [
+        'K1:GRD-PEM_EARTHQUAKE_STATE_N',
+    ],
+}
 
 #######################################
 ### Functions

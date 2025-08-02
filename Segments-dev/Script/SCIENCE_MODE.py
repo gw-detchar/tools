@@ -1,7 +1,7 @@
 #******************************************#
 #     File Name: SCIENCE_MODE2.py
 #        Author: Nami Uchikata
-# Last Modified: 2025/06/18 10:11:36
+# Last Modified: 2025/08/01 20:41:14
 #******************************************#
 
 #######################################
@@ -15,10 +15,12 @@ from gwpy.segments import DataQualityFlag
 #######################################
 ### witness channels
 #######################################
-SEGMENT_WITNESS = [
-    'K1:GRD-IFO_STATE_N',
-    'K1:GRD-LSC_LOCK_STATE_N',
-]
+SEGMENT_WITNESS = {
+    'default': [
+        'K1:GRD-IFO_STATE_N',
+        'K1:GRD-LSC_LOCK_STATE_N',
+    ],
+}
     
 #######################################
 ### Functions

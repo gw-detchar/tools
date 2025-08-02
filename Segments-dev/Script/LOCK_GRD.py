@@ -1,7 +1,7 @@
 #******************************************#
 #     File Name: LOCKED_GRD.py
 #        Author: Nami Uchikata
-# Last Modified: 2025/06/18 10:11:06
+# Last Modified: 2025/08/01 20:39:23
 #******************************************#
 
 #######################################
@@ -15,9 +15,11 @@ from gwpy.segments import DataQualityFlag
 #######################################
 ### witness channels
 #######################################
-SEGMENT_WITNESS = [
+SEGMENT_WITNESS = {
+    'default': [
         'K1:GRD-IFO_STATE_N',
-]
+    ],
+}
 
 #######################################
 ### Functions

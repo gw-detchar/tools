@@ -1,7 +1,7 @@
 #******************************************#
 #     File Name: DAQ_IPC_ERROR.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/06/18 10:10:57
+# Last Modified: 2025/08/02 15:20:39
 #******************************************#
 
 #######################################
@@ -15,12 +15,20 @@ from gwpy.segments import DataQualityFlag
 #######################################
 ### witness channels
 #######################################
-SEGMENT_WITNESS = [
-    'K1:FEC-8_TIME_DIAG',   ### k1lsc
-    'K1:FEC-11_TIME_DIAG',  ### k1calcs
-    'K1:FEC-83_TIME_DIAG',  ### k1omc
-    'K1:FEC-104_TIME_DIAG', ### k1visetmxlsc
-]
+SEGMENT_WITNESS = {
+    'default': [
+        'K1:FEC-8_TIME_DIAG',   ### k1lsc
+        'K1:FEC-11_TIME_DIAG',  ### k1calcs
+        'K1:FEC-83_TIME_DIAG',  ### k1omc
+        'K1:FEC-104_TIME_DIAG', ### k1visetmxlsc
+    ],
+    'O4a': [
+        'K1:FEC-8_TIME_DIAG',   ### k1lsc
+        'K1:FEC-11_TIME_DIAG',  ### k1calcs
+        'K1:FEC-83_TIME_DIAG',  ### k1omc
+        'K1:FEC-103_TIME_DIAG', ### k1visetmxp
+    ],
+}
 
 #######################################
 ### Functions
@@ -66,7 +74,7 @@ def make_ipc_glitch_flag(t0:float, t1:float, round:bool=False, host:str='k1nds1'
     ### [NOTE] Channels checked in this flag.
     ###        Though all ~100 models should be checked,
     ###          only DARM related models are checked due to comuting time.
-    chans = SEGMENT_WITNESS
+    chans = SEGMENT_WITNESS['default']
     sigs = TimeSeriesDict.fetch(chans, t0, t1, host=host, port=port)
     return _make_ipc_glitch_flag(sigs, round=round)
     
