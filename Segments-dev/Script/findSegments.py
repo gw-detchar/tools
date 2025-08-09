@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: findSegments.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/07/24 10:52:10
+# Last Modified: 2025/08/09 19:44:29
 #******************************************#
 
 import re
@@ -10,7 +10,7 @@ import os
 import glob
 
 import gpstime
-from gwpy.segments import DataQualityDict
+from gwpy.segments import DataQualityDict,DataQualityFlag
 
 def _check_type(seg_dir):
     child_dir = glob.glob('{0}/*'.format(seg_dir))
@@ -55,7 +55,7 @@ def findSegmentFiles(seg_dir, gps0, gps1):
     else:
         raise("Can't decide directory structure")
     
-def findSegments(seg_dir, gps0, gps1):
+def findSegments(seg_dir, gps0, gps1, truncate=False):
     try:
         files = findSegmentFiles(seg_dir, gps0, gps1)
     except:
@@ -64,7 +64,11 @@ def findSegments(seg_dir, gps0, gps1):
     if len(files) == 0:
         return None
     else:
-        return DataQualityDict.read(files, coalesce=True)
+        xs = DataQualityDict.read(files, coalesce=True)
+        if truncate == True:
+            y = DataQualityFlag(known=[(gps0, gps1)], active=[(gps0, gps1)])
+            xs = {k: v & y for k, v in xs.items()}
+        return xs
 
 if __name__ == '__main__':
     import argparse
@@ -79,6 +83,8 @@ if __name__ == '__main__':
                         help='start gps time')
     parser.add_argument('--t1', type=int, required=True,
                         help='end gps time')
+    parser.add_argument('--truncate', action='store_true',
+                        help='truncate as [t0, t1)')
     parser.add_argument('--names', type=str, nargs='+', metavar='NAME',
                         help='')
     parser.add_argument('--show-names', action='store_true',
@@ -92,7 +98,7 @@ if __name__ == '__main__':
         for ff in files:
             print(ff)
     else:
-        dq = findSegments(args.directory, args.t0, args.t1)
+        dq = findSegments(args.directory, args.t0, args.t1, truncate=args.truncate)
 
         if dq == None:
             print("Can't find segment [{0}, {1}) in {2}".format(args.t0, args.t1, args.directory))
