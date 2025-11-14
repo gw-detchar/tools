@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: findSegments.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/08/09 19:44:29
+# Last Modified: 2025/11/14 11:41:04
 #******************************************#
 
 import re
@@ -13,7 +13,7 @@ import gpstime
 from gwpy.segments import DataQualityDict,DataQualityFlag
 
 def _check_type(seg_dir):
-    child_dir = glob.glob('{0}/*'.format(seg_dir))
+    child_dir = sorted(glob.glob('{0}/*'.format(seg_dir)))
     if len(child_dir) == 0:
         return 'Unknown'
 
