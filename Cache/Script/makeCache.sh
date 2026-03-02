@@ -51,7 +51,7 @@ function __uniq_files(){
     then
 	let COL=$(printf "${root1}/${current}/" | tr '/' '\n' | wc -l)+1
 	CHAR=$(printf "${root1}/${current}/" | wc -c)
-	ls -1 ${root1}/${current}/*.gwf ${root2}/${current}/*.gwf | sort -t '/' -k${COL},${COL} | uniq -s ${CHAR}
+	ls -1 ${root2}/${current}/*.gwf ${root1}/${current}/*.gwf | sort -t '/' -k${COL},${COL} | uniq -s ${CHAR}
     else
 	ls -1 ${root1}/${current}/*.gwf
     fi
@@ -77,7 +77,7 @@ shift $((OPTIND - 1))
 if test "${CLUSTER}" = "Kamioka"
 then
     GWF_ROOT0=/frame0
-    GWF_ROOT1=/frame2
+    GWF_ROOT1=/frame1
     ROOTDIR=/users/DET/Cache
 elif test "${CLUSTER}" = "Kashiwa"
 then
