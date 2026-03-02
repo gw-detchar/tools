@@ -51,7 +51,10 @@ function __uniq_files(){
     then
 	let COL=$(printf "${root1}/${current}/" | tr '/' '\n' | wc -l)+1
 	CHAR=$(printf "${root1}/${current}/" | wc -c)
-	ls -1 ${root2}/${current}/*.gwf ${root1}/${current}/*.gwf | sort -t '/' -k${COL},${COL} | uniq -s ${CHAR}
+	local old=$(shopt -p nullglob)
+	shopt -s nullglob
+	printf "%s\n" ${root2}/${current}/*.gwf ${root1}/${current}/*.gwf | sort -s -t '/' -k${COL},${COL} | uniq -s ${CHAR}
+	eval "${old}"
     else
 	ls -1 ${root1}/${current}/*.gwf
     fi
