@@ -199,7 +199,7 @@ then
 		dd=$(dirname ${cc})/$(basename ${cc} .ffl)
 		echo "Remove ${dd}.{ffl,cache}"
 		rm -f ${cc} ${dd}.cache
-	    elif test "${GWF_DIR}" != "" -a ! -e ${GWF_DIR0}/${gpsdir} -a ! -e ${GWF_DIR1}/${gpsdir}
+	    elif test ! -e ${GWF_DIR0}/${gpsdir} -a ! -e ${GWF_DIR1}/${gpsdir}
 	    then
 		dd=$(dirname ${cc})/$(basename ${cc} .ffl)
 		echo "Remove ${dd}.{ffl,cache}"
