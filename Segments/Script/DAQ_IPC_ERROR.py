@@ -1,7 +1,7 @@
 #******************************************#
 #     File Name: DAQ_IPC_ERROR.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2023/06/22 13:15:06
+# Last Modified: 2026/07/23 21:22:55
 #******************************************#
 
 #######################################
@@ -60,7 +60,7 @@ def make_ipc_glitch_flag(t0:float, t1:float, round:bool=False, host:str='k1nds1'
         'K1:FEC-8_TIME_DIAG',   ### k1lsc
         'K1:FEC-11_TIME_DIAG',  ### k1calcs
         'K1:FEC-83_TIME_DIAG',  ### k1omc
-        'K1:FEC-103_TIME_DIAG', ### k1visetmxp
+        'K1:FEC-104_TIME_DIAG', ### k1visetmxlsc
     ]
     sigs = TimeSeriesDict.fetch(chans, t0, t1, host=host, port=port)
     return _make_ipc_glitch_flag(sigs, round=round)
