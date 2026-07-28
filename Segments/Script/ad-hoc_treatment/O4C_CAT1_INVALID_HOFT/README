@@ -20,6 +20,8 @@
       - *from 15:00:00 UTC on June 11, 2025 (GPS=1433689218)*
       - *to 16:00:00 UTC on November 18, 2025 (GPS=1447516818)*
     - "=active SegmentList=" is the relevant period descrived above.
+  - =condor-makeSegmentFile.sh=
+    - A script for submitting =makeSegmentFile.py= to condor.
   - =K1-CAL_HOFT_NOT_OK_INVALID_MEASUREMENT_O4c.xml=
     - A segment XML file including "=K1:CAL_HOFT_NOT_OK_INVALID_MEASUREMENT:1="
 
