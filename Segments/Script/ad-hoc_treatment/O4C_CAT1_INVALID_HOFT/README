@@ -1,0 +1,27 @@
+#+TITLE: =K1-CAL_HOFT_NOT_OK_INVALID_MEASUREMENT=
+#+AUTHOR: Takahiro Yamamoto
+#+DATE: 2026/07/28
+#+TEXT: 
+#+TEXT: 
+#+TEXT: [TABLE-OF-CONTENTS]
+
+* Abstract
+  - CAL group discovered failure in the calibration measurement on Nov. 13th, which was done just after recoverying the laser trouble.
+    - Reference: [[https://gwdoc.icrr.u-tokyo.ac.jp/cgi-bin/private/DocDB/ShowDocument?docid=17423][JGW-G2617423]]
+  - Since we are unable to provide an error assessment for the relevant period, we have decieded to exclude it from Analysis Ready.
+  - The relevant period is the time from the first return to observing mode following a laser malfunction until the start of the first weekly maintenance
+    - *from 09:48:01 UTC on November 13, 2025 (GPS = 1447062499)*
+    - *to 00:09:56 on November 14, 2025 (GPS = 1447114214)*
+
+* Related files
+  - =makeSegmentFile.py=
+    - A script to generate a segment XML file including "=K1:CAL_HOFT_NOT_OK_INVALID_MEASUREMENT:1="
+    - "=known SegmentList=" is set as a O4c period in which KAGRA detector joined.
+      - *from 15:00:00 UTC on June 11, 2025 (GPS=1433689218)*
+      - *to 16:00:00 UTC on November 18, 2025 (GPS=1447516818)*
+    - "=active SegmentList=" is the relevant period descrived above.
+  - =K1-CAL_HOFT_NOT_OK_INVALID_MEASUREMENT_O4c.xml=
+    - A segment XML file including "=K1:CAL_HOFT_NOT_OK_INVALID_MEASUREMENT:1="
+
+-----
+#+TEXT: END
