@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: makeSegmentDict.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2025/08/02 17:26:16
+# Last Modified: 2026/07/30 14:06:58
 #******************************************#
 
 import os
@@ -52,7 +52,7 @@ import LOCK_LOSS as LOSS
 #########################################
 SEGDIR = {
     'Kamioka': '/users/DET/test-Segments',
-    'Kashiwa': '/home/detchar/test-Segments',
+    'Kashiwa': '/home/detchar/Segments/online',
 }
 SEGPREF = {
     'DQSEGDB': 'K-K1_SEG',
