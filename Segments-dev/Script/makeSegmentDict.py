@@ -23,9 +23,20 @@ try:
 except:
     pass
 
+try:
+    import slack
+    def notify(msg, online=True):
+        if online:
+            slack.slackpost(channel='test', text=msg)
+        else:
+            print(msg)
+except:
+    def notify(msg):
+        print(msg)
+
 import gpstime
 from gwpy.timeseries import TimeSeriesDict
-from gwpy.segments import DataQualityDict
+from gwpy.segments import DataQualityDict,Segment,SegmentList
 
 from compareSegmentDict import compareSegmentDict
 
@@ -239,6 +250,8 @@ if __name__ == '__main__':
                         help='\n'.join(['common option', '  cache directory']
                                        + ['   * {0}: {1}'.format(k,v) for k,v in CACHEDIR.items()]
                                        + [' ']))
+    parser.add_argument('--gap', type=str, default=None, choices=['fail', 'pad', 'unknown'], metavar='GAP',
+                        help='choose from [{0}]\n\n'.format(', '.join(['fail', 'pad', 'unknown'])))
     parser.add_argument('--nds', type=str, default=None, metavar='NDS',
                         help='\n'.join(['debug option',
                                         '  gwf reading: NDS-mode [default=None (Cache-mode)]']))
@@ -376,12 +389,36 @@ if __name__ == '__main__':
             ### [NOTE] Cache-mode (default)
             gwf_files = _get_gwf_list(ii_gps, ii_gps+segment_length, cache_dir)
             try:
-                all_data = TimeSeriesDict.read(gwf_files, all_channels, start=ii_gps, end=ii_gps+segment_length,
-                                               pad='pad')
+                known_override = None
+                all_data = TimeSeriesDict.read(gwf_files, all_channels, start=ii_gps, end=ii_gps+segment_length)
             except Exception as e:
-                print('     fail: {0} {1}'.format(output_xml, e))
-                break
-
+                if args.gap in ['unknown', 'pad']:
+                    e1 = re.search(r"TimeSeries 1 span: \[(.*?)\)", '{0}'.format(e)).group(1).split()
+                    e2 = re.search(r"TimeSeries 2 span: \[(.*?)\)", '{0}'.format(e)).group(1).split()
+                    if len(e1) != 3 or len(e2) != 3:
+                        notify('     fail: {0} {1}'.format(output_xml, e), online=args.online)
+                        continue
+                    known_override = SegmentList()
+                    known_override.append( Segment(float(e1[0]), float(e1[2])) )
+                    while True:
+                        try:
+                            _ = TimeSeriesDict.read(gwf_files, all_channels, start=float(e2[0]), end=ii_gps+segment_length)
+                            known_override.append( Segment(float(e2[0]), float(ii_gps+segment_length)) )
+                            break
+                        except Exception as ee:
+                            e1 = re.search(r"TimeSeries 1 span: \[(.*?)\)", '{0}'.format(ee)).group(1).split()
+                            e2 = re.search(r"TimeSeries 2 span: \[(.*?)\)", '{0}'.format(ee)).group(1).split()
+                            if len(e1) != 3 or len(e2) != 3:
+                                notify('     fail: {0} {1}'.format(output_xml, e), online=args.online)
+                                continue
+                            known_override.append( Segment(float(e1[0]), float(e1[2])) )
+                    notify('      gap: {0}\n{1}'.format(output_xml, known_override), online=args.online)
+                    if args.gap == 'pad':
+                        known_override = None
+                    all_data = TimeSeriesDict.read(gwf_files, all_channels, start=ii_gps, end=ii_gps+segment_length, pad=0.0)
+                else:
+                    notify('     fail: {0} {1}'.format(output_xml, e), online=args.online)
+                    continue
         else:
             ### [NOTE] NDS-mode
             ###        This mode should be used only for tests.
@@ -410,6 +447,9 @@ if __name__ == '__main__':
                         | {k: v for k, v in all_data.items()
                            if term not in SEGLIST[key]["channel"] and k in SEGLIST[key]["channel"]['default']} )
             tmpDQD = SEGLIST[key]['function'](dq_data, *SEGLIST[key]['option'])
+            if known_override != None:
+                tmpDQD.known = known_override
+                tmpDQD.coalesce()
             if 'name' in SEGLIST[key] and SEGLIST[key]['name'] != None:
                 tmpDQD.name = SEGLIST[key]['name']
             if key > 0 or args.private:
