@@ -156,7 +156,10 @@ SEGLIST = { ### 'name' is only used for overriting segname
 ###  Helper function
 #########################################
 def _get_obs_term(gps0, gps1):
-    terms = {'O4a': (1368975618, 1371337218)}
+    terms = {
+        'O4a': (1368975618, 1371337218),
+        'O4c': (1433689218, 1447516818),
+    }
     for key in terms.keys():
         if terms[key][0] <= gps0 <= terms[key][1] or terms[key][0] <= gps1 <= terms[key][1]:
             return key
