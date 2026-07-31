@@ -3,7 +3,7 @@
 #******************************************#
 #     File Name: makeCache.sh
 #        Author: Takahiro Yamamoto
-# Last Modified: 2026/03/02 12:05:43
+# Last Modified: 2026/07/31 20:39:22
 #******************************************#
 
 ############################################
@@ -17,10 +17,16 @@ usage:
 options:
   -d         : Debug-mode (override OUTPUT_DIR as ${HOME}/Desktop/cache)
   -c cluster : Kamioka, Kashiwa
-  -t type    : full, science, second, minute, LL, LLNoGap
+  -t type    : full, science, second, minute, LL, LLNoGap, USER
   -i interval: exec interval in the unit of seconds
+  -I GWF_DIR : input directory for USER-mode
+  -T GWF_TYPE: GWF_TYPE e.g. K1_C for USER-mode
 
 examples:
+  USER-mode:
+    > $0 [-d] -c cluster -t USER -I GWF_DIR -T GWF_TYPE output_file
+    ### make cache for frames in user directory
+
   LL-mode:
     > $0 [-d] -c cluster -t {LL,LLNoGap} [-i interval] {K1,L1,H1,V1}
     ### make cache for LL frames
@@ -63,12 +69,14 @@ function __uniq_files(){
 ############################################
 ### Options
 ############################################
-while getopts c:dhi:t: OPT; do
+while getopts c:di:t:I:T:h OPT; do
     case $OPT in
 	c) CLUSTER=$OPTARG;;
 	d) DEBUG_MODE="True";;
 	t) TYPE=$OPTARG;;
 	i) INTERVAL=$OPTARG;;
+	I) GWF_DIR0=$OPTARG;;
+	T) GWF_TYPE=$OPTARG;;
 	h) _usage; exit 1;;
 	:) _usage; exit 1;;
 	*) _usage; exit 1;;
@@ -135,6 +143,17 @@ then
     GWF_LEN=4096
     GWF_TYPE=llohft
     OUT_DIR=${ROOTDIR}/Cache_LL
+elif test "${TYPE}" = "USER"
+then
+    GWF_LEN=4096
+    OUT_FILE="${1}"
+    if test "${GWF_DIR0}" = "" -o "${GWF_TYPE}" = ""
+    then
+	_usage
+	exit 1
+    else
+	OUT_FILE=${OUT_FILE%.*}
+    fi
 else
     _usage
     exit 1
@@ -162,6 +181,20 @@ then
     _usage
     exit 0
     
+elif test "${TYPE}" = "USER"
+then
+    if test -d ${GWF_DIR0}
+    then
+	echo "Create ${OUT_FILE}.{ffl,cache}"
+	mkdir -p $(dirname ${OUT_FILE})
+	ls -1 ${GWF_DIR0}/*.gwf \
+            | awk -F'[-.]' '{printf("%s\t%s %s  0 0\n", $0, $(NF-2), $(NF-1))}' > ${OUT_FILE}.ffl
+	awk -v T=${GWF_TYPE} '{printf("%c %s %s %s file://localhost%s\n", T, T, $2, $3, $1)}' ${OUT_FILE}.ffl \
+	    > ${OUT_FILE}.cache
+    else
+	echo "Can't find ${GWF_DIR0}"
+    fi
+
 elif test "${TYPE}" = "LL"
 then
     if test -d ${GWF_DIR0}/${1}
