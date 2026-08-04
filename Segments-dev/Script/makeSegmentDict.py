@@ -2,7 +2,7 @@
 #******************************************#
 #     File Name: makeSegmentDict.py
 #        Author: Takahiro Yamamoto
-# Last Modified: 2026/07/30 14:06:58
+# Last Modified: 2026/08/04 15:12:47
 #******************************************#
 
 import os
@@ -392,32 +392,54 @@ if __name__ == '__main__':
             ### [NOTE] Cache-mode (default)
             gwf_files = _get_gwf_list(ii_gps, ii_gps+segment_length, cache_dir)
             try:
+                next_fraction = True
                 known_override = None
-                all_data = TimeSeriesDict.read(gwf_files, all_channels, start=ii_gps, end=ii_gps+segment_length)
+                if args.gap == 'pad':
+                    all_data = TimeSeriesDict.read(gwf_files, all_channels, start=ii_gps, end=ii_gps+segment_length, pad=0.0)
+                else:
+                    all_data = TimeSeriesDict.read(gwf_files, all_channels, start=ii_gps, end=ii_gps+segment_length)
+            except IndexError as e:
+                notify('    blank: {0} {1}'.format(output_xml, e), online=args.online)
+                continue
             except Exception as e:
-                if args.gap in ['unknown', 'pad']:
-                    e1 = re.search(r"TimeSeries 1 span: \[(.*?)\)", '{0}'.format(e)).group(1).split()
-                    e2 = re.search(r"TimeSeries 2 span: \[(.*?)\)", '{0}'.format(e)).group(1).split()
+                if args.gap == 'unknown':
+                    e1 = re.search(r"TimeSeries 1 span: \[(.*?)\)", '{0}'.format(e))
+                    if e1 != None:
+                        e1 = e1.group(1).split()
+                        e2 = re.search(r"TimeSeries 2 span: \[(.*?)\)", '{0}'.format(e)).group(1).split()
+                    else:
+                        next_fraction = False
+                        e1 = re.search(r"TimeSeries with span \[(.*?)\) does not cover requested interval .*",
+                                       '{0}'.format(e)).group(1).split()
+                        e2 = re.search(r"TimeSeries with span .* does not cover requested interval \[(.*)\)",
+                                       '{0}'.format(e)).group(1).split()
                     if len(e1) != 3 or len(e2) != 3:
                         notify('     fail: {0} {1}'.format(output_xml, e), online=args.online)
                         continue
                     known_override = SegmentList()
                     known_override.append( Segment(float(e1[0]), float(e1[2])) )
-                    while True:
+                    while next_fraction:
                         try:
-                            _ = TimeSeriesDict.read(gwf_files, all_channels, start=float(e2[0]), end=ii_gps+segment_length)
+                            next_fraction = True
+                            _ = TimeSeriesDict.read(gwf_files, all_channels, start=int(float(e2[0])), end=ii_gps+segment_length)
                             known_override.append( Segment(float(e2[0]), float(ii_gps+segment_length)) )
                             break
                         except Exception as ee:
-                            e1 = re.search(r"TimeSeries 1 span: \[(.*?)\)", '{0}'.format(ee)).group(1).split()
-                            e2 = re.search(r"TimeSeries 2 span: \[(.*?)\)", '{0}'.format(ee)).group(1).split()
+                            e1 = re.search(r"TimeSeries 1 span: \[(.*?)\)", '{0}'.format(ee))
+                            if e1 != None:
+                                e1 = e1.group(1).split()
+                                e2 = re.search(r"TimeSeries 2 span: \[(.*?)\)", '{0}'.format(ee)).group(1).split()
+                            else:
+                                next_fraction = False
+                                e1 = re.search(r"TimeSeries with span \[(.*?)\) does not cover requested interval .*",
+                                               '{0}'.format(ee)).group(1).split()
+                                e2 = re.search(r"TimeSeries with span .* does not cover requested interval \[(.*)\)",
+                                               '{0}'.format(ee)).group(1).split()
                             if len(e1) != 3 or len(e2) != 3:
                                 notify('     fail: {0} {1}'.format(output_xml, e), online=args.online)
                                 continue
                             known_override.append( Segment(float(e1[0]), float(e1[2])) )
                     notify('      gap: {0}\n{1}'.format(output_xml, known_override), online=args.online)
-                    if args.gap == 'pad':
-                        known_override = None
                     all_data = TimeSeriesDict.read(gwf_files, all_channels, start=ii_gps, end=ii_gps+segment_length, pad=0.0)
                 else:
                     notify('     fail: {0} {1}'.format(output_xml, e), online=args.online)
