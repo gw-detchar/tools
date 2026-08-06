@@ -3,7 +3,7 @@
 #******************************************#
 #     File Name: condor-makeCache.sh
 #        Author: Takahiro Yamamoto
-# Last Modified: 2026/03/04 03:01:23
+# Last Modified: 2026/08/06 22:34:54
 #******************************************#
 
 ############################################
@@ -28,6 +28,7 @@ function _usage(){
 usage: $0 [-s] [-d] [-CRTM] 0
 usage: $0 [-s] [-d] [-CRTM] dir0 [dir1]
 usage: $0 [-s] [-d] [-CRTM] gps0 gps1
+usage: $0 [-s] [-d] -U gwf_dir output
 
 options:
     -s: submit to condor
@@ -47,7 +48,7 @@ EOF
 ############################################
 ###  Arguments
 ############################################
-while getopts CRTMsdh OPT; do
+while getopts CRTMUsdh OPT; do
     case $OPT in
 	s) SUBMIT="True";;
 	d) DEBUG="-d";;
@@ -55,6 +56,7 @@ while getopts CRTMsdh OPT; do
 	R) FRTYPE="${FRTYPE} science";;
 	T) FRTYPE="${FRTYPE} second";;
 	M) FRTYPE="${FRTYPE} minute";;
+	U) FRTYPE=" USER";;
 	h) _usage; exit 0;;
 	:) _usage; exit 1;;
 	*) _usage; exit 1;;
@@ -81,8 +83,23 @@ Getenv  = True
 EOF
       )
 
+###  USER-mode
+if test "${FRTYPE}" = " USER"
+then
+    SDF=$(cat <<EOF
+${SDF}
+
+Executable = ${EXECUTABLE}
+Arguments  = ${DEBUG} -c Kashiwa -t ${FRTYPE# } -I ${1} ${2}
+Output     = ${LOGDIR}/makeCache-user_\$(Cluster)_$(basename ${2%.*}).txt
+Error      = ${LOGDIR}/makeCache-user_\$(Cluster)_$(basename ${2%.*}).err
+
+Queue
+EOF
+       )
+
 ###  Online-mode
-if test ${1} -eq 0
+elif test ${1} -eq 0
 then
     if test $(whoami) = "detchar"
     then

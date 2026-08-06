@@ -3,7 +3,7 @@
 #******************************************#
 #     File Name: makeCache.sh
 #        Author: Takahiro Yamamoto
-# Last Modified: 2026/07/31 20:39:22
+# Last Modified: 2026/08/06 22:36:20
 #******************************************#
 
 ############################################
@@ -20,11 +20,10 @@ options:
   -t type    : full, science, second, minute, LL, LLNoGap, USER
   -i interval: exec interval in the unit of seconds
   -I GWF_DIR : input directory for USER-mode
-  -T GWF_TYPE: GWF_TYPE e.g. K1_C for USER-mode
 
 examples:
   USER-mode:
-    > $0 [-d] -c cluster -t USER -I GWF_DIR -T GWF_TYPE output_file
+    > $0 [-d] -c cluster -t USER -I GWF_DIR output_file
     ### make cache for frames in user directory
 
   LL-mode:
@@ -69,14 +68,13 @@ function __uniq_files(){
 ############################################
 ### Options
 ############################################
-while getopts c:di:t:I:T:h OPT; do
+while getopts c:di:t:I:h OPT; do
     case $OPT in
 	c) CLUSTER=$OPTARG;;
 	d) DEBUG_MODE="True";;
 	t) TYPE=$OPTARG;;
 	i) INTERVAL=$OPTARG;;
 	I) GWF_DIR0=$OPTARG;;
-	T) GWF_TYPE=$OPTARG;;
 	h) _usage; exit 1;;
 	:) _usage; exit 1;;
 	*) _usage; exit 1;;
@@ -147,11 +145,13 @@ elif test "${TYPE}" = "USER"
 then
     GWF_LEN=4096
     OUT_FILE="${1}"
-    if test "${GWF_DIR0}" = "" -o "${GWF_TYPE}" = ""
+    if test "${GWF_DIR0}" = ""
     then
 	_usage
 	exit 1
     else
+	tmp=(${GWF_DIR0}/*.gwf)
+	GWF_TYPE=$(basename "${tmp[0]}" | awk -F'-' '{printf $2}')
 	OUT_FILE=${OUT_FILE%.*}
     fi
 else
